@@ -38,12 +38,18 @@ def _style_bar_cv(bar, cv: float) -> None:
 
 def _annotate_hue_bars(
     ax: plt.Axes, df: pd.DataFrame, cat: str, hue: str, metric: str,
-    cat_order: list[str], hue_order: list[str], fmt: str, fs: float,
+    cat_order: list[str], hue_order: list[str], fmt: str, fs: float, horizontal: bool = False,
 ) -> None:
     lookup = df.set_index([cat, hue])[[metric, "cv_underemp_pct"]].to_dict("index")
     for h_val, container in zip(hue_order, ax.containers):
         labels = []
-        for c_val, bar in zip(cat_order, container):
+        for bar in container:
+            pos = (bar.get_y() + bar.get_height() / 2) if horizontal else (bar.get_x() + bar.get_width() / 2)
+            if np.isnan(pos):
+                labels.append("")
+                continue
+            idx = int(round(pos))
+            c_val = cat_order[idx] if 0 <= idx < len(cat_order) else None
             row = lookup.get((c_val, h_val))
             if row is None or pd.isna(row[metric]):
                 labels.append("")
@@ -91,7 +97,7 @@ def _two_panel_bars(
             else {"x": cat, "y": metric, "order": cat_order, "hue_order": hue_order}
         )
         sns.barplot(data=df, hue=hue, palette=palette, ax=ax, **kw)
-        _annotate_hue_bars(ax, df, cat, hue, metric, cat_order, hue_order, fmt, fs)
+        _annotate_hue_bars(ax, df, cat, hue, metric, cat_order, hue_order, fmt, fs, horizontal=horizontal)
         lim = df[metric].max() * 1.20
         if horizontal:
             ax.set(xlim=(0, lim), xlabel=mlabel, ylabel=cat_label if ax is ax1 else "")
@@ -196,7 +202,7 @@ def generate_figures(tables: dict[str, pd.DataFrame]) -> None:
             data=sub, x="age_group", y="avg_underemp_k", hue="sex",
             order=age_order, hue_order=sex_order, palette=SEX_COLORS, ax=ax,
         )
-        _annotate_hue_bars(ax, sub, "age_group", "sex", "avg_underemp_k", age_order, sex_order, "%.0fk", fs=7.5)
+        _annotate_hue_bars(ax, sub, "age_group", "sex", "avg_underemp_k", age_order, sex_order, "%.0fk", fs=7.5, horizontal=False)
         ax.set(xlabel="Age Group (Years)", ylim=(0, t4_agesex["avg_underemp_k"].max() * 1.18))
         ax.set_title(SECTOR_SHORT[sec], fontsize=11, weight="bold")
         if idx == 0:

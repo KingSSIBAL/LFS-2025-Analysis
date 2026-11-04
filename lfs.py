@@ -101,23 +101,32 @@ import pandas as pd
 
 from figures import generate_figures, generate_region_map, generate_rq_figures
 from psa import verify_against_psa_official
-from tables import (OUT_DIR, ROOT_DIR, TAB_DIR, build_consolidated_parquet, compute_region_tables, compute_rq_tables,
-                    compute_tables, create_analytical_view)
+from tables import (OUT_DIR, PARQUET_PATH, ROOT_DIR, TAB_DIR, _DOM_EXPR, build_consolidated_parquet,
+                    compute_region_tables, compute_rq_tables, compute_tables, create_analytical_view)
 
 if __name__ == "__main__":
     con = duckdb.connect()
-    build_consolidated_parquet(con)        # 12 monthly CSVs -> one Parquet
-    create_analytical_view(con)            # analysis table + variance design (lfs_view.sql)
 
-    # shortcut: `uv run lfs.py --plots-only` reads cached CSVs from output/tables/ and skips 41 SE queries + 150 Excel reads
+    # shortcut: `uv run lfs.py --plots-only` redraws all 11 figures directly from output/tables/*.csv in ~2s
     if "--plots-only" in sys.argv and any(TAB_DIR.glob("*.csv")):
         cached = {p.stem: pd.read_csv(p) for p in TAB_DIR.glob("*.csv")}
+        if PARQUET_PATH.exists():
+            p_str = PARQUET_PATH.as_posix().replace("'", "''")
+            con.execute(
+                f"CREATE OR REPLACE TABLE work_dom_region AS SELECT work_dom, arg_max(rcode, w) AS wcode FROM ("
+                f"SELECT {_DOM_EXPR} AS work_dom, TRIM(PUFREG) AS rcode, SUM(TRY_CAST(TRIM(PUFPWGTPRV) AS DOUBLE)) AS w "
+                f"FROM '{p_str}' WHERE NULLIF(TRIM(PUFREG), '') IS NOT NULL AND TRIM(PUFC12A_PROVMUN) <> '' GROUP BY 1, 2) GROUP BY 1"
+            )
+        else:
+            con.execute("CREATE OR REPLACE TABLE work_dom_region AS SELECT '66' AS work_dom, '19' AS wcode")
         generate_figures(cached)
         generate_region_map(con, cached)
         generate_rq_figures(cached)
         print("\nFast plot-only rebuild complete!")
         sys.exit(0)
 
+    build_consolidated_parquet(con)        # 12 monthly CSVs -> one Parquet
+    create_analytical_view(con)            # analysis table + variance design (lfs_view.sql)
     tables = compute_tables(con)           # sector x sex/age/education tables
     region_tables = compute_region_tables(con)
     rq_tables = compute_rq_tables(con)     # research questions 1-3
