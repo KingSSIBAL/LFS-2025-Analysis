@@ -21,6 +21,7 @@ Analysis of the $12$ monthly $2025$ Labor Force Survey Public Use Files (Philipp
   <li><a href="#region">5. By region</a></li>
   <li><a href="#deeper">6. Deeper breakdowns</a></li>
   <li><a href="#trust">Can these numbers be trusted?</a></li>
+  <li><a href="#why-unreliable">Why are some small cells flagged as "unreliable"?</a></li>
   <li><a href="#limits">Limits</a></li>
   <li><a href="#data">Data, math, and code</a></li>
 </ul>
@@ -44,7 +45,7 @@ Annual figures are the average of the $12$ monthly rounds. Regional figures are 
 
 **The main message:** the sector with the most underemployed workers (services) is not the sector where workers are most likely to be underemployed (agriculture).
 
-*Tip: click any figure to expand it in place (press Esc to close). Hatched bars mark cells with $\text{CV} \in (10\%, 20\%]$ (`*`, use with caution) or $\text{CV} > 20\%$ (`**`, unreliable).*
+*Tip: click any figure to expand it in place (press Esc to close). Hatched bars mark rare demographic cells with $\text{CV} \in (10\%, 20\%]$ (`*`, use with caution) or $\text{CV} > 20\%$ (`**`, unreliable; [see why below](#why-unreliable)).*
 
 ## 1. By broad sector {#sector}
 
@@ -56,7 +57,7 @@ Annual figures are the average of the $12$ monthly rounds. Regional figures are 
 
 [![Four bar charts of the number underemployed by age group, sex, education and sector, with each group's share of the total.](output/figures/fig_RQ1_total_underemployment_4panel.png)](output/figures/fig_RQ1_total_underemployment_4panel.png)
 
-**Men make up two-thirds of the underemployed pool and face a higher within-group rate than women ($13.3\%$ vs. $9.9\%$).** While the chart above plots each group's headcount and share of the $5.8\text{M}$ national pool, the within-group vulnerability rate falls steadily with schooling—from $18.6\%$ (no grade completed) to $6.7\%$ (college graduates). Post-secondary undergraduates (`**`, $\text{CV} = 22.7\%$) have too small a sample to read reliably. By age, the rate stays at $11\text{--}13\%$ until dropping to $7.8\%$ at $65$ and over.
+**Men make up two-thirds of the underemployed pool and face a higher within-group rate than women ($13.3\%$ vs. $9.9\%$).** While the chart above plots each group's headcount and *pool share* of the $5.8\text{M}$ national total, the *within-group rate* falls steadily with schooling—from $18.6\%$ (no grade completed) to $6.7\%$ (college graduates). Post-secondary undergraduates (`**`, $\text{CV} = 22.7\%$) represent a tiny fraction of the national workforce, leaving too few sampled individuals per barangay to read reliably. By age, the rate stays at $11\text{--}13\%$ until dropping to $7.8\%$ at $65$ and over.
 
 ## 3. Visible vs. invisible underemployment {#visible}
 
@@ -68,7 +69,7 @@ Annual figures are the average of the $12$ monthly rounds. Regional figures are 
 
 [![Left: monthly number underemployed split into visible and invisible. Right: monthly visible and invisible shares with the national rate as a line, peaking in July.](output/figures/fig_RQ3_monthly_number_and_distribution.png)](output/figures/fig_RQ3_monthly_number_and_distribution.png)
 
-**The rate peaks in July ($14.8\%$) and April ($14.6\%$) and hits its low in December ($8.0\%$).** Monthly standard errors run $0.2\text{--}1.0$ percentage points, ruling out sampling noise. April reflects dry-season farm slack, July reflects monsoon disruptions to outdoor hours, and December reflects holiday retail demand and $13$th-month pay.
+**The rate peaks in July ($14.8\%$) and April ($14.6\%$) and hits its low in December ($8.0\%$).** Monthly standard errors run $0.2\text{--}1.0$ percentage points, ruling out sampling noise. April reflects dry-season agricultural slack between planting and harvest cycles, July reflects southwest monsoon (*habagat*) and early typhoon disruptions to outdoor working hours, and December reflects Q4 holiday retail/hospitality expansion alongside $13$th-month pay and remittance inflows.
 
 [![Two line charts of monthly underemployed number and rate for agriculture, industry and services.](output/figures/fig2_monthly_sector_trends_2panel.png)](output/figures/fig2_monthly_sector_trends_2panel.png)
 
@@ -82,9 +83,9 @@ Annual figures are the average of the $12$ monthly rounds. Regional figures are 
 
 [![Map of the Philippines shaded by regional underemployment rate, next to a ranked bar chart of the 18 regions with 95% confidence intervals.](output/figures/fig8_region_map.png)](output/figures/fig8_region_map.png)
 
-**Regions differ five-fold: SOCCSKSARGEN ($28.8\%$), MIMAROPA ($24.5\%$), and Bicol ($23.5\%$) rank highest; Davao ($5.3\%$) and NCR ($7.4\%$) rank lowest.** Whiskers show $95\%$ confidence intervals; non-overlapping intervals indicate conservative, statistically distinct pairs (slight overlaps can still differ at the $5\%$ level; see the [math notes](methodology.html#reliability)).
+**Regions differ five-fold: SOCCSKSARGEN ($28.8\%$), MIMAROPA ($24.5\%$), and Bicol ($23.5\%$) rank highest; Davao ($5.3\%$) and NCR ($7.4\%$) rank lowest.** Whiskers show $95\%$ confidence intervals; non-overlapping intervals indicate conservative, statistically distinct pairs ($p \approx 0.006$, while intervals overlapping by less than $29\%$ of a whisker arm still differ at the $5\%$ level; see the [math proof](methodology.html#reliability)).
 
-**Residence vs. workplace:** When underemployed workers are counted by their *region of workplace* (`W*` tables) instead of residence (`R*` tables), cross-border commuting shifts the metropolitan numbers substantially—NCR's underemployed count is $19\%$ higher by workplace than by residence, while CALABARZON's is $11\%$ lower.
+**Residence vs. workplace commuter shift:** Official PSA tables classify workers by their *region of residence* (`R*` tables). When underemployed workers are tabulated by their *region of workplace* (`W*` tables, derived from the province/municipality of work code $\texttt{PUFC12A\_PROVMUN}$), daily commuting across metropolitan borders shifts the regional distribution: NCR's underemployed headcount is $19\%$ higher by workplace than by residence, while neighboring CALABARZON's is $11\%$ lower.
 
 ## 6. Deeper breakdowns {#deeper}
 
@@ -98,7 +99,7 @@ Annual figures are the average of the $12$ monthly rounds. Regional figures are 
 
 [![Underemployed number and rate by highest grade completed and sector.](output/figures/fig6_sector_by_education_2panel.png)](output/figures/fig6_sector_by_education_2panel.png)
 
-**Education lowers the rate in industry and services, but much less in agriculture:** college graduates in agriculture still face a $15.3\%$ rate. Hatched bars flag small cells with high sampling variance (`*` $\text{CV} \in (10\%, 20\%]$, `**` $\text{CV} > 20\%$, such as no schooling in industry).
+**Education lowers the rate in industry and services, but much less in agriculture:** college graduates in agriculture still face a $15.3\%$ rate. Hatched bars flag rare cross-tabulated cells with high relative sampling variance (`*` $\text{CV} \in (10\%, 20\%]$, `**` $\text{CV} > 20\%$, such as workers with no schooling in formal industry).
 
 [![Underemployed number by age group and sex, one chart per sector.](output/figures/fig7_sector_age_sex_3way.png)](output/figures/fig7_sector_age_sex_3way.png)
 
@@ -111,18 +112,26 @@ Annual figures are the average of the $12$ monthly rounds. Regional figures are 
 | Technical Specification | Detail |
 |---|---|
 | **Microdata Source** | PSA Labor Force Survey (LFS) Public Use Files, January–December 2025 ($12$ rounds) |
-| **Target Population** | Employed persons aged $15+$ excluding overseas workers (<span>$\bar{X} = 49,024.5\text{k}$</span> average per month) |
+| **Target Population** | Employed persons aged $15+$ excluding overseas workers (<span>$\bar{X} = 49,024.506\text{k}$</span> average per month) |
 | **Sampling & Variance Design** | 2023 Geo-enabled Master Sample: $117$ province/HUC strata, contiguous PSU clustering, $2$-stage FPC ($B = 250$), Taylor series linearization |
 | **Official Validation** | $4,229 / 4,229$ published PSA Special Release figures matched ($3,576$ monthly, $77$ annual, $576$ regional) |
-| **Standard Error Accuracy** | $0.999\times$ PSA published SEs nationally ($12$-month median) and $0.992\times$ regionally ($72$-cell median) |
+| **Standard Error Accuracy** | $0.9990\times$ PSA published SEs nationally ($12$-month median) and $0.9918\times$ regionally ($72$-cell median) |
 | **Reliability Flag Bands** | $\text{CV} \le 10\%$ reliable, $10\text{--}20\%$ (`*`) use with caution, $> 20\%$ (`**`) unreliable |
+
+## Why are some small cells flagged as "use with caution" (`*`) or "unreliable" (`**`)? {#why-unreliable}
+
+Seeing a cell flagged as **use with caution** ($\text{CV} \in (10\%, 20\%]$) or **unreliable** ($\text{CV} > 20\%$) does **not** mean there is a calculation error or data defect—our pipeline passes $4,229 / 4,229$ official PSA validation checks with zero failures. Instead, high Coefficients of Variation ($\text{CV} = \text{SE} / \text{Estimate}$) arise naturally in any sample survey when slicing the population into very small demographic cells:
+
+1. **Rare real-world subgroups have tiny sample counts ($n$):** The LFS interviews a representative sample of households rather than a $100\%$ population census. When you cross-tabulate $11$ education levels by $3$ sectors (Figure 6), some combinations barely exist in the Philippine economy—for example, very few workers in formal *Industry* have *no grade completed*, and very few workers overall are *Post-Secondary Non-Tertiary Undergraduates* (started but did not finish a short TVET certificate, are employed, and want extra hours).
+2. **Clustered barangay sampling magnifies relative variance for rare traits:** Because the LFS samples households inside Primary Sampling Units (barangays/enumeration areas), most barangays have $0$ respondents in a rare cell while a few barangays have $1$ or $2$. Under the two-stage cluster variance formula ([see exact algebra in `methodology.html`](methodology.html#small-cells)), dividing the resulting standard error by a very small headcount denominator pushes the relative error ($\text{CV}$) past $10\%$ or $20\%$.
+3. **Why flagging them is the statistical gold standard:** Statistical agencies worldwide (PSA, U.S. Bureau of Labor Statistics, Eurostat) flag high-CV cells so readers do not mistake small-sample survey bounce for a real economic pattern.
 
 ## Limits {#limits}
 
 - Multi-way breakdowns (by education, sector $\times$ sex/age/education, and region $\times$ age/sector/education) have no published PSA table and are verified by summing to checked margins.
 - Region of **workplace** tables (`W*`) cannot be checked against PSA's published tables, which report region of residence only.
 - Annual and regional averages treat the monthly Public Use Files as independent samples across rounds (<span>$V(\bar{Y}) = \frac{1}{K^2}\sum_{m=1}^{K} V(\hat{Y}_m)$</span>) because household panel identifiers across rounds are not released in the public microdata.
-- Standard errors cannot match PSA's to the last decimal because the Public Use Files omit survey design details documented in the [**Mathematical Methodology**](methodology.html#design) and at the top of [`lfs.py`](https://github.com/KingSSIBAL/LFS-2025-Analysis/blob/main/lfs.py).
+- Standard errors cannot match PSA's to the last decimal because the Public Use Files omit frame housing-unit counts ($B_{p,a}$, approximated by the Master Sample midpoint $B = 250$) and residence-province codes (reconstructed via neighbor-PSU geographic order), as documented in the [**Mathematical Methodology**](methodology.html#design) and at the top of [`lfs.py`](https://github.com/KingSSIBAL/LFS-2025-Analysis/blob/main/lfs.py).
 
 ## Data, math, and code {#data}
 
@@ -134,6 +143,7 @@ Annual figures are the average of the $12$ monthly rounds. Regional figures are 
 <footer>The analysis and any errors are ours, not PSA's.</footer>
 
 <style>
+  table { display: block; max-width: 100%; overflow-x: auto; }
   a[href$=".png"] img { cursor: zoom-in; }
   dialog#lightbox { max-width: 95vw; max-height: 95vh; padding: 0; border: none; background: transparent; }
   dialog#lightbox::backdrop { background: rgba(0, 0, 0, 0.82); cursor: zoom-out; }

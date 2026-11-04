@@ -18,7 +18,7 @@ This page documents the exact estimators, domain-reconstruction rules, and two-s
   <li><a href="#design">Reconstructing the 117 Master Sample domains &amp; PSUs</a></li>
   <li><a href="#variance">Two-stage stratified cluster variance (totals)</a></li>
   <li><a href="#taylor">Taylor series linearization for ratio standard errors</a></li>
-  <li><a href="#reliability">Reliability bands (CV) &amp; confidence interval overlap</a></li>
+  <li><a href="#reliability">Reliability bands (CV), small-cell algebra &amp; CI overlap</a></li>
   <li><a href="#example">Worked numerical walkthrough</a></li>
 </ol>
 </nav>
@@ -165,7 +165,7 @@ $$
 \text{SE}(\bar{R}_d) = \frac{\sqrt{\max\!\left(0,\, \sum_{m \in \mathcal{M}} V(\hat{Y}_{m,d}) + r_d^2 \sum_{m \in \mathcal{M}} V(\hat{X}_{m,d}) - 2 r_d \sum_{m \in \mathcal{M}} \text{Cov}(\hat{Y}_{m,d}, \hat{X}_{m,d})\right)}}{\sum_{m \in \mathcal{M}} \hat{X}_{m,d}} \times 100 \quad \text{(in percentage points)}
 $$
 
-## 6. Reliability Bands (CV) & Confidence Interval Overlap {#reliability}
+## 6. Reliability Bands (CV), Small-Cell Algebra & Confidence Interval Overlap {#reliability}
 
 ### Coefficient of Variation (CV)
 
@@ -180,6 +180,32 @@ Following the reliability thresholds used in PSA/NSCB small-area statistics, eve
 * **Reliable ($\text{CV} \le 10\%$):** Solid bar, no flag.
 * **Use with caution ($10\% < \text{CV} \le 20\%$):** Single-hatched bar (`//`) and single asterisk (`*`).
 * **Unreliable ($\text{CV} > 20\%$):** Triple-hatched translucent bar (`///`) and double asterisk (`**`).
+
+### Why Rare Subgroups Have High CVs (`*` and `**`): The Mathematics of Small-Cell Variance {#small-cells}
+
+When the data are cross-tabulated into fine demographic cells—such as *Post-Secondary Non-Tertiary Undergraduates* (`RQ1_RQ2_c_Education`) or *No Grade Completed $\times$ Industry* (`5A_Sector_Educ_Annual`)—some cells represent a very small fraction of the national workforce. In a two-stage cluster sample, rare subgroups exhibit high relative variance for two mathematical reasons:
+
+1. **Zero-Heavy PSU Concentration:** Suppose within a stratum $p$ containing $a_p$ sampled PSUs, only one PSU ($a = 1$) happens to contain respondents belonging to rare subgroup $d$, so <span>$z_{y,p,1} > 0$</span> and <span>$z_{y,p,2} = \dots = z_{y,p,a_p} = 0$</span>. Substituting these into the between-PSU sum of squares yields:
+
+$$
+\sum_{a=1}^{a_p} z_{y,p,a}^2 - \frac{\left(\sum_{a=1}^{a_p} z_{y,p,a}\right)^2}{a_p} = z_{y,p,1}^2 - \frac{z_{y,p,1}^2}{a_p} = \left(\frac{a_p - 1}{a_p}\right) z_{y,p,1}^2
+$$
+
+Multiplying by $\frac{a_p}{a_p - 1}(1 - f_{1,p})$ in the between-PSU variance formula gives:
+
+$$
+V_{b,p}(y) = (1 - f_{1,p}) \, z_{y,p,1}^2
+$$
+
+Thus, a single non-zero PSU contributes nearly the full square of its weighted total <span>$z_{y,p,1}^2$</span> to the stratum variance ($\text{CV}_{p} \approx \sqrt{1 - f_{1,p}} \approx 100\%$ within that stratum/month).
+
+2. **Small Denominator Scaling ($1 / \sqrt{n_d}$):** Pooled across $K$ rounds and $M_d$ non-empty PSU clusters nationally, the relative standard error scales inversely with the square root of the effective number of non-zero clusters <span>$M_d$</span>:
+
+$$
+\text{CV}(\bar{Y}_d) = \frac{\text{SE}(\bar{Y}_d)}{\bar{Y}_d} \propto \frac{1}{\sqrt{M_d}}
+$$
+
+Whenever a demographic subgroup has fewer than $M_d \approx 25$ effective non-zero PSU hits across the year, $\text{CV}(\bar{Y}_d)$ exceeds $1 / \sqrt{25} = 20\%$ and is automatically flagged as `unreliable (CV>20%)` (`**`).
 
 ### Why Slightly Overlapping $95\%$ Confidence Intervals Can Still Differ at $\alpha = 0.05$
 
@@ -220,13 +246,16 @@ To trace how the SQL and Python pipeline transforms raw household weights into p
    * **Standard Error Validation:** Across all $4 \times 18 = 72$ quarterly regional cells, our two-stage standard errors match PSA's published regional standard errors to a median ratio of $0.9918\times$ (range $0.875\times\text{--}1.040\times$).
 
 3. **Unreliable Small Subgroup (`RQ1_RQ2_c_Education`, Post-Secondary Undergraduates, $K = 12$ months):**
-   * **Why it is flagged `**`:** Post-secondary non-tertiary undergraduates represent a small sub-population where most PSU clusters contain zero respondents, inflating between-PSU relative variance.
-   * **CV Calculation:** Dividing the pooled standard error by the subgroup point estimate yields:
-     $$\text{CV}(\bar{Y}_d) = \frac{\text{SE}(\bar{Y}_d)}{\bar{Y}_d} \times 100 = 22.7\% > 20\%$$
+   * **Why it is flagged `**`:** Post-secondary non-tertiary undergraduates ($\texttt{PUFC07\_GRADE}$ codes $40001\text{--}40003$ and $50001\text{--}50003$) represent a tiny fraction of the workforce where most PSU clusters contain zero respondents ($z_{y,p,a} = 0$), triggering the small-cell variance effect derived in Section 6.
+   * **CV Calculation:** With $\text{SE}(\bar{Y}_d) = 0.227 \, \bar{Y}_d$, dividing the pooled standard error by the small subgroup headcount estimate yields:
+     $$\text{CV}(\bar{Y}_d) = \frac{\text{SE}(\bar{Y}_d)}{\bar{Y}_d} \times 100 = \frac{0.227 \, \bar{Y}_d}{\bar{Y}_d} \times 100 = 22.7\% > 20\%$$
    * **Visual & Table Encoding:** Because $\text{CV} > 20\%$, `tables.py` labels the row `unreliable (CV>20%)` and `figures.py` renders the bar with triple hatching (`///`), $45\%$ opacity, and a `**` suffix.
 
 [$\leftarrow$ Back to Main Report](index.html)
 
+<style>
+  table { display: block; max-width: 100%; overflow-x: auto; }
+</style>
 <script>
   window.MathJax = {
     tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] }
