@@ -1,0 +1,19 @@
+# PSA microdata: the PSA licence forbids redistributing it, and the July CSV (115 MB) is over GitHub's 100 MB limit.
+# Anyone re-running this downloads it from PSA themselves (see README).
+data/puf/
+data/zips/
+# These dictionaries ship inside the PUF zips (and come to 168 MB), so they're excluded with the microdata.
+docs/metadata/
+
+# Python / tooling
+__pycache__/
+*.py[cod]
+.venv/
+.ipynb_checkpoints/
+
+# Excel lock files and OS junk
+~$*
+.DS_Store
+Thumbs.db
+desktop.ini
+

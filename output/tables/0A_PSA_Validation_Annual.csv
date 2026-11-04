@@ -1,0 +1,658 @@
+Period,Check,Indicator,Group,PUF_Calculated,PSA_Official,Diff,Status
+2025 Annual Avg (mean of 12 monthly finals),status_sex_age,employed,Philippines,49024.506,49024.5058,0.0001,PASS
+2025 Annual Avg (mean of 12 monthly finals),status_sex_age,employed,age_group=15-24,5625.6905,5625.7079,-0.0175,PASS
+2025 Annual Avg (mean of 12 monthly finals),status_sex_age,employed,age_group=25-34,13788.9212,13788.9651,-0.0439,PASS
+2025 Annual Avg (mean of 12 monthly finals),status_sex_age,employed,age_group=35-44,11519.5477,11519.5648,-0.017,PASS
+2025 Annual Avg (mean of 12 monthly finals),status_sex_age,employed,age_group=45-54,9254.9102,9254.9641,-0.0539,PASS
+2025 Annual Avg (mean of 12 monthly finals),status_sex_age,employed,age_group=55-64,6080.7932,6080.8243,-0.0311,PASS
+2025 Annual Avg (mean of 12 monthly finals),status_sex_age,employed,age_group=65 and Over,2754.6431,2754.5659,0.0772,PASS
+2025 Annual Avg (mean of 12 monthly finals),class_broad,employed,"broad_sector=Agriculture, Forestry, and Fisheries",10048.9249,10048.925,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,"broad_sector=Agriculture, Forestry, and Fisheries; region=BARMM",1114.2364,1114.2345,0.0019,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,"broad_sector=Agriculture, Forestry, and Fisheries; region=CAR",301.9803,301.9799,0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,"broad_sector=Agriculture, Forestry, and Fisheries; region=MIMAROPA",443.9288,443.9228,0.006,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,"broad_sector=Agriculture, Forestry, and Fisheries; region=NCR",21.4224,21.3965,0.0259,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,"broad_sector=Agriculture, Forestry, and Fisheries; region=NIR (Negros Island)",684.1924,684.1987,-0.0063,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,"broad_sector=Agriculture, Forestry, and Fisheries; region=Region I (Ilocos)",526.3287,526.3344,-0.0057,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,"broad_sector=Agriculture, Forestry, and Fisheries; region=Region II (Cagayan Valley)",524.544,524.5468,-0.0028,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,"broad_sector=Agriculture, Forestry, and Fisheries; region=Region III (Central Luzon)",582.2528,582.2449,0.0079,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,"broad_sector=Agriculture, Forestry, and Fisheries; region=Region IV-A (CALABARZON)",480.6484,480.65,-0.0016,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,"broad_sector=Agriculture, Forestry, and Fisheries; region=Region IX (Zamboanga Peninsula)",551.9524,551.9557,-0.0033,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,"broad_sector=Agriculture, Forestry, and Fisheries; region=Region V (Bicol)",551.5413,551.5418,-0.0005,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,"broad_sector=Agriculture, Forestry, and Fisheries; region=Region VI (Western Visayas)",515.8703,515.8667,0.0036,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,"broad_sector=Agriculture, Forestry, and Fisheries; region=Region VII (Central Visayas)",472.5234,472.5299,-0.0064,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,"broad_sector=Agriculture, Forestry, and Fisheries; region=Region VIII (Eastern Visayas)",536.1499,536.1549,-0.005,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,"broad_sector=Agriculture, Forestry, and Fisheries; region=Region X (Northern Mindanao)",646.2564,646.2587,-0.0022,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,"broad_sector=Agriculture, Forestry, and Fisheries; region=Region XI (Davao)",669.9554,669.9528,0.0026,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,"broad_sector=Agriculture, Forestry, and Fisheries; region=Region XII (SOCCSKSARGEN)",806.538,806.538,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,"broad_sector=Agriculture, Forestry, and Fisheries; region=Region XIII (Caraga)",381.8668,381.8707,-0.0039,PASS
+2025 Annual Avg (mean of 12 monthly finals),class_broad,employed,broad_sector=Industry,8714.7506,8714.7506,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Industry; region=BARMM,153.1562,153.1588,-0.0027,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Industry; region=CAR,129.4721,129.4731,-0.001,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Industry; region=MIMAROPA,201.5934,201.6016,-0.0082,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Industry; region=NCR,1027.0548,1027.0237,0.0311,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Industry; region=NIR (Negros Island),268.5477,268.55,-0.0022,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Industry; region=Region I (Ilocos),397.809,397.8177,-0.0086,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Industry; region=Region II (Cagayan Valley),232.049,232.0569,-0.0079,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Industry; region=Region III (Central Luzon),1332.5261,1332.5331,-0.0069,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Industry; region=Region IV-A (CALABARZON),1781.9311,1781.9401,-0.009,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Industry; region=Region IX (Zamboanga Peninsula),228.7025,228.6938,0.0087,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Industry; region=Region V (Bicol),413.2865,413.2819,0.0046,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Industry; region=Region VI (Western Visayas),330.5755,330.5718,0.0038,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Industry; region=Region VII (Central Visayas),592.6272,592.6237,0.0035,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Industry; region=Region VIII (Eastern Visayas),303.0372,303.0247,0.0125,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Industry; region=Region X (Northern Mindanao),361.6804,361.6776,0.0027,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Industry; region=Region XI (Davao),356.0634,356.0636,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Industry; region=Region XII (SOCCSKSARGEN),241.1609,241.1485,0.0125,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Industry; region=Region XIII (Caraga),208.4983,208.4943,0.004,PASS
+2025 Annual Avg (mean of 12 monthly finals),class_broad,employed,broad_sector=Services,30260.8304,30260.8303,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Services; region=BARMM,894.8401,894.8511,-0.011,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Services; region=CAR,371.3937,371.3889,0.0048,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Services; region=MIMAROPA,692.381,692.3715,0.0096,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Services; region=NCR,5184.4703,5184.5273,-0.057,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Services; region=NIR (Negros Island),1082.1317,1082.133,-0.0012,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Services; region=Region I (Ilocos),1321.5114,1321.4967,0.0147,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Services; region=Region II (Cagayan Valley),827.5965,827.6017,-0.0051,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Services; region=Region III (Central Luzon),3687.9937,3687.9946,-0.0009,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Services; region=Region IV-A (CALABARZON),4981.9927,4982.0371,-0.0444,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Services; region=Region IX (Zamboanga Peninsula),783.7019,783.692,0.0099,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Services; region=Region V (Bicol),1387.9569,1387.9834,-0.0265,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Services; region=Region VI (Western Visayas),1237.7691,1237.766,0.0031,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Services; region=Region VII (Central Visayas),1800.807,1800.7976,0.0094,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Services; region=Region VIII (Eastern Visayas),1112.2031,1112.2104,-0.0073,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Services; region=Region X (Northern Mindanao),1235.6845,1235.6619,0.0226,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Services; region=Region XI (Davao),1371.063,1371.0527,0.0103,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Services; region=Region XII (SOCCSKSARGEN),987.3332,987.3256,0.0076,PASS
+Q-avg Jan/Apr/Jul/Oct,sex_major_ind,employed,broad_sector=Services; region=Region XIII (Caraga),657.9497,657.9492,0.0005,PASS
+2025 Annual Avg (mean of 12 monthly finals),educ_sex_age,employed,educ_group=College Graduate,10490.0001,10490.0002,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Graduate; region=BARMM,221.8865,221.8865,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Graduate; region=CAR,200.5334,200.5335,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Graduate; region=MIMAROPA,234.2578,234.258,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Graduate; region=NCR,2088.3073,2088.3075,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Graduate; region=NIR (Negros Island),336.4588,336.4588,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Graduate; region=Region I (Ilocos),459.6857,459.6858,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Graduate; region=Region II (Cagayan Valley),318.3835,318.3835,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Graduate; region=Region III (Central Luzon),1173.0386,1173.0385,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Graduate; region=Region IV-A (CALABARZON),1644.8724,1644.8722,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Graduate; region=Region IX (Zamboanga Peninsula),264.7468,264.7468,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Graduate; region=Region V (Bicol),468.3835,468.3835,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Graduate; region=Region VI (Western Visayas),461.1036,461.1035,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Graduate; region=Region VII (Central Visayas),583.8476,583.8475,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Graduate; region=Region VIII (Eastern Visayas),380.0151,380.0153,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Graduate; region=Region X (Northern Mindanao),424.2704,424.2702,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Graduate; region=Region XI (Davao),419.1102,419.1102,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Graduate; region=Region XII (SOCCSKSARGEN),333.0386,333.0385,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Graduate; region=Region XIII (Caraga),234.2439,234.2438,0.0002,PASS
+2025 Annual Avg (mean of 12 monthly finals),educ_sex_age,employed,educ_group=College Undergraduate,4575.6296,4575.6297,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Undergraduate; region=BARMM,161.9024,161.9022,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Undergraduate; region=CAR,92.123,92.123,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Undergraduate; region=MIMAROPA,113.3658,113.366,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Undergraduate; region=NCR,804.3282,804.3282,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Undergraduate; region=NIR (Negros Island),153.3526,153.3528,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Undergraduate; region=Region I (Ilocos),203.8184,203.8182,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Undergraduate; region=Region II (Cagayan Valley),140.9636,140.9638,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Undergraduate; region=Region III (Central Luzon),475.4854,475.4855,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Undergraduate; region=Region IV-A (CALABARZON),752.0702,752.0702,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Undergraduate; region=Region IX (Zamboanga Peninsula),139.1723,139.1722,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Undergraduate; region=Region V (Bicol),184.2323,184.2323,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Undergraduate; region=Region VI (Western Visayas),168.7593,168.7592,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Undergraduate; region=Region VII (Central Visayas),289.2955,289.2955,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Undergraduate; region=Region VIII (Eastern Visayas),152.9447,152.9448,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Undergraduate; region=Region X (Northern Mindanao),217.577,217.5768,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Undergraduate; region=Region XI (Davao),235.1049,235.105,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Undergraduate; region=Region XII (SOCCSKSARGEN),169.4593,169.4592,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=College Undergraduate; region=Region XIII (Caraga),115.7937,115.7938,-0.0,PASS
+2025 Annual Avg (mean of 12 monthly finals),educ_sex_age,employed,educ_group=Elementary Graduate,5329.5259,5329.5259,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Graduate; region=BARMM,301.602,301.6023,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Graduate; region=CAR,77.6695,77.6695,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Graduate; region=MIMAROPA,171.9291,171.9292,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Graduate; region=NCR,310.849,310.849,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Graduate; region=NIR (Negros Island),264.2015,264.2012,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Graduate; region=Region I (Ilocos),206.9701,206.9702,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Graduate; region=Region II (Cagayan Valley),230.2907,230.2908,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Graduate; region=Region III (Central Luzon),685.9621,685.9622,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Graduate; region=Region IV-A (CALABARZON),610.1874,610.1875,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Graduate; region=Region IX (Zamboanga Peninsula),203.465,203.465,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Graduate; region=Region V (Bicol),395.5548,395.5548,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Graduate; region=Region VI (Western Visayas),186.2733,186.2732,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Graduate; region=Region VII (Central Visayas),286.9923,286.9922,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Graduate; region=Region VIII (Eastern Visayas),253.5085,253.5088,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Graduate; region=Region X (Northern Mindanao),246.3692,246.369,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Graduate; region=Region XI (Davao),260.8255,260.8252,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Graduate; region=Region XII (SOCCSKSARGEN),231.4821,231.4822,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Graduate; region=Region XIII (Caraga),148.7548,148.7548,0.0,PASS
+2025 Annual Avg (mean of 12 monthly finals),educ_sex_age,employed,educ_group=Elementary Undergraduate,4615.0971,4615.0972,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Undergraduate; region=BARMM,543.9064,543.9065,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Undergraduate; region=CAR,74.2163,74.2165,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Undergraduate; region=MIMAROPA,181.0515,181.0515,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Undergraduate; region=NCR,134.4309,134.431,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Undergraduate; region=NIR (Negros Island),369.9124,369.9122,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Undergraduate; region=Region I (Ilocos),101.9048,101.9045,0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Undergraduate; region=Region II (Cagayan Valley),165.5856,165.5858,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Undergraduate; region=Region III (Central Luzon),240.3371,240.337,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Undergraduate; region=Region IV-A (CALABARZON),329.2208,329.221,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Undergraduate; region=Region IX (Zamboanga Peninsula),294.3527,294.3528,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Undergraduate; region=Region V (Bicol),193.406,193.406,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Undergraduate; region=Region VI (Western Visayas),199.0278,199.0278,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Undergraduate; region=Region VII (Central Visayas),382.9117,382.9118,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Undergraduate; region=Region VIII (Eastern Visayas),342.7014,342.7015,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Undergraduate; region=Region X (Northern Mindanao),330.332,330.332,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Undergraduate; region=Region XI (Davao),320.0721,320.072,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Undergraduate; region=Region XII (SOCCSKSARGEN),290.0362,290.0362,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Elementary Undergraduate; region=Region XIII (Caraga),171.1643,171.1642,0.0,PASS
+2025 Annual Avg (mean of 12 monthly finals),educ_sex_age,employed,educ_group=Junior High Completed,14965.8976,14965.8976,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Completed; region=BARMM,407.6675,407.6675,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Completed; region=CAR,229.0336,229.0338,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Completed; region=MIMAROPA,334.8868,334.8868,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Completed; region=NCR,2250.8423,2250.8422,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Completed; region=NIR (Negros Island),541.6617,541.6618,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Completed; region=Region I (Ilocos),888.5206,888.5205,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Completed; region=Region II (Cagayan Valley),455.3897,455.3898,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Completed; region=Region III (Central Luzon),2222.8348,2222.8348,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Completed; region=Region IV-A (CALABARZON),2570.0039,2570.0038,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Completed; region=Region IX (Zamboanga Peninsula),347.7827,347.7828,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Completed; region=Region V (Bicol),631.8146,631.8145,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Completed; region=Region VI (Western Visayas),562.8039,562.804,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Completed; region=Region VII (Central Visayas),790.6771,790.677,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Completed; region=Region VIII (Eastern Visayas),440.7165,440.7165,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Completed; region=Region X (Northern Mindanao),577.1904,577.1905,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Completed; region=Region XI (Davao),672.9742,672.9742,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Completed; region=Region XII (SOCCSKSARGEN),564.8862,564.8862,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Completed; region=Region XIII (Caraga),295.2672,295.267,0.0002,PASS
+2025 Annual Avg (mean of 12 monthly finals),educ_sex_age,employed,educ_group=Junior High Undergraduate,4919.877,4919.8768,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Undergraduate; region=BARMM,307.7496,307.7498,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Undergraduate; region=CAR,81.283,81.283,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Undergraduate; region=MIMAROPA,165.7342,165.7342,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Undergraduate; region=NCR,337.6442,337.6442,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Undergraduate; region=NIR (Negros Island),215.329,215.3288,0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Undergraduate; region=Region I (Ilocos),181.0122,181.0122,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Undergraduate; region=Region II (Cagayan Valley),187.3862,187.386,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Undergraduate; region=Region III (Central Luzon),446.2548,446.2548,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Undergraduate; region=Region IV-A (CALABARZON),563.7533,563.753,0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Undergraduate; region=Region IX (Zamboanga Peninsula),222.0301,222.03,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Undergraduate; region=Region V (Bicol),292.7824,292.7822,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Undergraduate; region=Region VI (Western Visayas),236.9507,236.9505,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Undergraduate; region=Region VII (Central Visayas),298.918,298.9182,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Undergraduate; region=Region VIII (Eastern Visayas),252.7845,252.7845,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Undergraduate; region=Region X (Northern Mindanao),288.7906,288.7908,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Undergraduate; region=Region XI (Davao),285.9179,285.918,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Undergraduate; region=Region XII (SOCCSKSARGEN),242.6332,242.6332,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Junior High Undergraduate; region=Region XIII (Caraga),161.3264,161.3263,0.0001,PASS
+2025 Annual Avg (mean of 12 monthly finals),educ_sex_age,employed,educ_group=No grade completed,446.031,446.031,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=No grade completed; region=BARMM,169.8444,169.8445,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=No grade completed; region=CAR,7.08,7.08,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=No grade completed; region=MIMAROPA,31.487,31.4873,-0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=No grade completed; region=NCR,5.8023,5.8022,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=No grade completed; region=NIR (Negros Island),21.3681,21.368,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=No grade completed; region=Region I (Ilocos),6.8949,6.8947,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=No grade completed; region=Region II (Cagayan Valley),10.4561,10.456,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=No grade completed; region=Region III (Central Luzon),14.0993,14.099,0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=No grade completed; region=Region IV-A (CALABARZON),14.3014,14.3015,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=No grade completed; region=Region IX (Zamboanga Peninsula),25.8198,25.8198,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=No grade completed; region=Region V (Bicol),5.9363,5.9365,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=No grade completed; region=Region VI (Western Visayas),14.2427,14.2428,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=No grade completed; region=Region VII (Central Visayas),21.8226,21.8225,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=No grade completed; region=Region VIII (Eastern Visayas),22.4726,22.4728,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=No grade completed; region=Region X (Northern Mindanao),22.8247,22.8247,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=No grade completed; region=Region XI (Davao),25.2344,25.2342,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=No grade completed; region=Region XII (SOCCSKSARGEN),66.358,66.358,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=No grade completed; region=Region XIII (Caraga),10.6402,10.6402,-0.0001,PASS
+2025 Annual Avg (mean of 12 monthly finals),educ_sex_age,employed,educ_group=Post Secondary Graduate,1701.1816,1701.1817,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Graduate; region=BARMM,6.5359,6.536,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Graduate; region=CAR,22.5284,22.5282,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Graduate; region=MIMAROPA,49.3469,49.347,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Graduate; region=NCR,163.5978,163.598,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Graduate; region=NIR (Negros Island),41.1904,41.1902,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Graduate; region=Region I (Ilocos),98.5796,98.5795,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Graduate; region=Region II (Cagayan Valley),39.9201,39.92,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Graduate; region=Region III (Central Luzon),178.3594,178.3595,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Graduate; region=Region IV-A (CALABARZON),390.9064,390.9065,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Graduate; region=Region IX (Zamboanga Peninsula),22.7621,22.762,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Graduate; region=Region V (Bicol),73.9444,73.9443,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Graduate; region=Region VI (Western Visayas),145.3187,145.3188,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Graduate; region=Region VII (Central Visayas),75.0057,75.0058,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Graduate; region=Region VIII (Eastern Visayas),27.056,27.056,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Graduate; region=Region X (Northern Mindanao),44.1856,44.1858,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Graduate; region=Region XI (Davao),65.0509,65.0507,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Graduate; region=Region XII (SOCCSKSARGEN),56.2624,56.2625,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Graduate; region=Region XIII (Caraga),31.6788,31.6792,-0.0004,PASS
+2025 Annual Avg (mean of 12 monthly finals),educ_sex_age,employed,educ_group=Post Secondary Undergraduate,44.84,44.8399,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Undergraduate; region=BARMM,0.0,0.0,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Undergraduate; region=CAR,0.0177,0.0177,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Undergraduate; region=MIMAROPA,0.3319,0.332,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Undergraduate; region=NCR,0.8134,0.8135,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Undergraduate; region=NIR (Negros Island),0.046,0.0462,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Undergraduate; region=Region I (Ilocos),0.7243,0.7243,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Undergraduate; region=Region II (Cagayan Valley),0.1358,0.136,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Undergraduate; region=Region III (Central Luzon),1.1482,1.148,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Undergraduate; region=Region IV-A (CALABARZON),20.1967,20.1968,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Undergraduate; region=Region IX (Zamboanga Peninsula),0.1944,0.1942,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Undergraduate; region=Region V (Bicol),1.8569,1.857,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Undergraduate; region=Region VI (Western Visayas),8.2621,8.262,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Undergraduate; region=Region VII (Central Visayas),1.4393,1.4392,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Undergraduate; region=Region VIII (Eastern Visayas),0.3657,0.3655,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Undergraduate; region=Region X (Northern Mindanao),0.5607,0.5608,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Undergraduate; region=Region XI (Davao),1.6385,1.6385,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Undergraduate; region=Region XII (SOCCSKSARGEN),3.7188,3.7188,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Post Secondary Undergraduate; region=Region XIII (Caraga),0.8668,0.8668,0.0001,PASS
+2025 Annual Avg (mean of 12 monthly finals),educ_sex_age,employed,educ_group=Senior High Graduate,1551.0387,1551.0388,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Graduate; region=BARMM,17.9305,17.9305,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Graduate; region=CAR,13.2222,13.222,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Graduate; region=MIMAROPA,40.699,40.699,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Graduate; region=NCR,117.7078,117.7078,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Graduate; region=NIR (Negros Island),76.2533,76.2533,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Graduate; region=Region I (Ilocos),80.7723,80.7722,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Graduate; region=Region II (Cagayan Valley),27.2204,27.2205,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Graduate; region=Region III (Central Luzon),143.0039,143.004,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Graduate; region=Region IV-A (CALABARZON),300.9314,300.9315,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Graduate; region=Region IX (Zamboanga Peninsula),33.3714,33.3715,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Graduate; region=Region V (Bicol),77.9516,77.9518,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Graduate; region=Region VI (Western Visayas),81.7596,81.7595,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Graduate; region=Region VII (Central Visayas),111.942,111.9422,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Graduate; region=Region VIII (Eastern Visayas),59.9501,59.95,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Graduate; region=Region X (Northern Mindanao),69.0728,69.0728,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Graduate; region=Region XI (Davao),92.3009,92.301,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Graduate; region=Region XII (SOCCSKSARGEN),53.5847,53.5848,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Graduate; region=Region XIII (Caraga),59.1367,59.1368,-0.0,PASS
+2025 Annual Avg (mean of 12 monthly finals),educ_sex_age,employed,educ_group=Senior High Undergraduate,385.3874,385.3875,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Undergraduate; region=BARMM,23.2076,23.2075,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Undergraduate; region=CAR,5.1388,5.1388,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Undergraduate; region=MIMAROPA,14.8132,14.8132,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Undergraduate; region=NCR,18.6243,18.6245,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Undergraduate; region=NIR (Negros Island),15.0981,15.0982,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Undergraduate; region=Region I (Ilocos),16.7664,16.7665,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Undergraduate; region=Region II (Cagayan Valley),8.4578,8.458,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Undergraduate; region=Region III (Central Luzon),22.2491,22.249,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Undergraduate; region=Region IV-A (CALABARZON),48.1282,48.1282,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Undergraduate; region=Region IX (Zamboanga Peninsula),10.6596,10.6597,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Undergraduate; region=Region V (Bicol),26.9219,26.922,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Undergraduate; region=Region VI (Western Visayas),19.7132,19.7132,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Undergraduate; region=Region VII (Central Visayas),23.1057,23.1058,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Undergraduate; region=Region VIII (Eastern Visayas),18.8751,18.8752,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Undergraduate; region=Region X (Northern Mindanao),22.448,22.4478,0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Undergraduate; region=Region XI (Davao),18.8523,18.8525,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Undergraduate; region=Region XII (SOCCSKSARGEN),23.5728,23.5728,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,educ_region_sex,employed,educ_group=Senior High Undergraduate; region=Region XIII (Caraga),19.4421,19.4422,-0.0002,PASS
+2025 Annual Avg (mean of 12 monthly finals),sex_major_ind,employed,major_industry=Accommodation and Food Service Activities,2891.717,2891.6113,0.1056,PASS
+2025 Annual Avg (mean of 12 monthly finals),sex_major_ind,employed,major_industry=Activities of Extraterritorial Organizations,0.445,0.4445,0.0005,PASS
+2025 Annual Avg (mean of 12 monthly finals),sex_major_ind,employed,major_industry=Administrative and Support Service Activities,2792.8948,2792.8772,0.0176,PASS
+2025 Annual Avg (mean of 12 monthly finals),sex_major_ind,employed,major_industry=Agriculture and Forestry,8749.2053,8749.1817,0.0236,PASS
+2025 Annual Avg (mean of 12 monthly finals),sex_major_ind,employed,"major_industry=Arts, Entertainment and Recreation",458.9537,458.9711,-0.0174,PASS
+2025 Annual Avg (mean of 12 monthly finals),sex_major_ind,employed,major_industry=Construction,4841.5127,4841.4678,0.0449,PASS
+2025 Annual Avg (mean of 12 monthly finals),sex_major_ind,employed,major_industry=Education,1686.8562,1686.8244,0.0318,PASS
+2025 Annual Avg (mean of 12 monthly finals),sex_major_ind,employed,"major_industry=Electricity, Gas, Steam, and Air Conditioning Supply",96.9602,97.014,-0.0538,PASS
+2025 Annual Avg (mean of 12 monthly finals),sex_major_ind,employed,major_industry=Financial and Insurance Activities,716.3722,716.4227,-0.0505,PASS
+2025 Annual Avg (mean of 12 monthly finals),sex_major_ind,employed,major_industry=Fishing and Aquaculture,1299.7196,1299.706,0.0136,PASS
+2025 Annual Avg (mean of 12 monthly finals),sex_major_ind,employed,major_industry=Human Health and Social Work Activities,776.2267,776.2259,0.0008,PASS
+2025 Annual Avg (mean of 12 monthly finals),sex_major_ind,employed,major_industry=Information and Communication,497.564,497.5867,-0.0227,PASS
+2025 Annual Avg (mean of 12 monthly finals),sex_major_ind,employed,major_industry=Manufacturing,3497.92,3497.8961,0.0239,PASS
+2025 Annual Avg (mean of 12 monthly finals),sex_major_ind,employed,major_industry=Mining and Quarrying,207.8657,207.8867,-0.0211,PASS
+2025 Annual Avg (mean of 12 monthly finals),sex_major_ind,employed,major_industry=Other Service Activities,3026.9744,3026.994,-0.0195,PASS
+2025 Annual Avg (mean of 12 monthly finals),sex_major_ind,employed,"major_industry=Professional, Scientific and Technical Activities",391.8197,391.8197,0.0001,PASS
+2025 Annual Avg (mean of 12 monthly finals),sex_major_ind,employed,major_industry=Public Administration and Defense,2998.4271,2998.4699,-0.0429,PASS
+2025 Annual Avg (mean of 12 monthly finals),sex_major_ind,employed,major_industry=Real Estate Activities,286.4475,286.4425,0.005,PASS
+2025 Annual Avg (mean of 12 monthly finals),sex_major_ind,employed,major_industry=Transportation and Storage,3769.1494,3769.1152,0.0342,PASS
+2025 Annual Avg (mean of 12 monthly finals),sex_major_ind,employed,"major_industry=Water Supply; Sewerage, Waste Management",70.492,70.4436,0.0484,PASS
+2025 Annual Avg (mean of 12 monthly finals),sex_major_ind,employed,major_industry=Wholesale and Retail Trade; Repair of Motor Vehicles,9966.9826,9966.9405,0.0421,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,region=BARMM,2162.2327,2162.2328,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,region=CAR,802.846,802.846,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,region=MIMAROPA,1337.9032,1337.903,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,region=NCR,6232.9475,6232.9478,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,region=NIR (Negros Island),2034.8718,2034.8718,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,region=Region I (Ilocos),2245.6492,2245.649,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,region=Region II (Cagayan Valley),1584.1895,1584.1895,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,region=Region III (Central Luzon),5602.7727,5602.7728,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,region=Region IV-A (CALABARZON),7244.5722,7244.572,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,region=Region IX (Zamboanga Peninsula),1564.3568,1564.3568,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,region=Region V (Bicol),2352.7847,2352.7847,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,region=Region VI (Western Visayas),2084.2149,2084.2148,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,region=Region VII (Central Visayas),2865.9576,2865.9575,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,region=Region VIII (Eastern Visayas),1951.3902,1951.39,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,region=Region X (Northern Mindanao),2243.6213,2243.6212,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,region=Region XI (Davao),2397.0818,2397.082,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,region=Region XII (SOCCSKSARGEN),2035.0321,2035.032,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,region=Region XIII (Caraga),1248.3148,1248.3148,0.0001,PASS
+2025 Annual Avg (mean of 12 monthly finals),status_sex_age,employed,sex=Female,20314.8697,20314.8698,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Female; region=BARMM,896.3808,896.3771,0.0038,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Female; region=CAR,331.106,331.1064,-0.0004,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Female; region=MIMAROPA,534.5626,534.5601,0.0026,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Female; region=NCR,2778.1134,2778.1045,0.0089,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Female; region=NIR (Negros Island),801.5022,801.4986,0.0035,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Female; region=Region I (Ilocos),885.6166,885.6155,0.0011,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Female; region=Region II (Cagayan Valley),604.8803,604.8753,0.005,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Female; region=Region III (Central Luzon),2235.0073,2235.0061,0.0012,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Female; region=Region IV-A (CALABARZON),3105.7891,3105.7675,0.0216,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Female; region=Region IX (Zamboanga Peninsula),585.9129,585.9118,0.0011,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Female; region=Region V (Bicol),894.746,894.749,-0.003,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Female; region=Region VI (Western Visayas),858.3002,858.2988,0.0013,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Female; region=Region VII (Central Visayas),1239.4112,1239.4091,0.0021,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Female; region=Region VIII (Eastern Visayas),737.0716,737.0704,0.0012,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Female; region=Region X (Northern Mindanao),884.6102,884.6091,0.0011,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Female; region=Region XI (Davao),918.8091,918.8108,-0.0017,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Female; region=Region XII (SOCCSKSARGEN),802.2435,802.2498,-0.0063,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Female; region=Region XIII (Caraga),498.1996,498.1975,0.0021,PASS
+2025 Annual Avg (mean of 12 monthly finals),status_sex_age,employed,sex=Male,28709.6363,28709.6361,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Male; region=BARMM,1265.8518,1265.8557,-0.0038,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Male; region=CAR,471.74,471.7396,0.0004,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Male; region=MIMAROPA,803.3406,803.3429,-0.0024,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Male; region=NCR,3454.8341,3454.8432,-0.0091,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Male; region=NIR (Negros Island),1233.3697,1233.3731,-0.0034,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Male; region=Region I (Ilocos),1360.0326,1360.0335,-0.0009,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Male; region=Region II (Cagayan Valley),979.3092,979.3142,-0.005,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Male; region=Region III (Central Luzon),3367.7654,3367.7667,-0.0013,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Male; region=Region IV-A (CALABARZON),4138.7831,4138.8045,-0.0214,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Male; region=Region IX (Zamboanga Peninsula),978.444,978.445,-0.001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Male; region=Region V (Bicol),1458.0387,1458.0358,0.003,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Male; region=Region VI (Western Visayas),1225.9147,1225.9159,-0.0012,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Male; region=Region VII (Central Visayas),1626.5464,1626.5484,-0.002,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Male; region=Region VIII (Eastern Visayas),1214.3185,1214.3196,-0.001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Male; region=Region X (Northern Mindanao),1359.0111,1359.0121,-0.001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Male; region=Region XI (Davao),1478.2727,1478.2712,0.0015,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Male; region=Region XII (SOCCSKSARGEN),1232.7887,1232.7822,0.0064,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex,employed,sex=Male; region=Region XIII (Caraga),750.1153,750.1141,0.0012,PASS
+2025 Annual Avg (mean of 12 monthly finals),hours_occ,ge40,Philippines,33546.5062,33546.5062,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,ge40,region=BARMM,1230.7366,1230.7365,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,ge40,region=CAR,558.3084,558.3082,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,ge40,region=MIMAROPA,693.3992,693.399,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,ge40,region=NCR,5411.5447,5411.5448,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,ge40,region=NIR (Negros Island),1284.6213,1284.6212,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,ge40,region=Region I (Ilocos),1394.881,1394.881,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,ge40,region=Region II (Cagayan Valley),921.0762,921.0762,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,ge40,region=Region III (Central Luzon),4512.9983,4512.9985,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,ge40,region=Region IV-A (CALABARZON),5413.2057,5413.2055,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,ge40,region=Region IX (Zamboanga Peninsula),947.664,947.6642,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,ge40,region=Region V (Bicol),1358.0112,1358.011,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,ge40,region=Region VI (Western Visayas),1323.5927,1323.5925,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,ge40,region=Region VII (Central Visayas),1832.3901,1832.3902,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,ge40,region=Region VIII (Eastern Visayas),1168.2653,1168.2655,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,ge40,region=Region X (Northern Mindanao),1434.2233,1434.2232,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,ge40,region=Region XI (Davao),1542.6359,1542.6358,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,ge40,region=Region XII (SOCCSKSARGEN),1092.1749,1092.175,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,ge40,region=Region XIII (Caraga),676.7485,676.7485,-0.0,PASS
+2025 Annual Avg (mean of 12 monthly finals),wm_hours_sex,invisible,Philippines,2400.2667,2400.2668,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,region=BARMM,85.0802,85.0803,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,region=CAR,45.8914,45.8915,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,region=MIMAROPA,112.5497,112.5495,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,region=NCR,291.3692,291.369,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,region=NIR (Negros Island),86.4961,86.4962,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,region=Region I (Ilocos),69.5424,69.5422,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,region=Region II (Cagayan Valley),109.5952,109.5952,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,region=Region III (Central Luzon),282.0132,282.0132,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,region=Region IV-A (CALABARZON),530.4752,530.475,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,region=Region IX (Zamboanga Peninsula),95.0964,95.0965,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,region=Region V (Bicol),234.8794,234.8795,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,region=Region VI (Western Visayas),178.9832,178.983,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,region=Region VII (Central Visayas),109.4466,109.4465,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,region=Region VIII (Eastern Visayas),109.0281,109.028,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,region=Region X (Northern Mindanao),176.7522,176.7525,-0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,region=Region XI (Davao),43.4263,43.4263,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,region=Region XII (SOCCSKSARGEN),226.4124,226.4125,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,region=Region XIII (Caraga),65.552,65.552,0.0,PASS
+2025 Annual Avg (mean of 12 monthly finals),wm_hours_sex,invisible,sex=Female,754.1469,754.1468,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Female; region=BARMM,25.3814,25.3816,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Female; region=CAR,13.9576,13.9574,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Female; region=MIMAROPA,32.2126,32.2129,-0.0004,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Female; region=NCR,105.7687,105.7689,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Female; region=NIR (Negros Island),30.1378,30.1376,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Female; region=Region I (Ilocos),22.3715,22.3718,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Female; region=Region II (Cagayan Valley),34.3994,34.3996,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Female; region=Region III (Central Luzon),87.042,87.0421,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Female; region=Region IV-A (CALABARZON),185.735,185.7344,0.0006,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Female; region=Region IX (Zamboanga Peninsula),26.6481,26.6476,0.0005,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Female; region=Region V (Bicol),76.285,76.2849,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Female; region=Region VI (Western Visayas),51.8402,51.8403,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Female; region=Region VII (Central Visayas),38.11,38.1101,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Female; region=Region VIII (Eastern Visayas),29.1349,29.1352,-0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Female; region=Region X (Northern Mindanao),48.9362,48.9359,0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Female; region=Region XI (Davao),11.0534,11.0532,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Female; region=Region XII (SOCCSKSARGEN),75.5489,75.5485,0.0004,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Female; region=Region XIII (Caraga),21.4054,21.4054,-0.0001,PASS
+2025 Annual Avg (mean of 12 monthly finals),wm_hours_sex,invisible,sex=Male,1646.1198,1646.1197,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Male; region=BARMM,59.6988,59.6987,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Male; region=CAR,31.9339,31.9341,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Male; region=MIMAROPA,80.3372,80.3366,0.0006,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Male; region=NCR,185.6006,185.6008,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Male; region=NIR (Negros Island),56.3583,56.3587,-0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Male; region=Region I (Ilocos),47.1708,47.1707,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Male; region=Region II (Cagayan Valley),75.1959,75.1961,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Male; region=Region III (Central Luzon),194.9713,194.9712,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Male; region=Region IV-A (CALABARZON),344.7403,344.7406,-0.0004,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Male; region=Region IX (Zamboanga Peninsula),68.4483,68.4485,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Male; region=Region V (Bicol),158.5944,158.5946,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Male; region=Region VI (Western Visayas),127.143,127.1427,0.0004,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Male; region=Region VII (Central Visayas),71.3365,71.3368,-0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Male; region=Region VIII (Eastern Visayas),79.8932,79.8931,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Male; region=Region X (Northern Mindanao),127.816,127.8162,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Male; region=Region XI (Davao),32.373,32.3731,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Male; region=Region XII (SOCCSKSARGEN),150.8635,150.864,-0.0005,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,invisible,sex=Male; region=Region XIII (Caraga),44.1466,44.1466,0.0001,PASS
+2025 Annual Avg (mean of 12 monthly finals),hours_occ,lt40,Philippines,14972.3317,14972.3318,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,lt40,region=BARMM,927.4232,927.423,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,lt40,region=CAR,242.1154,242.1152,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,lt40,region=MIMAROPA,625.2566,625.2568,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,lt40,region=NCR,776.1531,776.1533,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,lt40,region=NIR (Negros Island),745.3989,745.3988,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,lt40,region=Region I (Ilocos),832.3232,832.3232,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,lt40,region=Region II (Cagayan Valley),656.6347,656.6345,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,lt40,region=Region III (Central Luzon),1075.387,1075.3865,0.0005,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,lt40,region=Region IV-A (CALABARZON),1725.467,1725.4668,0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,lt40,region=Region IX (Zamboanga Peninsula),613.8928,613.8922,0.0005,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,lt40,region=Region V (Bicol),939.5918,939.5918,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,lt40,region=Region VI (Western Visayas),747.2669,747.2668,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,lt40,region=Region VII (Central Visayas),985.7122,985.7118,0.0005,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,lt40,region=Region VIII (Eastern Visayas),773.5937,773.594,-0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,lt40,region=Region X (Northern Mindanao),793.1008,793.1007,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,lt40,region=Region XI (Davao),831.907,831.9068,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,lt40,region=Region XII (SOCCSKSARGEN),903.5172,903.5172,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,lt40,region=Region XIII (Caraga),546.446,546.4458,0.0002,PASS
+2025 Annual Avg (mean of 12 monthly finals),hours_occ,notwork,Philippines,505.6681,505.6679,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,notwork,region=BARMM,4.0729,4.0728,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,notwork,region=CAR,2.4222,2.4222,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,notwork,region=MIMAROPA,19.2474,19.2472,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,notwork,region=NCR,45.2498,45.2498,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,notwork,region=NIR (Negros Island),4.8516,4.8518,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,notwork,region=Region I (Ilocos),18.445,18.445,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,notwork,region=Region II (Cagayan Valley),6.4786,6.4785,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,notwork,region=Region III (Central Luzon),14.3873,14.3873,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,notwork,region=Region IV-A (CALABARZON),105.8995,105.8998,-0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,notwork,region=Region IX (Zamboanga Peninsula),2.8001,2.8,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,notwork,region=Region V (Bicol),55.1818,55.1818,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,notwork,region=Region VI (Western Visayas),13.3553,13.3552,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,notwork,region=Region VII (Central Visayas),47.8552,47.855,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,notwork,region=Region VIII (Eastern Visayas),9.5312,9.531,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,notwork,region=Region X (Northern Mindanao),16.2972,16.2973,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,notwork,region=Region XI (Davao),22.539,22.539,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,notwork,region=Region XII (SOCCSKSARGEN),39.34,39.34,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,hours_region_sex,notwork,region=Region XIII (Caraga),25.1204,25.1205,-0.0001,PASS
+2025 Annual Avg (mean of 12 monthly finals),status_sex_age+wm_hours_sex,underemp,Philippines,5825.4386,5825.4387,-0.0001,PASS
+2025 Annual Avg (mean of 12 monthly finals),status_sex_age,underemp,age_group=15-24,625.654,625.6608,-0.0068,PASS
+2025 Annual Avg (mean of 12 monthly finals),status_sex_age,underemp,age_group=25-34,1614.1898,1614.1974,-0.0076,PASS
+2025 Annual Avg (mean of 12 monthly finals),status_sex_age,underemp,age_group=35-44,1456.848,1456.8453,0.0027,PASS
+2025 Annual Avg (mean of 12 monthly finals),status_sex_age,underemp,age_group=45-54,1206.667,1206.6687,-0.0016,PASS
+2025 Annual Avg (mean of 12 monthly finals),status_sex_age,underemp,age_group=55-64,706.2639,706.263,0.0009,PASS
+2025 Annual Avg (mean of 12 monthly finals),status_sex_age,underemp,age_group=65 and Over,215.8158,215.8139,0.0019,PASS
+2025 Annual Avg (mean of 12 monthly finals),wm_broad+wm_major,underemp,"broad_sector=Agriculture, Forestry, and Fisheries",1761.3837,1761.3867,-0.0029,PASS
+2025 Annual Avg (mean of 12 monthly finals),wm_broad+wm_major,underemp,broad_sector=Industry,1092.1117,1092.1111,0.0006,PASS
+2025 Annual Avg (mean of 12 monthly finals),wm_broad+wm_major,underemp,broad_sector=Services,2971.9432,2971.9682,-0.0251,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,region=BARMM,215.0284,215.0282,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,region=CAR,107.8555,107.8555,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,region=MIMAROPA,328.3632,328.3632,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,region=NCR,458.9116,458.912,-0.0004,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,region=NIR (Negros Island),214.1748,214.1748,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,region=Region I (Ilocos),282.0368,282.037,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,region=Region II (Cagayan Valley),306.8581,306.858,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,region=Region III (Central Luzon),480.0239,480.0238,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,region=Region IV-A (CALABARZON),1042.0812,1042.0812,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,region=Region IX (Zamboanga Peninsula),251.9322,251.9321,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,region=Region V (Bicol),553.2432,553.2432,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,region=Region VI (Western Visayas),408.6216,408.6218,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,region=Region VII (Central Visayas),278.1621,278.1623,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,region=Region VIII (Eastern Visayas),309.9735,309.9732,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,region=Region X (Northern Mindanao),397.235,397.2352,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,region=Region XI (Davao),127.9755,127.9755,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,region=Region XII (SOCCSKSARGEN),585.4034,585.4032,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,region=Region XIII (Caraga),201.3038,201.3038,0.0001,PASS
+2025 Annual Avg (mean of 12 monthly finals),status_sex_age+wm_hours_sex,underemp,sex=Female,2001.4696,2001.4695,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Female; region=BARMM,72.9242,72.9244,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Female; region=CAR,40.8149,40.8148,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Female; region=MIMAROPA,110.8908,110.8916,-0.0008,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Female; region=NCR,177.745,177.7453,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Female; region=NIR (Negros Island),77.4109,77.4112,-0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Female; region=Region I (Ilocos),95.3289,95.3291,-0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Female; region=Region II (Cagayan Valley),103.3976,103.3975,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Female; region=Region III (Central Luzon),168.5222,168.5236,-0.0014,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Female; region=Region IV-A (CALABARZON),372.7666,372.7653,0.0013,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Female; region=Region IX (Zamboanga Peninsula),71.8328,71.8326,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Female; region=Region V (Bicol),172.6163,172.6161,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Female; region=Region VI (Western Visayas),132.8545,132.8542,0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Female; region=Region VII (Central Visayas),108.2232,108.2237,-0.0005,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Female; region=Region VIII (Eastern Visayas),89.55,89.5503,-0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Female; region=Region X (Northern Mindanao),127.9992,127.9993,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Female; region=Region XI (Davao),35.9003,35.9002,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Female; region=Region XII (SOCCSKSARGEN),194.3855,194.3852,0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Female; region=Region XIII (Caraga),63.7145,63.7145,-0.0,PASS
+2025 Annual Avg (mean of 12 monthly finals),status_sex_age+wm_hours_sex,underemp,sex=Male,3823.9689,3823.9688,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Male; region=BARMM,142.1042,142.1044,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Male; region=CAR,67.0406,67.0407,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Male; region=MIMAROPA,217.4723,217.472,0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Male; region=NCR,281.1666,281.1661,0.0004,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Male; region=NIR (Negros Island),136.7639,136.7635,0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Male; region=Region I (Ilocos),186.7079,186.7079,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Male; region=Region II (Cagayan Valley),203.4605,203.4605,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Male; region=Region III (Central Luzon),311.5017,311.5001,0.0016,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Male; region=Region IV-A (CALABARZON),669.3146,669.3159,-0.0013,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Male; region=Region IX (Zamboanga Peninsula),180.0993,180.0995,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Male; region=Region V (Bicol),380.6269,380.6272,-0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Male; region=Region VI (Western Visayas),275.7671,275.7675,-0.0004,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Male; region=Region VII (Central Visayas),169.9389,169.9385,0.0004,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Male; region=Region VIII (Eastern Visayas),220.4235,220.423,0.0005,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Male; region=Region X (Northern Mindanao),269.2358,269.2349,0.0009,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Male; region=Region XI (Davao),92.0752,92.0753,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Male; region=Region XII (SOCCSKSARGEN),391.0179,391.018,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,status_region_sex+wm_hours_region,underemp,sex=Male; region=Region XIII (Caraga),137.5894,137.5894,-0.0,PASS
+2025 Annual Avg (mean of 12 monthly finals),wm_hours_sex,visible,Philippines,3425.1719,3425.1718,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,region=BARMM,129.9481,129.9482,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,region=CAR,61.964,61.964,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,region=MIMAROPA,215.8134,215.8135,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,region=NCR,167.5424,167.542,0.0004,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,region=NIR (Negros Island),127.6787,127.6788,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,region=Region I (Ilocos),212.4944,212.4942,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,region=Region II (Cagayan Valley),197.2628,197.2628,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,region=Region III (Central Luzon),198.0107,198.0108,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,region=Region IV-A (CALABARZON),511.606,511.606,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,region=Region IX (Zamboanga Peninsula),156.8357,156.8355,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,region=Region V (Bicol),318.3638,318.364,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,region=Region VI (Western Visayas),229.6383,229.6382,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,region=Region VII (Central Visayas),168.7156,168.7155,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,region=Region VIII (Eastern Visayas),200.9454,200.9455,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,region=Region X (Northern Mindanao),220.4828,220.4828,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,region=Region XI (Davao),84.5491,84.549,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,region=Region XII (SOCCSKSARGEN),358.991,358.9912,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,region=Region XIII (Caraga),135.7518,135.7517,0.0001,PASS
+2025 Annual Avg (mean of 12 monthly finals),wm_hours_sex,visible,sex=Female,1247.3227,1247.3227,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Female; region=BARMM,47.5428,47.5429,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Female; region=CAR,26.8573,26.8572,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Female; region=MIMAROPA,78.6782,78.6787,-0.0004,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Female; region=NCR,71.9764,71.9762,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Female; region=NIR (Negros Island),47.2732,47.2735,-0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Female; region=Region I (Ilocos),72.9574,72.9571,0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Female; region=Region II (Cagayan Valley),68.9982,68.9984,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Female; region=Region III (Central Luzon),81.4803,81.4804,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Female; region=Region IV-A (CALABARZON),187.0317,187.0321,-0.0004,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Female; region=Region IX (Zamboanga Peninsula),45.1847,45.1849,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Female; region=Region V (Bicol),96.3313,96.3318,-0.0005,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Female; region=Region VI (Western Visayas),81.0143,81.014,0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Female; region=Region VII (Central Visayas),70.1132,70.1125,0.0007,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Female; region=Region VIII (Eastern Visayas),60.4151,60.4161,-0.001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Female; region=Region X (Northern Mindanao),79.063,79.0628,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Female; region=Region XI (Davao),24.8469,24.847,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Female; region=Region XII (SOCCSKSARGEN),118.8366,118.8368,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Female; region=Region XIII (Caraga),42.3091,42.3094,-0.0003,PASS
+2025 Annual Avg (mean of 12 monthly finals),wm_hours_sex,visible,sex=Male,2177.8491,2177.8491,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Male; region=BARMM,82.4054,82.4054,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Male; region=CAR,35.1067,35.1066,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Male; region=MIMAROPA,137.1352,137.1348,0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Male; region=NCR,95.566,95.5661,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Male; region=NIR (Negros Island),80.4055,80.4052,0.0004,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Male; region=Region I (Ilocos),139.5371,139.5372,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Male; region=Region II (Cagayan Valley),128.2646,128.2643,0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Male; region=Region III (Central Luzon),116.5305,116.5304,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Male; region=Region IV-A (CALABARZON),324.5743,324.5754,-0.0011,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Male; region=Region IX (Zamboanga Peninsula),111.6511,111.651,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Male; region=Region V (Bicol),222.0325,222.0322,0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Male; region=Region VI (Western Visayas),148.6241,148.6243,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Male; region=Region VII (Central Visayas),98.6024,98.603,-0.0006,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Male; region=Region VIII (Eastern Visayas),140.5303,140.5294,0.0008,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Male; region=Region X (Northern Mindanao),141.4198,141.4199,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Male; region=Region XI (Davao),59.7022,59.7018,0.0004,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Male; region=Region XII (SOCCSKSARGEN),240.1544,240.1545,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,wm_hours_region,visible,sex=Male; region=Region XIII (Caraga),93.4427,93.4428,-0.0,PASS
+2025 Annual Avg (mean of 12 monthly finals),rate = underemp / employed,underemp_rate_pct,Philippines,11.8827,11.8827,-0.0,PASS
+2025 Annual Avg (mean of 12 monthly finals),rate = underemp / employed,underemp_rate_pct,age_group=15-24,11.1214,11.1215,-0.0001,PASS
+2025 Annual Avg (mean of 12 monthly finals),rate = underemp / employed,underemp_rate_pct,age_group=25-34,11.7064,11.7064,-0.0,PASS
+2025 Annual Avg (mean of 12 monthly finals),rate = underemp / employed,underemp_rate_pct,age_group=35-44,12.6467,12.6467,0.0,PASS
+2025 Annual Avg (mean of 12 monthly finals),rate = underemp / employed,underemp_rate_pct,age_group=45-54,13.0381,13.0381,0.0001,PASS
+2025 Annual Avg (mean of 12 monthly finals),rate = underemp / employed,underemp_rate_pct,age_group=55-64,11.6147,11.6146,0.0001,PASS
+2025 Annual Avg (mean of 12 monthly finals),rate = underemp / employed,underemp_rate_pct,age_group=65 and Over,7.8346,7.8348,-0.0002,PASS
+2025 Annual Avg (mean of 12 monthly finals),rate = underemp / employed,underemp_rate_pct,"broad_sector=Agriculture, Forestry, and Fisheries",17.5281,17.5281,-0.0,PASS
+2025 Annual Avg (mean of 12 monthly finals),rate = underemp / employed,underemp_rate_pct,broad_sector=Industry,12.5318,12.5318,0.0,PASS
+2025 Annual Avg (mean of 12 monthly finals),rate = underemp / employed,underemp_rate_pct,broad_sector=Services,9.8211,9.8212,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,region=BARMM,9.9447,9.9447,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,region=CAR,13.4341,13.4341,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,region=MIMAROPA,24.5431,24.5431,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,region=NCR,7.3627,7.3627,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,region=NIR (Negros Island),10.5252,10.5252,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,region=Region I (Ilocos),12.5593,12.5593,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,region=Region II (Cagayan Valley),19.37,19.37,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,region=Region III (Central Luzon),8.5676,8.5676,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,region=Region IV-A (CALABARZON),14.3843,14.3843,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,region=Region IX (Zamboanga Peninsula),16.1045,16.1045,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,region=Region V (Bicol),23.5144,23.5144,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,region=Region VI (Western Visayas),19.6055,19.6055,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,region=Region VII (Central Visayas),9.7057,9.7057,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,region=Region VIII (Eastern Visayas),15.8848,15.8847,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,region=Region X (Northern Mindanao),17.7051,17.7051,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,region=Region XI (Davao),5.3388,5.3388,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,region=Region XII (SOCCSKSARGEN),28.7663,28.7663,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,region=Region XIII (Caraga),16.126,16.126,0.0,PASS
+2025 Annual Avg (mean of 12 monthly finals),rate = underemp / employed,underemp_rate_pct,sex=Female,9.8522,9.8522,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Female; region=BARMM,8.1354,8.1355,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Female; region=CAR,12.3268,12.3268,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Female; region=MIMAROPA,20.7442,20.7445,-0.0003,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Female; region=NCR,6.398,6.3981,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Female; region=NIR (Negros Island),9.6582,9.6583,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Female; region=Region I (Ilocos),10.7641,10.7642,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Female; region=Region II (Cagayan Valley),17.0939,17.094,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Female; region=Region III (Central Luzon),7.5401,7.5402,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Female; region=Region IV-A (CALABARZON),12.0023,12.0024,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Female; region=Region IX (Zamboanga Peninsula),12.26,12.26,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Female; region=Region V (Bicol),19.2922,19.2921,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Female; region=Region VI (Western Visayas),15.4788,15.4788,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Female; region=Region VII (Central Visayas),8.7318,8.7319,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Female; region=Region VIII (Eastern Visayas),12.1494,12.1495,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Female; region=Region X (Northern Mindanao),14.4696,14.4696,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Female; region=Region XI (Davao),3.9073,3.9072,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Female; region=Region XII (SOCCSKSARGEN),24.2302,24.23,0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Female; region=Region XIII (Caraga),12.7889,12.789,-0.0001,PASS
+2025 Annual Avg (mean of 12 monthly finals),rate = underemp / employed,underemp_rate_pct,sex=Male,13.3195,13.3195,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Male; region=BARMM,11.226,11.226,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Male; region=CAR,14.2113,14.2114,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Male; region=MIMAROPA,27.071,27.0709,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Male; region=NCR,8.1384,8.1383,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Male; region=NIR (Negros Island),11.0886,11.0886,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Male; region=Region I (Ilocos),13.7282,13.7282,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Male; region=Region II (Cagayan Valley),20.7759,20.7758,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Male; region=Region III (Central Luzon),9.2495,9.2495,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Male; region=Region IV-A (CALABARZON),16.1718,16.1717,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Male; region=Region IX (Zamboanga Peninsula),18.4067,18.4067,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Male; region=Region V (Bicol),26.1054,26.1055,-0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Male; region=Region VI (Western Visayas),22.4948,22.4948,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Male; region=Region VII (Central Visayas),10.4478,10.4478,0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Male; region=Region VIII (Eastern Visayas),18.152,18.152,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Male; region=Region X (Northern Mindanao),19.8112,19.8111,0.0001,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Male; region=Region XI (Davao),6.2286,6.2286,-0.0,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Male; region=Region XII (SOCCSKSARGEN),31.7182,31.7183,-0.0002,PASS
+Q-avg Jan/Apr/Jul/Oct,rate = underemp / employed,underemp_rate_pct,sex=Male; region=Region XIII (Caraga),18.3424,18.3425,-0.0,PASS
+2025 Annual (Annual Special Release 2025p),annual_release_table2,employed,Philippines,49024.506,49013.17,11.336,"INFO: preliminary; PSA's own monthly finals average 49,024.506"
+N/A (not published every month; no comparable period average),wm_broad,invisible,all groups,,,,"N/A months Feb,Mar,May,Jun,Aug,Sep,Nov,Dec"
+N/A (not published every month; no comparable period average),wm_broad,visible,all groups,,,,"N/A months Feb,Mar,May,Jun,Aug,Sep,Nov,Dec"
+N/A (not published every month; no comparable period average),wm_major,underemp,all groups,,,,"N/A months Jan,Apr,Jul,Oct"
