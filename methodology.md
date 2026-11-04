@@ -1,14 +1,14 @@
 ---
 layout: default
 title: "Mathematical Methodology & Survey Variance Design — Philippine LFS 2025"
-description: "Exact point estimators, 117-domain PSU reconstruction, two-stage finite population corrections, and Taylor series linearization formulas for the 2025 Philippine Labor Force Survey."
+description: "Exact point estimators, 117-domain PSU reconstruction, two-stage finite population corrections, Taylor series linearization, and Small Area Estimation remedies for the 2025 Philippine Labor Force Survey."
 ---
 
 # Mathematical Methodology & Survey Variance Design
 
 [$\leftarrow$ Back to Main Report](index.html)
 
-This page documents the exact estimators, domain-reconstruction rules, and two-stage Taylor series linearization formulas implemented in [`tables.py`](https://github.com/KingSSIBAL/LFS-2025-Analysis/blob/main/tables.py) and [`lfs_view.sql`](https://github.com/KingSSIBAL/LFS-2025-Analysis/blob/main/lfs_view.sql) for the 2025 Philippine Labor Force Survey (LFS) Public Use Files (PUF). All formulas follow the Philippine Statistics Authority (PSA) *Technical Notes on the Labor Force Survey* (pp. 1–9).
+This page documents the exact estimators, domain-reconstruction rules, two-stage Taylor series linearization formulas, and small-domain variance reduction methods implemented in [`tables.py`](https://github.com/KingSSIBAL/LFS-2025-Analysis/blob/main/tables.py) and [`lfs_view.sql`](https://github.com/KingSSIBAL/LFS-2025-Analysis/blob/main/lfs_view.sql) for the 2025 Philippine Labor Force Survey (LFS) Public Use Files (PUF). All formulas follow the Philippine Statistics Authority (PSA) *Technical Notes on the Labor Force Survey* (pp. 1–9).
 
 <nav aria-label="Methodology Contents">
 <strong>Contents</strong>
@@ -19,6 +19,7 @@ This page documents the exact estimators, domain-reconstruction rules, and two-s
   <li><a href="#variance">Two-stage stratified cluster variance (totals)</a></li>
   <li><a href="#taylor">Taylor series linearization for ratio standard errors</a></li>
   <li><a href="#reliability">Reliability bands (CV), small-cell algebra &amp; CI overlap</a></li>
+  <li><a href="#remedies">Statistical remedies for high-CV ("unreliable") small domains</a></li>
   <li><a href="#example">Worked numerical walkthrough</a></li>
 </ol>
 </nav>
@@ -165,6 +166,8 @@ $$
 \text{SE}(\bar{R}_d) = \frac{\sqrt{\max\!\left(0,\, \sum_{m \in \mathcal{M}} V(\hat{Y}_{m,d}) + r_d^2 \sum_{m \in \mathcal{M}} V(\hat{X}_{m,d}) - 2 r_d \sum_{m \in \mathcal{M}} \text{Cov}(\hat{Y}_{m,d}, \hat{X}_{m,d})\right)}}{\sum_{m \in \mathcal{M}} \hat{X}_{m,d}} \times 100 \quad \text{(in percentage points)}
 $$
 
+*(Note on rotational panel covariance: If longitudinal household panel identifiers were available across rounds, the true variance of the $K$-round mean would include positive serial covariance terms $2 \sum_{m < m'} \text{Cov}(\hat{Y}_{m,d}, \hat{Y}_{m',d})$.)*
+
 ## 6. Reliability Bands (CV), Small-Cell Algebra & Confidence Interval Overlap {#reliability}
 
 ### Coefficient of Variation (CV)
@@ -199,7 +202,7 @@ $$
 
 Thus, a single non-zero PSU contributes nearly the full square of its weighted total <span>$z_{y,p,1}^2$</span> to the stratum variance ($\text{CV}_{p} \approx \sqrt{1 - f_{1,p}} \approx 100\%$ within that stratum/month).
 
-2. **Small Denominator Scaling ($1 / \sqrt{n_d}$):** Pooled across $K$ rounds and $M_d$ non-empty PSU clusters nationally, the relative standard error scales inversely with the square root of the effective number of non-zero clusters <span>$M_d$</span>:
+2. **Small Denominator Scaling ($1 / \sqrt{M_d}$):** Pooled across $K$ rounds and $M_d$ non-empty PSU clusters nationally, the relative standard error scales inversely with the square root of the effective number of non-zero clusters <span>$M_d$</span>:
 
 $$
 \text{CV}(\bar{Y}_d) = \frac{\text{SE}(\bar{Y}_d)}{\bar{Y}_d} \propto \frac{1}{\sqrt{M_d}}
@@ -231,7 +234,57 @@ $$
 
 Consequently, non-overlapping $95\%$ whiskers provide a conservative visual guarantee of statistical difference ($p \approx 0.006$), while two intervals that overlap by less than $\frac{3.92 - 2.77}{3.92} \approx 29\%$ of a single whisker arm remain statistically distinct at the pairwise $5\%$ level.
 
-## 7. Worked Numerical Walkthrough {#example}
+## 7. Statistical Remedies for High-CV ("Unreliable") Small Domains {#remedies}
+
+In official survey statistics (Eurostat EU-LFS, U.S. Census/ACS, Statistics Canada, and PSA/ADB Small Area Estimation guidelines), three mathematical techniques are used to reduce $\text{CV}(\bar{Y}_d)$ below the $10\text{--}20\%$ threshold when analyzing small domains:
+
+### Remedy 1: Design-Based Domain Collapsing (Zero Model Bias)
+
+Let $d_1$ and $d_2$ be two adjacent sparse categories (for example, *Post-Secondary Undergraduate* $d_1$ with $\text{CV} = 22.7\%$ and *Post-Secondary Graduate* $d_2$ with $\text{CV} = 6.9\%$), and define the collapsed domain $D = d_1 \cup d_2$ (**Post-Secondary / TVET Combined**). Because $d_1 \cap d_2 = \emptyset$, the combined estimator is simply $\bar{Y}_D = \bar{Y}_{d_1} + \bar{Y}_{d_2}$, and its relative variance is:
+
+$$
+\text{CV}(\bar{Y}_D) = \frac{\sqrt{V(\bar{Y}_{d_1}) + V(\bar{Y}_{d_2}) + 2\,\text{Cov}(\bar{Y}_{d_1}, \bar{Y}_{d_2})}}{\bar{Y}_{d_1} + \bar{Y}_{d_2}} \times 100\%
+$$
+
+When $d_1$ and $d_2$ rarely co-occur in the same household ($\text{Cov}(\bar{Y}_{d_1}, \bar{Y}_{d_2}) \approx 0$), the larger denominator $\bar{Y}_{d_1} + \bar{Y}_{d_2}$ dominates, reducing the combined $\text{CV}(\bar{Y}_D)$ to $\approx 6.6\% \le 10\%$ (`reliable`) with zero model bias.
+
+### Remedy 2: Multi-Year Wave Pooling ($T$-Year Rolling Averages)
+
+Let $\bar{Y}_{d}^{(T)} = \frac{1}{T}\sum_{t=1}^{T} \bar{Y}_{d,t}$ be the pooled estimator across $T$ consecutive years of LFS Public Use Files (e.g., $T = 3$ years, $36$ monthly rounds). Under annual independence across rotating master sample panels with equal annual variance $V(\bar{Y}_{d,t}) \approx V_d$, the pooled standard error scales by $1/\sqrt{T}$:
+
+$$
+\text{CV}\!\left(\bar{Y}_d^{(T)}\right) \approx \frac{\text{CV}(\bar{Y}_d)}{\sqrt{T}}
+$$
+
+Pooling $T = 3$ years reduces the *Post-Secondary Undergraduate* $\text{CV}$ from $22.7\%$ to $22.7\% / \sqrt{3} \approx 13.1\%$, moving it out of the `unreliable` band.
+
+### Remedy 3: Fay-Herriot Small Area Estimation (Empirical Bayes / EBLUP Shrinkage)
+
+When disaggregated estimates are needed for a single year without collapsing categories, the **Fay-Herriot (1979) area-level linear mixed model** links the direct survey estimator $\bar{Y}_d$ to a vector of auxiliary Census or administrative covariates $\mathbf{x}_d$ (such as Census of Population and Housing educational attainment shares or TESDA enrollment totals):
+
+$$
+\bar{Y}_d = \theta_d + e_d, \qquad e_d \sim \mathcal{N}\!\left(0,\, V(\bar{Y}_d)\right) \quad \text{(Sampling model)}
+$$
+
+$$
+\theta_d = \mathbf{x}_d^\top \boldsymbol{\beta} + u_d, \qquad u_d \sim \mathcal{N}\!\left(0,\, \sigma_u^2\right) \quad \text{(Linking model)}
+$$
+
+where $V(\bar{Y}_d)$ is our known two-stage Taylor design variance and $\sigma_u^2$ is the between-domain model variance estimated via Restricted Maximum Likelihood (REML). The **Empirical Best Linear Unbiased Predictor (EBLUP)** is the precision-weighted composite estimator:
+
+$$
+\hat{\theta}_d^{\text{FH}} = \gamma_d \, \bar{Y}_d + (1 - \gamma_d) \, \mathbf{x}_d^\top \hat{\boldsymbol{\beta}}, \qquad \text{where} \quad \gamma_d = \frac{\sigma_u^2}{\sigma_u^2 + V(\bar{Y}_d)} \in (0, 1)
+$$
+
+Ignoring uncertainty in estimating $\boldsymbol{\beta}$, the leading term of the Mean Squared Error is:
+
+$$
+\text{MSE}\!\left(\hat{\theta}_d^{\text{FH}}\right) \approx \gamma_d \, V(\bar{Y}_d) < V(\bar{Y}_d)
+$$
+
+Whenever a small cell $d$ has a very large direct design variance $V(\bar{Y}_d)$ ($\text{CV} > 20\%$), the shrinkage factor $\gamma_d$ automatically shifts weight toward the synthetic census prediction $\mathbf{x}_d^\top \hat{\boldsymbol{\beta}}$, stabilizing the estimate and reducing its effective $\text{CV}$ by $\sqrt{\gamma_d}$.
+
+## 8. Worked Numerical Walkthrough {#example}
 
 To trace how the SQL and Python pipeline transforms raw household weights into published rows with standard errors and reliability flags, consider three benchmark cells from the verified 2025 tables:
 
