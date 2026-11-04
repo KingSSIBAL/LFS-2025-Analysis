@@ -1,97 +1,85 @@
----
-layout: default
+## layout: default
 title: "Mathematical Methodology, PSA Survey Plan & PUF Metadata — Philippine LFS 2025"
 description: "Complete PSA 2023 Geo-enabled Master Sample plan, PUF variable metadata dictionary, questionnaire cross-walks, two-stage Taylor variance formulas, and Small Area Estimation remedies for the 2025 Philippine Labor Force Survey."
----
 
 # Mathematical Methodology, PSA Survey Plan & PUF Metadata
 
-[$\leftarrow$ Back to Main Report](index.html)
+[\$\\leftarrow$ Back to Main Report](index.html)
 
 This reference documents the complete Philippine Statistics Authority (PSA) Labor Force Survey (LFS) sampling plan, the 2025 Public Use File (PUF) metadata and recode dictionaries, the domain-reconstruction rules, and the two-stage Taylor series linearization formulas implemented in [`tables.py`](https://github.com/KingSSIBAL/LFS-2025-Analysis/blob/main/tables.py), [`lfs_view.sql`](https://github.com/KingSSIBAL/LFS-2025-Analysis/blob/main/lfs_view.sql), and [`psa.py`](https://github.com/KingSSIBAL/LFS-2025-Analysis/blob/main/psa.py). All definitions and variance equations follow the official PSA *Technical Notes on the Labor Force Survey* (pp. 1–9).
-
-<nav aria-label="Methodology Contents">
-<strong>Contents</strong>
-<ol>
-  <li><a href="#psa-plan">Full PSA Labor Force Survey (LFS) sampling &amp; operations plan</a></li>
-  <li><a href="#metadata">Complete PUF metadata, variable dictionary &amp; questionnaire cross-walk</a></li>
-  <li><a href="#estimators">Core point estimators (counts, rates, and shares)</a></li>
-  <li><a href="#aggregation">Multi-round aggregation (annual &amp; quarterly averages)</a></li>
-  <li><a href="#design">Reconstructing the 117 Master Sample domains &amp; PSUs</a></li>
-  <li><a href="#variance">Two-stage stratified cluster variance (totals)</a></li>
-  <li><a href="#taylor">Taylor series linearization for ratio standard errors</a></li>
-  <li><a href="#reliability">Reliability bands (CV), small-cell algebra &amp; CI overlap</a></li>
-  <li><a href="#remedies">Statistical remedies for high-CV ("unreliable") small domains</a></li>
-  <li><a href="#example">Official PSA validation architecture &amp; worked numerical walkthrough</a></li>
-</ol>
-</nav>
-
----
 
 ## 1. Full PSA Labor Force Survey (LFS) Sampling & Operations Plan {#psa-plan}
 
 ### 1.1 Scope, Target Population & Reference Period (PSA Technical Notes, pp. 1–2)
 
 * **Target Population:** All household population aged $15$ years and over residing in the Philippines.
+
 * **Exclusions:** Overseas Filipino Workers (OFWs) and the institutional population (persons living in dormitories, barracks, hospitals, penal institutions, and convents) are excluded from the labor force domestic count.
+
 * **Reference Period:** The **past week**, defined as the $7$ consecutive days preceding the date of the enumerator's interview.
+
 * **Official Labor Force Concepts:**
+
   * **In the Labor Force:** Persons aged $15+$ who are either *employed* or *unemployed* during the reference week.
+
   * **Employed (`PUFNEWEMPSTAT = 1`):** Persons aged $15+$ who during the reference week either (a) worked for at least $1$ hour for pay or profit, or without pay on a family farm/enterprise (`PUFC11_WORK = 1`), or (b) had a job or business from which they were temporarily absent (`PUFC12_JOB = 1`, "with a job, not at work").
+
   * **Underemployed (`PUFC20_PWMORE = 1`):** Employed persons who expressed the desire to have additional hours of work in their present job, or to have an additional job, or to have a new job with longer working hours.
+
   * **Visibly Underemployed:** Underemployed persons who worked less than $40$ hours during the reference week (`PUFC19_PHOURS < 40` or `NULL`/`0` for those with a job but not at work).
+
   * **Invisibly Underemployed:** Underemployed persons who worked $40$ hours or more during the reference week (`PUFC19_PHOURS >= 40`).
 
 ### 1.2 The 2023 Geo-Enabled Master Sample (MS) & 117 Sampling Domains (Technical Notes, pp. 2–4)
 
-The 2025 LFS utilizes the PSA's **2023 Geo-Enabled Master Sample (MS)** for household surveys, constructed from the 2020 Census of Population and Housing (CPH) frame. The national frame is partitioned into **$117$ mutually exclusive sampling domains** ($81$ provinces, $33$ Highly Urbanized Cities, and $3$ other urban areas), each treated as an explicit design stratum ($p \in \{1, \dots, 117\}$). In `tables.py` (`_DOM_EXPR`), these $117$ domains are extracted from the $4$-digit PSGC province/municipality code (`PUFC12A_PROVMUN`) as $84$ two-digit prefixes and $33$ four-digit HUC/municipality codes:
+The 2025 LFS utilizes the PSA's **2023 Geo-Enabled Master Sample (MS)** for household surveys, constructed from the 2020 Census of Population and Housing (CPH) frame. The national frame is partitioned into $117$ **mutually exclusive sampling domains** ($81$ provinces, $33$ Highly Urbanized Cities, and $3$ other urban areas), each treated as an explicit design stratum ($p \in \{1, \dots, 117\}$). In `tables.py` (`_DOM_EXPR`), these $117$ domains are extracted from the $4$-digit PSGC province/municipality code (`PUFC12A_PROVMUN`) as $84$ two-digit prefixes and $33$ four-digit HUC/municipality codes:
 
-| Domain Category | PSA Count | SQL `_DOM_EXPR` Rule & PSGC Composition in `tables.py` |
-|---|---|---|
-| **Provinces** | $81$ | Coded by their 2-digit PSGC province prefix (`LEFT(PUFC12A_PROVMUN, 2)`, codes `01` to `86`), with Sulu (`66`) assigned to BARMM (`19`) in the 2025 PUF frame. |
-| **Highly Urbanized Cities (HUCs) in NCR** | $16$ | City of Manila (coded by 2-digit prefix `39`) plus the $15$ Highly Urbanized Cities in NCR Districts II–IV (coded by 4-digit PSGC in `74xx`, `75xx`, `76xx`, excluding Pateros `7606`). |
-| **Highly Urbanized Cities (HUCs) Outside NCR** | $17$ | Coded by their full 4-digit PSGC (`_HUCS_OUTSIDE_NCR`): `0202` Butuan, `1102` Baguio, `2217` Cebu City, `2226` Lapu-Lapu, `2230` Mandaue, `2402` Davao City, `3022` Iloilo City, `3504` Iligan, `3747` Tacloban, `4305` Cagayan de Oro, `4501` Bacolod, `5316` Puerto Princesa, `5401` Angeles, `5624` Lucena, `6303` General Santos, `7107` Olongapo, `7332` Zamboanga City. |
-| **Other Urban Areas** | $3$ | Municipality of Pateros (4-digit code `7606` in NCR), Isabela City (2-digit prefix `97`), and Cotabato City (2-digit prefix `98`). |
-| **Total Sampling Domains** | **$117$** | $81 + 16 + 17 + 3 = 117$ ($84$ two-digit codes + $33$ four-digit codes; asserted via `SELECT COUNT(*) FROM work_dom_region == 117`). |
+| Domain Category | PSA Count | SQL `_DOM_EXPR` Rule & PSGC Composition in `tables.py` | 
+| ----- | ----- | ----- | 
+| **Provinces** | $81$ | Coded by their 2-digit PSGC province prefix (`LEFT(PUFC12A_PROVMUN, 2)`, codes `01` to `86`), with Sulu (`66`) assigned to BARMM (`19`) in the 2025 PUF frame. | 
+| **Highly Urbanized Cities (HUCs) in NCR** | $16$ | City of Manila (coded by 2-digit prefix `39`) plus the $15$ Highly Urbanized Cities in NCR Districts II–IV (coded by 4-digit PSGC in `74xx`, `75xx`, `76xx`, excluding Pateros `7606`). | 
+| **Highly Urbanized Cities (HUCs) Outside NCR** | $17$ | Coded by their full 4-digit PSGC (`_HUCS_OUTSIDE_NCR`): `0202` Butuan, `1102` Baguio, `2217` Cebu City, `2226` Lapu-Lapu, `2230` Mandaue, `2402` Davao City, `3022` Iloilo City, `3504` Iligan, `3747` Tacloban, `4305` Cagayan de Oro, `4501` Bacolod, `5316` Puerto Princesa, `5401` Angeles, `5624` Lucena, `6303` General Santos, `7107` Olongapo, `7332` Zamboanga City. | 
+| **Other Urban Areas** | $3$ | Municipality of Pateros (4-digit code `7606` in NCR), Isabela City (2-digit prefix `97`), and Cotabato City (2-digit prefix `98`). | 
+| **Total Sampling Domains** | $117$ | $81 + 16 + 17 + 3 = 117$ ($84$ two-digit codes + $33$ four-digit codes; asserted via `SELECT COUNT(*) FROM work_dom_region == 117`). | 
 
 ### 1.3 Two-Stage Stratified Cluster Design (Technical Notes, pp. 3–5)
 
 Within each of the $117$ sampling domains (strata), the Master Sample selects households in two stages:
 
-1. **Stage 1 — Primary Sampling Units (PSUs):** PSUs are individual barangays, combinations of small contiguous barangays, or portions of large barangays formed to contain approximately **$100$ to $400$ households** (midpoint $B = 250$ households). Within each domain $p$, $a _ p$ PSUs are selected systematically with **Probability Proportional to Size (PPS)**, where the measure of size is the 2020 Census household count $B _ {p,a}$. PSUs are sorted in geographic/serpentine order prior to systematic selection to induce implicit geographic stratification.
-2. **Stage 2 — Secondary Sampling Units (Housing Units & Households):** Within each sampled PSU $(p,a)$, housing units are selected via systematic random sampling. All households residing within a selected housing unit are interviewed, up to a maximum of **$3$ households per housing unit** (if a housing unit contains more than $3$ households, $3$ are selected at random).
+1. **Stage 1 — Primary Sampling Units (PSUs):** PSUs are individual barangays, combinations of small contiguous barangays, or portions of large barangays formed to contain approximately $100$ **to** $400$ **households** (midpoint $B = 250$ households). Within each domain $p$, $a _ p$ PSUs are selected systematically with **Probability Proportional to Size (PPS)**, where the measure of size is the 2020 Census household count $B _ {p,a}$. PSUs are sorted in geographic/serpentine order prior to systematic selection to induce implicit geographic stratification.
+
+2. **Stage 2 — Secondary Sampling Units (Housing Units & Households):** Within each sampled PSU $(p,a)$, housing units are selected via systematic random sampling. All households residing within a selected housing unit are interviewed, up to a maximum of $3$ **households per housing unit** (if a housing unit contains more than $3$ households, $3$ are selected at random).
 
 ### 1.4 Quarterly ($4$-Replicate) vs. Monthly ($1$-Replicate) Rotation Schedule (Technical Notes, pp. 2, 4)
 
 The PSA conducts the LFS in all $12$ months of the year, alternating between two sample designs:
 
-| Design Feature | Quarterly Rounds (Jan, Apr, Jul, Oct) | Non-Quarterly Monthly Rounds (Feb, Mar, May, Jun, Aug, Sep, Nov, Dec) |
-|---|---|---|
-| **Number of Replicates (`PUFRPL`)** | **$4$ independent replicates** (`1`, `2`, `3`, `4`) | **$1$ replicate** |
-| **Approximate Sample Size** | $\approx 2,940$ PSUs ($\approx 44,000\text{--}48,000$ households) per round | $\approx 735$ PSUs ($\approx 11,000\text{--}12,000$ households) per round |
-| **Geographic Estimation Level** | **National and Regional ($18$ Regions)** | **National Level Only** |
-| **Residence Region (`PUFREG`) in PUF** | Populated for all respondents | Omitted (`NULL`/blank) by design |
-| **Questionnaire Version** | Long Quarterly Questionnaire ($43$ items) | Short Monthly Questionnaire ($33$ items; shifted numbering) |
-| **PSA Special Release Tables** | $20$ final tables (including regional & major industry breakdowns) | $11$ final tables (national & broad industry breakdowns) |
+| Design Feature | Quarterly Rounds (Jan, Apr, Jul, Oct) | Non-Quarterly Monthly Rounds (Feb, Mar, May, Jun, Aug, Sep, Nov, Dec) | 
+| ----- | ----- | ----- | 
+| **Number of Replicates (`PUFRPL`)** | $4$ **independent replicates** (`1`, `2`, `3`, `4`) | $1$ **replicate** | 
+| **Approximate Sample Size** | $\approx 2,940$ PSUs ($\approx 44,000\text{--}48,000$ households) per round | $\approx 735$ PSUs ($\approx 11,000\text{--}12,000$ households) per round | 
+| **Geographic Estimation Level** | **National and Regional (**$18$ **Regions)** | **National Level Only** | 
+| **Residence Region (`PUFREG`) in PUF** | Populated for all respondents | Omitted (`NULL`/blank) by design | 
+| **Questionnaire Version** | Long Quarterly Questionnaire ($43$ items) | Short Monthly Questionnaire ($33$ items; shifted numbering) | 
+| **PSA Special Release Tables** | $20$ final tables (including regional & major industry breakdowns) | $11$ final tables (national & broad industry breakdowns) | 
 
 ### 1.5 Three-Step Sampling Weight Construction & Calibration (Technical Notes, pp. 5–6)
 
 Each respondent $i$ in PSU $a$ of domain $p$ receives a final calibrated weight $w _ i = \texttt{PUFPWGTPRV} _ i$ constructed in three stages:
 
-1. **Base Design Weight ($w _ {0,p,a}$):** The inverse of the product of the first-stage PSU selection probability $f _ {1,p,a} \approx \frac{a _ p}{A _ p}$ and the second-stage household selection probability $f _ {2,p,a} = \frac{b _ {p,a}}{B _ {p,a}}$:
+1. **Base Design Weight (**$w _ {0,p,a}$**):** The inverse of the product of the first-stage PSU selection probability $f _ {1,p,a} \approx \frac{a _ p}{A _ p}$ and the second-stage household selection probability $f _ {2,p,a} = \frac{b _ {p,a}}{B _ {p,a}}$:
 
 $$
 w_{0,p,a} = \frac{1}{f_{1,p,a} \times f_{2,p,a}} = \frac{A_p}{a_p} \times \frac{B_{p,a}}{b_{p,a}}
 $$
 
-2. **Non-Response Adjustment ($w _ {1,p,a}$):** Base weights are multiplied by a PSU/domain non-response inflation factor $F _ {\text{NR},p,a} = \frac{b _ {p,a}^{\text{eligible}}}{b _ {p,a}^{\text{interviewed}}}$ to account for eligible sample households that could not be interviewed.
-3. **Post-Stratification Age-Sex-Domain Calibration ($w _ i = \texttt{PUFPWGTPRV} _ i$):** Non-response-adjusted weights are raked/calibrated within each domain $p$, sex, and $5$-year age group cell $c$ so that weighted sample population totals match independent PSA demographic projections $N _ {p,c}^{\text{proj}}$ for the survey month:
+2. **Non-Response Adjustment (**$w _ {1,p,a}$**):** Base weights are multiplied by a PSU/domain non-response inflation factor $F _ {\text{NR},p,a} = \frac{b _ {p,a}^{\text{eligible}}}{b _ {p,a}^{\text{interviewed}}}$ to account for eligible sample households that could not be interviewed.
+
+3. **Post-Stratification Age-Sex-Domain Calibration (**$w _ i = \texttt{PUFPWGTPRV} _ i$**):** Non-response-adjusted weights are raked/calibrated within each domain $p$, sex, and $5$-year age group cell $c$ so that weighted sample population totals match independent PSA demographic projections $N _ {p,c}^{\text{proj}}$ for the survey month:
 
 $$
 w_i = w_{1,p,a} \times \frac{N_{p,c}^{\text{proj}}}{\sum_{j \in (p,c)} w_{1,p,a(j)}} = \texttt{PUFPWGTPRV}_i
 $$
-
----
 
 ## 2. Complete PUF Metadata, Variable Dictionary & Questionnaire Cross-Walk {#metadata}
 
@@ -99,123 +87,121 @@ $$
 
 All $12$ monthly CSV files in `data/puf/` are consolidated into `LFS_PUF_2025_Consolidated.parquet`. Below is the complete metadata dictionary for the variables used in the analytical view (`lfs_view.sql`), variance engine (`tables.py`), and PSA verifier (`psa.py`):
 
-| PUF Variable (Quarterly Name) | Data Type | Valid Codes / Range | Official PSA Definition & Analytical Role |
-|---|---|---|---|
-| `PUFSVYYR` | Integer | `2025` | Survey year. |
-| `PUFSVYMO` | Integer | `1`–`12` | Survey month (`1` = Jan, `4` = Apr, `7` = Jul, `10` = Oct are quarterly rounds). |
-| `PUFREG` | String ($2$-char) | `01`–`19` (`NULL` in monthly) | PSGC Region of Residence. Populated only in quarterly rounds (`1, 4, 7, 10`). |
-| `PUFPSU` | String | Numeric code | Primary Sampling Unit number. Reused across different provinces/domains. |
-| `PUFRPL` | String | `1`–`4` | Master Sample replicate code. Used with `PUFPSU` and `PUFHHNUM` to identify contiguous PSU clusters. |
-| `PUFHHNUM` | Integer | Sequential ID | Unique household identifier within each round, sorted in geographic domain order. |
-| `PUFHHSIZE` | Integer | $\ge 1$ | Number of household members. |
-| `PUFURB2020` | String | `1` = Urban, `2` = Rural | 2020 Census urban-rural barangay classification. |
-| `PUFPWGTPRV` | Double | $> 0$ | **Final calibrated person weight** ($w _ i$). Summing `PUFPWGTPRV` yields population levels; household weight `w_hh` in `hh_psu` is `AVG(PUFPWGTPRV)` within each household. |
-| `PUFC01_LNO` | Integer | `1`–$N$ | Person line number within the household roster. |
-| `PUFC03_REL` | Integer | `1`–`11` | Relationship to household head. |
-| `PUFC04_SEX` | String | `1` = Male, `2` = Female | Sex of respondent (`sex` in tables). |
-| `PUFC05_AGE` | Integer | `0`–`99` ($\ge 15$ filtered) | Age as of last birthday. Filtered to $\ge 15$ and grouped into $6$ age brackets (`age_group`). |
-| `PUFC06_MSTAT` | Integer | `1`–`6` | Marital status. |
-| `PUFC07_GRADE` | Integer ($5$-digit) | PSCEd codes (`0`–`89999`) | Highest grade completed. Recoded into PSA's $11$ official education categories (`educ_group`). |
-| `PUFNEWEMPSTAT` | String | `1` = Emp, `2` = Unemp, `3` = NILF | **PSA derived labor force status.** Filtered to `1` (Employed) in `lfs_employed_2025`. |
-| `PUFC10_CONWR` | String | `1`–`5` | Overseas indicator (used by PSA to exclude OFWs from domestic labor force). |
-| `PUFC11_WORK` | String | `1` = Yes, `2` = No | Worked for at least $1$ hour during the past week. |
-| `PUFC12_JOB` | String | `1` = Yes, `2` = No | Albeit did not work, had a job or business during the past week ("with a job, not at work"). |
-| `PUFC12A_PROVMUN` | String ($4$-char) | `PP` or `PPMM` PSGC | **Province and Municipality of Work.** Used to infer the $117$ sampling domains and workplace region (`W*`). |
-| `PUFC14_PROCC` | Integer ($2$-digit) | PSOC codes (`01`–`96`) | Major occupation group in primary job. |
-| `PUFC16_PKB` | Integer ($2$-digit) | PSIC codes (`01`–`99`) | **Kind of business / industry** (2019 PSIC $2$-digit division). Recoded into $3$ broad sectors and $22$ major industries. |
-| `PUFC17_NATEM` | String | `1` = Perm, `2` = Short-term, `3` = Diff emp | Nature/permanency of employment in primary job. |
-| `PUFC18_PNWHRS` | Integer | `1`–`24` | Normal working hours per day in primary job. |
-| `PUFC19_PHOURS` | Integer | `0`–`168` (or `NULL`) | **Total hours worked during the past week** across all jobs. Splits visible ($<40$) vs. invisible ($\ge 40$). |
-| `PUFC20_PWMORE` | String | `1` = Yes, `2` = No | **Wanted more hours of work** during the past week. Defines underemployment (`pwmore = '1'`). |
-| `PUFC21_PLADDW` | String | `1` = Yes, `2` = No | Looked for additional work during the past week. |
-| `PUFC23_PCLASS` | String | `0`–`6` | Class of worker (private wage, gov't, self-employed, employer, unpaid family worker). |
+| PUF Variable (Quarterly Name) | Data Type | Valid Codes / Range | Official PSA Definition & Analytical Role | 
+| ----- | ----- | ----- | ----- | 
+| `PUFSVYYR` | Integer | `2025` | Survey year. | 
+| `PUFSVYMO` | Integer | `1`–`12` | Survey month (`1` = Jan, `4` = Apr, `7` = Jul, `10` = Oct are quarterly rounds). | 
+| `PUFREG` | String ($2$-char) | `01`–`19` (`NULL` in monthly) | PSGC Region of Residence. Populated only in quarterly rounds (`1, 4, 7, 10`). | 
+| `PUFPSU` | String | Numeric code | Primary Sampling Unit number. Reused across different provinces/domains. | 
+| `PUFRPL` | String | `1`–`4` | Master Sample replicate code. Used with `PUFPSU` and `PUFHHNUM` to identify contiguous PSU clusters. | 
+| `PUFHHNUM` | Integer | Sequential ID | Unique household identifier within each round, sorted in geographic domain order. | 
+| `PUFHHSIZE` | Integer | $\ge 1$ | Number of household members. | 
+| `PUFURB2020` | String | `1` = Urban, `2` = Rural | 2020 Census urban-rural barangay classification. | 
+| `PUFPWGTPRV` | Double | $> 0$ | **Final calibrated person weight** ($w _ i$). Summing `PUFPWGTPRV` yields population levels; household weight `w_hh` in `hh_psu` is `AVG(PUFPWGTPRV)` within each household. | 
+| `PUFC01_LNO` | Integer | `1`–$N$ | Person line number within the household roster. | 
+| `PUFC03_REL` | Integer | `1`–`11` | Relationship to household head. | 
+| `PUFC04_SEX` | String | `1` = Male, `2` = Female | Sex of respondent (`sex` in tables). | 
+| `PUFC05_AGE` | Integer | `0`–`99` ($\ge 15$ filtered) | Age as of last birthday. Filtered to $\ge 15$ and grouped into $6$ age brackets (`age_group`). | 
+| `PUFC06_MSTAT` | Integer | `1`–`6` | Marital status. | 
+| `PUFC07_GRADE` | Integer ($5$-digit) | PSCEd codes (`0`–`89999`) | Highest grade completed. Recoded into PSA's $11$ official education categories (`educ_group`). | 
+| `PUFNEWEMPSTAT` | String | `1` = Emp, `2` = Unemp, `3` = NILF | **PSA derived labor force status.** Filtered to `1` (Employed) in `lfs_employed_2025`. | 
+| `PUFC10_CONWR` | String | `1`–`5` | Overseas indicator (used by PSA to exclude OFWs from domestic labor force). | 
+| `PUFC11_WORK` | String | `1` = Yes, `2` = No | Worked for at least $1$ hour during the past week. | 
+| `PUFC12_JOB` | String | `1` = Yes, `2` = No | Albeit did not work, had a job or business during the past week ("with a job, not at work"). | 
+| `PUFC12A_PROVMUN` | String ($4$-char) | `PP` or `PPMM` PSGC | **Province and Municipality of Work.** Used to infer the $117$ sampling domains and workplace region (`W*`). | 
+| `PUFC14_PROCC` | Integer ($2$-digit) | PSOC codes (`01`–`96`) | Major occupation group in primary job. | 
+| `PUFC16_PKB` | Integer ($2$-digit) | PSIC codes (`01`–`99`) | **Kind of business / industry** (2019 PSIC $2$-digit division). Recoded into $3$ broad sectors and $22$ major industries. | 
+| `PUFC17_NATEM` | String | `1` = Perm, `2` = Short-term, `3` = Diff emp | Nature/permanency of employment in primary job. | 
+| `PUFC18_PNWHRS` | Integer | `1`–`24` | Normal working hours per day in primary job. | 
+| `PUFC19_PHOURS` | Integer | `0`–`168` (or `NULL`) | **Total hours worked during the past week** across all jobs. Splits visible ($<40$) vs. invisible ($\ge 40$). | 
+| `PUFC20_PWMORE` | String | `1` = Yes, `2` = No | **Wanted more hours of work** during the past week. Defines underemployment (`pwmore = '1'`). | 
+| `PUFC21_PLADDW` | String | `1` = Yes, `2` = No | Looked for additional work during the past week. | 
+| `PUFC23_PCLASS` | String | `0`–`6` | Class of worker (private wage, gov't, self-employed, employer, unpaid family worker). | 
 
 ### 2.2 Quarterly vs. Monthly Questionnaire Column-Shift Cross-Walk (`tables.py`)
 
 Because the $8$ non-quarterly monthly rounds omit several supplemental questions, the questionnaire item numbers in the monthly PUF CSVs are shifted backward relative to the $4$ quarterly PUF CSVs. During Step 1 (`build_consolidated_parquet` in `tables.py`), the monthly columns are harmonized to the quarterly schema via the following exact mapping:
 
-| Harmonized / Quarterly Column (Jan, Apr, Jul, Oct) | Raw Monthly PUF Column (Feb, Mar, May, Jun, Aug, Sep, Nov, Dec) | Variable Description |
-|---|---|---|
-| `PUFC10_CONWR` | `PUFC08_CONWR` | Overseas / OFW indicator |
-| `PUFC11_WORK` | `PUFC09_WORK` | Worked at least $1$ hour in past week |
-| `PUFC11A_ARRANGEMENT` | `PUFC09A_WORK` | Work arrangement |
-| `PUFC12_JOB` | `PUFC10_JOB` | Had a job/business although did not work |
-| `PUFC12A_PROVMUN` | `PUFC11A_PROVMUN` | Province & municipality of work ($4$-digit PSGC) |
-| `PUFC14_PROCC` | `PUFC13_PROCC` | Major occupation ($2$-digit PSOC) |
-| `PUFC16_PKB` | `PUFC15_PKB` | Kind of business / industry ($2$-digit PSIC) |
-| `PUFC17_NATEM` | `PUFC16_NATEM` | Nature of employment (permanency) |
-| `PUFC18_PNWHRS` | `PUFC17_PNWHRS` | Normal working hours per day |
-| `PUFC19_PHOURS` | `PUFC18_PHOURS` | Total hours worked in past week |
-| `PUFC20_PWMORE` | `PUFC19_PWMORE` | Wanted more hours of work (underemployed indicator) |
-| `PUFC21_PLADDW` | `PUFC20_PLADDW` | Looked for additional work |
-| `PUFC22_PFWRK` | `PUFC20B_FTWORK` | First time to look for additional work |
-| `PUFC23_PCLASS` | `PUFC21_PCLASS` | Class of worker |
-| `PUFC26_OJOB` | `PUFC22_OJOB` | Had other job/business |
-| `PUFC28_THOURS` | `PUFC23_THOURS` | Total hours worked across all jobs |
-| `PUFC29_WWM48H` | `PUFC24_WWM48H` | Reason for working more than $48$ hours |
-| `PUFC30_LOOKW` | `PUFC25_LOOKW` | Looked for work / tried to establish business |
-| `PUFC31_FLWRK` | `PUFC25B_FTWORK` | First time to look for work |
-| `PUFC34_WYNOT` | `PUFC26_WYNOT` | Main reason for not looking for work |
-| `PUFC36_AVAIL` | `PUFC27_AVAIL` | Available for work during past week / within $2$ weeks |
-| `PUFC38_PREVJOB` | `PUFC28_PREVJOB` | Worked at any time before |
-| `PUFC39_YEAR` / `PUFC39_MONTH` | `PUFC29_YEAR` / `PUFC29_MONTH` | Year and month last worked |
-| `PUFC41_POCC` | `PUFC31_POCC` | Previous occupation |
-| `PUFC43_QKB` | `PUFC33_QKB` | Previous kind of business / industry |
+| Harmonized / Quarterly Column (Jan, Apr, Jul, Oct) | Raw Monthly PUF Column (Feb, Mar, May, Jun, Aug, Sep, Nov, Dec) | Variable Description | 
+| ----- | ----- | ----- | 
+| `PUFC10_CONWR` | `PUFC08_CONWR` | Overseas / OFW indicator | 
+| `PUFC11_WORK` | `PUFC09_WORK` | Worked at least $1$ hour in past week | 
+| `PUFC11A_ARRANGEMENT` | `PUFC09A_WORK` | Work arrangement | 
+| `PUFC12_JOB` | `PUFC10_JOB` | Had a job/business although did not work | 
+| `PUFC12A_PROVMUN` | `PUFC11A_PROVMUN` | Province & municipality of work ($4$-digit PSGC) | 
+| `PUFC14_PROCC` | `PUFC13_PROCC` | Major occupation ($2$-digit PSOC) | 
+| `PUFC16_PKB` | `PUFC15_PKB` | Kind of business / industry ($2$-digit PSIC) | 
+| `PUFC17_NATEM` | `PUFC16_NATEM` | Nature of employment (permanency) | 
+| `PUFC18_PNWHRS` | `PUFC17_PNWHRS` | Normal working hours per day | 
+| `PUFC19_PHOURS` | `PUFC18_PHOURS` | Total hours worked in past week | 
+| `PUFC20_PWMORE` | `PUFC19_PWMORE` | Wanted more hours of work (underemployed indicator) | 
+| `PUFC21_PLADDW` | `PUFC20_PLADDW` | Looked for additional work | 
+| `PUFC22_PFWRK` | `PUFC20B_FTWORK` | First time to look for additional work | 
+| `PUFC23_PCLASS` | `PUFC21_PCLASS` | Class of worker | 
+| `PUFC26_OJOB` | `PUFC22_OJOB` | Had other job/business | 
+| `PUFC28_THOURS` | `PUFC23_THOURS` | Total hours worked across all jobs | 
+| `PUFC29_WWM48H` | `PUFC24_WWM48H` | Reason for working more than $48$ hours | 
+| `PUFC30_LOOKW` | `PUFC25_LOOKW` | Looked for work / tried to establish business | 
+| `PUFC31_FLWRK` | `PUFC25B_FTWORK` | First time to look for work | 
+| `PUFC34_WYNOT` | `PUFC26_WYNOT` | Main reason for not looking for work | 
+| `PUFC36_AVAIL` | `PUFC27_AVAIL` | Available for work during past week / within $2$ weeks | 
+| `PUFC38_PREVJOB` | `PUFC28_PREVJOB` | Worked at any time before | 
+| `PUFC39_YEAR` / `PUFC39_MONTH` | `PUFC29_YEAR` / `PUFC29_MONTH` | Year and month last worked | 
+| `PUFC41_POCC` | `PUFC31_POCC` | Previous occupation | 
+| `PUFC43_QKB` | `PUFC33_QKB` | Previous kind of business / industry | 
 
 ### 2.3 Official Classification & Recode Schemas (`lfs_view.sql`)
 
 #### A. Educational Attainment (`PUFC07_GRADE` $5$-Digit PSCEd $\to$ $11$ Official PSA Categories)
 
-| `educ_code` | Official PSA Category (`educ_group`) | Exact `PUFC07_GRADE` Integer Code Ranges in `lfs_view.sql` |
-|---|---|---|
-| `1` | `No grade completed` | `0`–`1000`, or `2000` (Early childhood / no schooling) |
-| `2` | `Elementary Undergraduate` | `10011`–`10015` (Grades 1–5), or `10004`–`10006` (SPED / non-graded elem) |
-| `3` | `Elementary Graduate` | `10016`–`10018` (Grade 6–7 graduate) |
-| `4` | `Junior High Undergraduate` | `24011`–`24013` (Grades 7–9 / 1st–3rd Yr HS), or `24004`–`24006` |
-| `5` | `Junior High Completed` | `24014`–`24015` (Grade 10 / 4th Yr High School graduate) |
-| `6` | `Senior High Undergraduate` | `34011`, `34021`, `34031`, `35011` (Grade 11 across Academic/TVL/Sports/Arts tracks) |
-| `7` | `Senior High Graduate` | `34013`, `34023`, `34033`, `35013` (Grade 12 graduate across all tracks) |
-| `8` | `Post Secondary Undergraduate` | `40001`–`40003` or `50001`–`50003` (1st–3rd year non-tertiary TVET incomplete) |
-| `9` | `Post Secondary Graduate` | `40011`–`49999` or `50011`–`59999` (Completed post-secondary TVET certificate/diploma) |
-| `10` | `College Undergraduate` | `60001`–`60006` (1st–6th year baccalaureate undergraduate) |
-| `11` | `College Graduate` | `60000`, or `60011`–`89999` (Baccalaureate, Master's, or Doctoral degree holder) |
+| `educ_code` | Official PSA Category (`educ_group`) | Exact `PUFC07_GRADE` Integer Code Ranges in `lfs_view.sql` | 
+| ----- | ----- | ----- | 
+| `1` | `No grade completed` | `0`–`1000`, or `2000` (Early childhood / no schooling) | 
+| `2` | `Elementary Undergraduate` | `10011`–`10015` (Grades 1–5), or `10004`–`10006` (SPED / non-graded elem) | 
+| `3` | `Elementary Graduate` | `10016`–`10018` (Grade 6–7 graduate) | 
+| `4` | `Junior High Undergraduate` | `24011`–`24013` (Grades 7–9 / 1st–3rd Yr HS), or `24004`–`24006` | 
+| `5` | `Junior High Completed` | `24014`–`24015` (Grade 10 / 4th Yr High School graduate) | 
+| `6` | `Senior High Undergraduate` | `34011`, `34021`, `34031`, `35011` (Grade 11 across Academic/TVL/Sports/Arts tracks) | 
+| `7` | `Senior High Graduate` | `34013`, `34023`, `34033`, `35013` (Grade 12 graduate across all tracks) | 
+| `8` | `Post Secondary Undergraduate` | `40001`–`40003` or `50001`–`50003` (1st–3rd year non-tertiary TVET incomplete) | 
+| `9` | `Post Secondary Graduate` | `40011`–`49999` or `50011`–`59999` (Completed post-secondary TVET certificate/diploma) | 
+| `10` | `College Undergraduate` | `60001`–`60006` (1st–6th year baccalaureate undergraduate) | 
+| `11` | `College Graduate` | `60000`, or `60011`–`89999` (Baccalaureate, Master's, or Doctoral degree holder) | 
 
 #### B. Industry Classification (`PUFC16_PKB` $2$-Digit 2019 PSIC $\to$ $3$ Broad Sectors & $22$ Major Industries)
 
-| Broad Sector (`broad_sector`) | `major_industry_order` | Major Industry Division (`major_industry`) | $2$-Digit PSIC (`PUFC16_PKB`) |
-|---|---|---|---|
-| **Agriculture, Forestry, and Fisheries (AFF)** | `1` | Agriculture and Forestry | `01`–`02` |
-| **Agriculture, Forestry, and Fisheries (AFF)** | `2` | Fishing and Aquaculture | `03` |
-| **Industry** | `3` | Mining and Quarrying | `05`–`09` |
-| **Industry** | `4` | Manufacturing | `10`–`33` |
-| **Industry** | `5` | Electricity, Gas, Steam, and Air Conditioning Supply | `35` |
-| **Industry** | `6` | Water Supply; Sewerage, Waste Management | `36`–`39` |
-| **Industry** | `7` | Construction | `41`–`43` |
-| **Services** | `8` | Wholesale and Retail Trade; Repair of Motor Vehicles | `45`–`47` |
-| **Services** | `9` | Transportation and Storage | `49`–`53` |
-| **Services** | `10` | Accommodation and Food Service Activities | `55`–`56` |
-| **Services** | `11` | Information and Communication | `58`–`63` |
-| **Services** | `12` | Financial and Insurance Activities | `64`–`66` |
-| **Services** | `13` | Real Estate Activities | `68` |
-| **Services** | `14` | Professional, Scientific and Technical Activities | `69`–`75` |
-| **Services** | `15` | Administrative and Support Service Activities | `77`–`82` |
-| **Services** | `16` | Public Administration and Defense | `84` |
-| **Services** | `17` | Education | `85` |
-| **Services** | `18` | Human Health and Social Work Activities | `86`–`88` |
-| **Services** | `19` | Arts, Entertainment and Recreation | `90`–`93` |
-| **Services** | `20` | Other Service Activities | `94`–`96` |
-| **Services** | `21` | Activities of Households as Employers | `97`–`98` (0 rows in 2025 PUF; folded into `Other Service` by PSA) |
-| **Services** | `22` | Activities of Extraterritorial Organizations | `99` |
+| Broad Sector (`broad_sector`) | `major_industry_order` | Major Industry Division (`major_industry`) | $2$-Digit PSIC (`PUFC16_PKB`) | 
+| ----- | ----- | ----- | ----- | 
+| **Agriculture, Forestry, and Fisheries (AFF)** | `1` | Agriculture and Forestry | `01`–`02` | 
+| **Agriculture, Forestry, and Fisheries (AFF)** | `2` | Fishing and Aquaculture | `03` | 
+| **Industry** | `3` | Mining and Quarrying | `05`–`09` | 
+| **Industry** | `4` | Manufacturing | `10`–`33` | 
+| **Industry** | `5` | Electricity, Gas, Steam, and Air Conditioning Supply | `35` | 
+| **Industry** | `6` | Water Supply; Sewerage, Waste Management | `36`–`39` | 
+| **Industry** | `7` | Construction | `41`–`43` | 
+| **Services** | `8` | Wholesale and Retail Trade; Repair of Motor Vehicles | `45`–`47` | 
+| **Services** | `9` | Transportation and Storage | `49`–`53` | 
+| **Services** | `10` | Accommodation and Food Service Activities | `55`–`56` | 
+| **Services** | `11` | Information and Communication | `58`–`63` | 
+| **Services** | `12` | Financial and Insurance Activities | `64`–`66` | 
+| **Services** | `13` | Real Estate Activities | `68` | 
+| **Services** | `14` | Professional, Scientific and Technical Activities | `69`–`75` | 
+| **Services** | `15` | Administrative and Support Service Activities | `77`–`82` | 
+| **Services** | `16` | Public Administration and Defense | `84` | 
+| **Services** | `17` | Education | `85` | 
+| **Services** | `18` | Human Health and Social Work Activities | `86`–`88` | 
+| **Services** | `19` | Arts, Entertainment and Recreation | `90`–`93` | 
+| **Services** | `20` | Other Service Activities | `94`–`96` | 
+| **Services** | `21` | Activities of Households as Employers | `97`–`98` (0 rows in 2025 PUF; folded into `Other Service` by PSA) | 
+| **Services** | `22` | Activities of Extraterritorial Organizations | `99` | 
 
 #### C. Regional Classification (`PUFREG` $\to$ $18$ Official PSA Regions in Publication Order)
 
-| Publication Order (`region_order`) | PSGC Code (`rcode`) | Region Display Name (`region` / `work_region`) | Residence (`R*`) vs. Workplace (`W*`) Rule |
-|---|---|---|---|
-| `1`–`6` | `13`, `14`, `01`, `02`, `03`, `04` | NCR, CAR, Region I (Ilocos), Region II (Cagayan Valley), Region III (Central Luzon), Region IV-A (CALABARZON) | `R*` uses `PUFREG` (Jan/Apr/Jul/Oct); `W*` maps `PUFC12A_PROVMUN` across all $12$ months. |
-| `7`–`12` | `17`, `05`, `06`, `18`, `07`, `08` | MIMAROPA, Region V (Bicol), Region VI (Western Visayas), NIR (Negros Island), Region VII (Central Visayas), Region VIII (Eastern Visayas) | NIR (`18`) is published as a distinct region throughout all 2025 LFS rounds. |
-| `13`–`18` | `09`, `10`, `11`, `12`, `16`, `19` | Region IX (Zamboanga Peninsula), Region X (Northern Mindanao), Region XI (Davao), Region XII (SOCCSKSARGEN), Region XIII (Caraga), BARMM | In the 2025 PUF, Sulu province (`66`) is mapped to BARMM (`19`) via `work_dom_region`. |
-
----
+| Publication Order (`region_order`) | PSGC Code (`rcode`) | Region Display Name (`region` / `work_region`) | Residence (`R*`) vs. Workplace (`W*`) Rule | 
+| ----- | ----- | ----- | ----- | 
+| `1`–`6` | `13`, `14`, `01`, `02`, `03`, `04` | NCR, CAR, Region I (Ilocos), Region II (Cagayan Valley), Region III (Central Luzon), Region IV-A (CALABARZON) | `R*` uses `PUFREG` (Jan/Apr/Jul/Oct); `W*` maps `PUFC12A_PROVMUN` across all $12$ months. | 
+| `7`–`12` | `17`, `05`, `06`, `18`, `07`, `08` | MIMAROPA, Region V (Bicol), Region VI (Western Visayas), NIR (Negros Island), Region VII (Central Visayas), Region VIII (Eastern Visayas) | NIR (`18`: Negros Occidental `45` and Negros Oriental `46`) is published as a distinct region throughout all 2025 LFS rounds. | 
+| `13`–`18` | `09`, `10`, `11`, `12`, `16`, `19` | Region IX (Zamboanga Peninsula), Region X (Northern Mindanao), Region XI (Davao), Region XII (SOCCSKSARGEN), Region XIII (Caraga), BARMM | In the 2025 PUF, Sulu province (`66`) is mapped to BARMM (`19`) via `work_dom_region`. | 
 
 ## 3. Core Point Estimators (Counts, Rates, and Shares) {#estimators}
 
@@ -257,20 +243,19 @@ Published headcount tables divide these totals by $10^3$ to report figures in th
 
 Because headcount concentration and individual vulnerability move in opposite directions across sectors, the tables and figures distinguish four ratios:
 
-| Metric Name | Column Name in CSVs | Mathematical Definition | Interpretation |
-|---|---|---|---|
-| **1. Within-Group Underemployment Rate** | `underemp_rate_pct` | $\hat{R} _ {m,d} = \frac{\hat{Y} _ {m,d}}{\hat{X} _ {m,d}} \times 100$ | Share of *employed workers in group* $d$ who want more hours (vulnerability/incidence rate). |
-| **2. Within-Group Visible / Invisible Rates** | `visible_rate_pct`, `invisible_rate_pct` | $\hat{R} _ {m,d}^{\text{vis}} = \frac{\hat{Y} _ {m,d}^{\text{vis}}}{\hat{X} _ {m,d}} \times 100$, $\hat{R} _ {m,d}^{\text{inv}} = \frac{\hat{Y} _ {m,d}^{\text{inv}}}{\hat{X} _ {m,d}} \times 100$ | Additive components of the group rate ($\hat{R} _ {m,d} = \hat{R} _ {m,d}^{\text{vis}} + \hat{R} _ {m,d}^{\text{inv}}$), plotted in Figure 1B. |
-| **3. Visible / Invisible Share of Underemployed** | `visible_share_within_group_pct` | $\hat{S} _ {m,d}^{\text{vis}} = \frac{\hat{Y} _ {m,d}^{\text{vis}}}{\hat{Y} _ {m,d}} \times 100$, $\hat{S} _ {m,d}^{\text{inv}} = \frac{\hat{Y} _ {m,d}^{\text{inv}}}{\hat{Y} _ {m,d}} \times 100$ | Share of *underemployed workers in group* $d$ working $<40$ hrs vs. $\ge 40$ hrs ($\hat{S} _ {m,d}^{\text{vis}} + \hat{S} _ {m,d}^{\text{inv}} = 100\%$). |
-| **4. Share of National / Sector Pool** | `share_of_national_underemp_pct` | $\hat{P} _ {m,d}^{\text{nat}} = \frac{\hat{Y} _ {m,d}}{\sum _ {d'} \hat{Y} _ {m,d'}} \times 100$ | Group $d$'s share of the entire national underemployed pool ($5.8\text{M}$). |
-
----
+| Metric Name | Column Name in CSVs | Mathematical Definition | Interpretation | 
+| ----- | ----- | ----- | ----- | 
+| **1. Within-Group Underemployment Rate** | `underemp_rate_pct` | $\hat{R} _ {m,d} = \frac{\hat{Y} _ {m,d}}{\hat{X} _ {m,d}} \times 100$ | Share of *employed workers in group* $d$ who want more hours (vulnerability/incidence rate). | 
+| **2. Within-Group Visible / Invisible Rates** | `visible_rate_pct`, `invisible_rate_pct` | $\hat{R} _ {m,d}^{\text{vis}} = \frac{\hat{Y} _ {m,d}^{\text{vis}}}{\hat{X} _ {m,d}} \times 100$, $\hat{R} _ {m,d}^{\text{inv}} = \frac{\hat{Y} _ {m,d}^{\text{inv}}}{\hat{X} _ {m,d}} \times 100$ | Additive components of the group rate ($\hat{R} _ {m,d} = \hat{R} _ {m,d}^{\text{vis}} + \hat{R} _ {m,d}^{\text{inv}}$), plotted in Figure 1B. | 
+| **3. Visible / Invisible Share of Underemployed** | `visible_share_within_group_pct` | $\hat{S} _ {m,d}^{\text{vis}} = \frac{\hat{Y} _ {m,d}^{\text{vis}}}{\hat{Y} _ {m,d}} \times 100$, $\hat{S} _ {m,d}^{\text{inv}} = \frac{\hat{Y} _ {m,d}^{\text{inv}}}{\hat{Y} _ {m,d}} \times 100$ | Share of *underemployed workers in group* $d$ working $<40$ hrs vs. $\ge 40$ hrs ($\hat{S} _ {m,d}^{\text{vis}} + \hat{S} _ {m,d}^{\text{inv}} = 100\%$). | 
+| **4. Share of National / Sector Pool** | `share_of_national_underemp_pct` | $\hat{P} _ {m,d}^{\text{nat}} = \frac{\hat{Y} _ {m,d}}{\sum _ {d'} \hat{Y} _ {m,d'}} \times 100$ | Group $d$'s share of the entire national underemployed pool ($5.8\text{M}$). | 
 
 ## 4. Multi-Round Aggregation (Annual & Quarterly Averages) {#aggregation}
 
 Let $\mathcal{M}$ be the set of survey months pooled for an estimate, with cardinality $K = \vert\mathcal{M}\vert$:
 
 * **National and Workplace-Region (`W*`) Annual Tables:** $\mathcal{M} = \{1, 2, \dots, 12\}$, $K = 12$.
+
 * **Residence-Region (`R*`) Quarterly Tables:** $\mathcal{M} = \{1, 4, 7, 10\}$ (January, April, July, October), $K = 4$, as only the quarterly LFS rounds deploy the full $4$-replicate sample designed for regional estimates.
 
 The multi-round average monthly headcount (in thousands) is the arithmetic mean across the $K$ rounds:
@@ -285,27 +270,25 @@ $$
 \bar{R}_d = \frac{\sum_{m \in \mathcal{M}} \hat{Y}_{m,d}}{\sum_{m \in \mathcal{M}} \hat{X}_{m,d}} \times 100 = \frac{\bar{Y}_d}{\bar{X}_d} \times 100
 $$
 
----
-
 ## 5. Reconstructing the 117 Master Sample Domains & PSUs {#design}
 
 Because the anonymized PUF omits explicit residence-province codes and reuses PSU numbers across provinces, [`lfs_view.sql`](https://github.com/KingSSIBAL/LFS-2025-Analysis/blob/main/lfs_view.sql) reconstructs the two-stage design in four steps:
 
 1. **Contiguous PSU Identification (`hh_psu`):** Within each month $m$, households are ordered by their sequential household number (`PUFHHNUM`), which follows the geographic ordering of the Master Sample frame. A new Primary Sampling Unit (PSU) cluster $a$ begins whenever the replicate code (`PUFRPL`) or PSU code (`PUFPSU`) changes between consecutive households. Each household's weight $w _ {p,a,h}$ (`w_hh`) is computed as the mean of its members' calibrated person weights (`AVG(PUFPWGTPRV)`).
+
 2. **Neighbor-PSU Stratum Assignment (`psu_frame`):** Each household is assigned the modal province/HUC of work (`PUFC12A_PROVMUN`) of its employed members, and each PSU takes the modal domain $s _ {m,a}$ of its households. Because `PUFHHNUM` is sorted geographically by residence domain, any PSU whose workplace-mode domain differs from two agreeing adjacent neighbors ($s _ {m,a-1} = s _ {m,a+1} \neq s _ {m,a}$) represents cross-border commuters ($248$ PSUs across 2025) and is reassigned to the residence stratum $p = s _ {m,a-1}$ (likewise for $4$ PSUs with zero employed workers).
-3. **Second-Stage Finite Population Correction ($1 - f _ {2,p,a}$):** Let $b _ {p,a}$ be the number of sampled households in PSU $a$ of stratum $p$. Following PSA Technical Notes (p. 3), where each PSU contains approximately $100$ to $400$ households, the frame size of each PSU is approximated by the midpoint $B _ {p,a} = \max(b _ {p,a}, 250)$, giving the second-stage FPC factor:
+
+3. **Second-Stage Finite Population Correction (**$1 - f _ {2,p,a}$**):** Let $b _ {p,a}$ be the number of sampled households in PSU $a$ of stratum $p$. Following PSA Technical Notes (p. 3), where each PSU contains approximately $100$ to $400$ households, the frame size of each PSU is approximated by the midpoint $B _ {p,a} = \max(b _ {p,a}, 250)$, giving the second-stage FPC factor:
 
 $$
 1 - f_{2,p,a} = 1 - \frac{b_{p,a}}{\max(b_{p,a}, 250)}
 $$
 
-4. **First-Stage Sampling Fraction ($f _ {1,p}$):** Let $a _ p$ be the number of sampled PSUs in stratum $p$, and let $\hat{H} _ {p,a} = \sum _ {h=1}^{b _ {p,a}} w _ {p,a,h}$ (`psu_hh`) be the weighted household count of PSU $a$. The total number of frame PSUs in stratum $p$ is estimated as $\hat{A} _ p = \max\!\left(a _ p, \frac{1}{250}\sum _ {a=1}^{a _ p} \hat{H} _ {p,a}\right)$, yielding the first-stage sampling fraction:
+4. **First-Stage Sampling Fraction (**$f _ {1,p}$**):** Let $a _ p$ be the number of sampled PSUs in stratum $p$, and let $\hat{H} _ {p,a} = \sum _ {h=1}^{b _ {p,a}} w _ {p,a,h}$ (`psu_hh`) be the weighted household count of PSU $a$. The total number of frame PSUs in stratum $p$ is estimated as $\hat{A} _ p = \max\!\left(a _ p, \frac{1}{250}\sum _ {a=1}^{a _ p} \hat{H} _ {p,a}\right)$, yielding the first-stage sampling fraction:
 
 $$
 f_{1,p} = \frac{a_p}{\hat{A}_p}, \qquad 1 - f_{1,p} = 1 - \frac{a_p}{\hat{A}_p}
 $$
-
----
 
 ## 6. Two-Stage Stratified Cluster Variance (Totals) {#variance}
 
@@ -345,8 +328,6 @@ $$
 
 Identical expressions yield the denominator variance $V(\hat{X} _ {m,d})$ and the bilinear covariance $\text{Cov}(\hat{X} _ {m,d}, \hat{Y} _ {m,d})$.
 
----
-
 ## 7. Taylor Series Linearization for Ratio Standard Errors {#taylor}
 
 Because the underemployment proportion $\hat{r} _ d = \hat{Y} _ d / \hat{X} _ d \in [0, 1]$ (where $\hat{R} _ d = 100\,\hat{r} _ d$ is expressed in percentage points) is a ratio of two random survey totals, its variance is approximated via first-order Taylor series linearization around the population expectations (PSA Technical Notes, p. 8b):
@@ -365,9 +346,7 @@ $$
 \text{SE}(\bar{R}_d) = \frac{\sqrt{\max\!\left(0,\, \sum_{m \in \mathcal{M}} V(\hat{Y}_{m,d}) + \hat{r}_d^2 \sum_{m \in \mathcal{M}} V(\hat{X}_{m,d}) - 2 \hat{r}_d \sum_{m \in \mathcal{M}} \text{Cov}(\hat{Y}_{m,d}, \hat{X}_{m,d})\right)}}{\sum_{m \in \mathcal{M}} \hat{X}_{m,d}} \times 100 \quad \text{(in pp, } \texttt{se\_underemp\_rate\_pp}\text{)}
 $$
 
-*(Note on rotational panel covariance: If longitudinal household panel identifiers were available across rounds, the true variance of the $K$-round mean would include positive serial covariance terms $2 \sum _ {m < m'} \text{Cov}(\hat{Y} _ {m,d}, \hat{Y} _ {m',d})$.)*
-
----
+*(Note on rotational panel covariance: If longitudinal household panel identifiers were available across rounds, the true variance of the* $K$*-round mean would include positive serial covariance terms* $2 \sum _ {m < m'} \text{Cov}(\hat{Y} _ {m,d}, \hat{Y} _ {m',d})$*.)*
 
 ## 8. Reliability Bands (CV), Small-Cell Algebra & Confidence Interval Overlap {#reliability}
 
@@ -381,13 +360,15 @@ $$
 
 Following the reliability thresholds used in PSA/NSCB small-area statistics, every table row and chart bar is classified into three bands:
 
-* **Reliable ($\text{CV} \le 10\%$):** Solid bar, no flag.
-* **Use with caution ($10\% < \text{CV} \le 20\%$):** Single-hatched bar (`//`) and single asterisk (`*`).
-* **Unreliable ($\text{CV} > 20\%$):** Triple-hatched translucent bar (`///`) and double asterisk (`**`).
+* **Reliable (**$\text{CV} \le 10\%$**):** Solid bar, no flag.
+
+* **Use with caution (**$10\% < \text{CV} \le 20\%$**):** Single-hatched bar (`//`) and single asterisk (`*`).
+
+* **Unreliable (**$\text{CV} > 20\%$**):** Triple-hatched translucent bar (`///`) and double asterisk (`**`).
 
 ### Why Rare Subgroups Have High CVs (`*` and `**`): The Mathematics of Small-Cell Variance {#small-cells}
 
-When the data are cross-tabulated into fine demographic cells—such as *Post-Secondary Non-Tertiary Undergraduates* (`RQ1_RQ2_c_Education`) or *No Grade Completed $\times$ Industry* (`5A_Sector_Educ_Annual`)—some cells represent a very small fraction of the national workforce. In a two-stage cluster sample, rare subgroups exhibit high relative variance for two mathematical reasons:
+When the data are cross-tabulated into fine demographic cells—such as *Post-Secondary Non-Tertiary Undergraduates* (`RQ1_RQ2_c_Education`) or *No Grade Completed* $\times$ *Industry* (`5A_Sector_Educ_Annual`)—some cells represent a very small fraction of the national workforce. In a two-stage cluster sample, rare subgroups exhibit high relative variance for two mathematical reasons:
 
 1. **Zero-Heavy PSU Concentration:** Suppose within a stratum $p$ containing $a _ p$ sampled PSUs, only one PSU ($a = 1$) happens to contain respondents belonging to rare subgroup $d$, so $z _ {y,p,1} > 0$ and $z _ {y,p,2} = \dots = z _ {y,p,a _ p} = 0$. Substituting these into the between-PSU sum of squares yields:
 
@@ -403,7 +384,7 @@ $$
 
 Thus, a single non-zero PSU contributes nearly the full square of its weighted total $z _ {y,p,1}^2$ to the stratum variance ($\text{CV} _ p \approx \sqrt{1 - f _ {1,p}} \approx 100\%$ within that stratum/month).
 
-2. **Small Denominator Scaling ($1 / \sqrt{M _ d}$):** Pooled across $K$ rounds and $M _ d$ non-empty PSU clusters nationally, the relative standard error scales inversely with the square root of the effective number of non-zero clusters $M _ d$:
+2. **Small Denominator Scaling (**$1 / \sqrt{M _ d}$**):** Pooled across $K$ rounds and $M _ d$ non-empty PSU clusters nationally, the relative standard error scales inversely with the square root of the effective number of non-zero clusters $M _ d$:
 
 $$
 \text{CV}(\bar{Y}_d) = \frac{\text{SE}(\bar{Y}_d)}{\bar{Y}_d} \propto \frac{1}{\sqrt{M_d}}
@@ -434,8 +415,6 @@ $$
 $$
 
 Consequently, non-overlapping $95\%$ whiskers provide a conservative visual guarantee of statistical difference ($p \approx 0.006$), while two intervals that overlap by less than $\frac{3.92 - 2.77}{3.92} \approx 29\%$ of a single whisker arm remain statistically distinct at the pairwise $5\%$ level.
-
----
 
 ## 9. Statistical Remedies for High-CV ("Unreliable") Small Domains {#remedies}
 
@@ -487,57 +466,82 @@ $$
 
 Whenever a small cell $d$ has a very large direct design variance $V(\bar{Y} _ d)$ ($\text{CV} > 20\%$), the shrinkage factor $\gamma _ d$ automatically shifts weight toward the synthetic census prediction $\mathbf{x} _ d^\top \hat{\boldsymbol{\beta}}$, stabilizing the estimate and reducing its effective $\text{CV}$ by $\sqrt{\gamma _ d}$.
 
----
-
-## 10. Official PSA Validation Architecture & Worked Numerical Walkthrough {#example}
+## 10. Official PSA Validation Architecture, Output Table Inventory & Worked Walkthrough {#example}
 
 ### 10.1 Automated Validation Against $12$ PSA Special Release Table Families (`psa.py`) {#validation-map}
 
-Every run of `uv run lfs.py` executes `verify_against_psa_official()` in [`psa.py`](https://github.com/KingSSIBAL/LFS-2025-Analysis/blob/main/psa.py), which parses the official Excel files in `data/psa_special_release/` and verifies $4,229$ point estimates ($3,576$ monthly, $77$ annual, $576$ regional) and $84$ standard error cells ($12$ national + $72$ regional) across all $12$ PSA table families:
+The repository stores two sets of PSA spreadsheets: preliminary Press Release tables in `data/psa_press_release/` (`44` files) and **final Special Release statistical tables** (estimates marked `"f"`) in `data/psa_special_release/` (`159` files). Every run of `uv run lfs.py` executes `verify_against_psa_official()` in [`psa.py`](https://github.com/KingSSIBAL/LFS-2025-Analysis/blob/main/psa.py), which skips preliminary `__PR_` files and checks every comparable figure and standard error against the final Special Release tables in `data/psa_special_release/`:
 
-| Verifier Key in `psa.py` | Official PSA Special Release Table Title Pattern | Rounds Published | Verified Indicators & Dimensions |
-|---|---|---|---|
-| `status_sex_age` | *Percent Distribution of Population 15 Years Old and Over by Employment Status, Sex, and Age* | All $12$ months | Employed & underemployed totals + SEs; by sex and $6$ age groups |
-| `status_region_sex` | *...by Employment Status, Region, and Sex* | Quarterly ($1, 4, 7, 10$) | Employed & underemployed totals + SEs across $18$ regions $\times$ sex |
-| `hours_occ` | *Employed Persons by Total Hours Worked and Major Occupation* | All $12$ months | Not at work, worked $<40$ hrs, worked $40+$ hrs (`notwork`, `lt40`, `ge40`) |
-| `hours_region_sex` | *Employed Persons by Total Hours Worked, Region, and Sex* | Quarterly ($1, 4, 7, 10$) | Hours worked categories across $18$ regions |
-| `class_broad` | *Employed Persons by Class of Worker and Broad Industry Group* | All $12$ months | Employed totals across AFF, Industry, and Services |
-| `sex_major_ind` | *Employed Persons by Sex, (Region,) and Major Industry* | All $12$ months | Employed across $22$ major industries (and region $\times$ broad sector in quarterly rounds) |
-| `educ_sex_age` | *Employed Persons by Highest Grade Completed, Sex, and Age* | All $12$ months | Employed across all $11$ official education categories (`EDUC_ORDER`) |
-| `educ_region_sex` | *Employed Persons by Highest Grade Completed, Region, and Sex* | Quarterly ($1, 4, 7, 10$) | Employed across $18$ regions $\times$ $11$ education categories |
-| `wm_hours_sex` | *Employed Persons Wanting More Hours of Work by Total Hours Worked and Sex* | All $12$ months | Underemployed, visibly ($<40$ hrs), and invisibly ($\ge 40$ hrs) by sex |
-| `wm_hours_region` | *Employed Persons Wanting More Hours of Work by Total Hours Worked, Region, and Sex* | Quarterly ($1, 4, 7, 10$) | Underemployed, visible, and invisible across $18$ regions $\times$ sex |
-| `wm_broad` | *Employed Persons Wanting More Hours of Work by Total Hours Worked and Broad Industry* | Monthly ($8$ non-Q rounds) | Underemployed, visible, and invisible across AFF, Industry, and Services |
-| `wm_major` | *Employed Persons Wanting More Hours of Work by Major Industry* | Quarterly ($1, 4, 7, 10$) | Underemployed across all $22$ major industries (and $3$ broad sectors) |
+* **`0B_PSA_Validation_Monthly.csv` (**$3,576$ **`PASS` rows,** $0$ **failures):** Verifies every monthly point estimate and rate across all $12$ rounds.
 
-*(Rounding tolerances: PSA prints totals in thousands to $3$ decimal places and child breakdowns as percentages to $1\text{--}3$ decimal places; rebuilding a child level as $\text{pct} \times \text{total}$ introduces at most $0.25\text{k}$ rounding difference, guarded by strict pass/fail assertions of `TOL_LEVEL_K = 1.0k` and `TOL_RATE_PP = 0.05 pp`.)*
+* **`0A_PSA_Validation_Annual.csv` (**$657$ **total rows,** $0$ **failures):**
 
-### 10.2 Worked Numerical Walkthrough
+  * $77$ **`PASS` rows** (`2025 Annual Avg (mean of 12 monthly finals)`): National and demographic/sectoral $12$-month averages.
+
+  * $576$ **`PASS` rows** (`Q-avg Jan/Apr/Jul/Oct`): Regional $4$-quarter averages across all $18$ regions.
+
+  * $1$ **`INFO` row** (`2025 Annual (Annual Special Release 2025p)`): Compares our $12$-month final mean employed count ($49,024.506\text{k}$) against PSA's preliminary `00_Annual__Table 2` release (`2025p`, which was published before all monthly rounds were finalized and sits $11.3\text{k}$ higher).
+
+  * $3$ **`N/A` rows** (`N/A (not published every month; no comparable period average)`): Documents `wm_broad` (`visible` and `invisible` by broad sector, published only in the $8$ non-quarterly rounds) and `wm_major` (`underemp` by major industry, published only in the $4$ quarterly rounds).
+
+* **Standard Error Assertions (**$84$ **cells):** Asserts that our two-stage Taylor linearization standard errors (`se_underemp_k`) match PSA's published `Standard Error` columns within $5\%$ nationally ($12$ months: median $0.9990\times$, range $0.973\text{--}1.020\times$) and within $15\%$ regionally ($72$ cells: median $0.9918\times$, range $0.875\text{--}1.040\times$).
+
+| Verifier Key in `psa.py` | Official PSA Special Release Table Title Pattern | Rounds Published | Verified Indicators & Dimensions | 
+| ----- | ----- | ----- | ----- | 
+| `status_sex_age` | *Percent Distribution of Population 15 Years Old and Over by Employment Status, Sex, and Age* | All $12$ months | Employed & underemployed totals + SEs; by sex and $6$ age groups | 
+| `status_region_sex` | *...by Employment Status, Region, and Sex* | Quarterly ($1, 4, 7, 10$) | Employed & underemployed totals + SEs across $18$ regions $\times$ sex | 
+| `hours_occ` | *Employed Persons by Total Hours Worked and Major Occupation* | All $12$ months | Not at work, worked $<40$ hrs, worked $40+$ hrs (`notwork`, `lt40`, `ge40`) | 
+| `hours_region_sex` | *Employed Persons by Total Hours Worked, Region, and Sex* | Quarterly ($1, 4, 7, 10$) | Hours worked categories across $18$ regions | 
+| `class_broad` | *Employed Persons by Class of Worker and Broad Industry Group* | All $12$ months | Employed totals across AFF, Industry, and Services | 
+| `sex_major_ind` | *Employed Persons by Sex, (Region,) and Major Industry* | All $12$ months | Employed across $22$ major industries (and region $\times$ broad sector in quarterly rounds) | 
+| `educ_sex_age` | *Employed Persons by Highest Grade Completed, Sex, and Age* | All $12$ months | Employed across all $11$ official education categories (`EDUC_ORDER`) | 
+| `educ_region_sex` | *Employed Persons by Highest Grade Completed, Region, and Sex* | Quarterly ($1, 4, 7, 10$) | Employed across $18$ regions $\times$ $11$ education categories | 
+| `wm_hours_sex` | *Employed Persons Wanting More Hours of Work by Total Hours Worked and Sex* | All $12$ months | Underemployed, visibly ($<40$ hrs), and invisibly ($\ge 40$ hrs) by sex | 
+| `wm_hours_region` | *Employed Persons Wanting More Hours of Work by Total Hours Worked, Region, and Sex* | Quarterly ($1, 4, 7, 10$) | Underemployed, visible, and invisible across $18$ regions $\times$ sex | 
+| `wm_broad` | *Employed Persons Wanting More Hours of Work by Total Hours Worked and Broad Industry* | Monthly ($8$ non-Q rounds) | Underemployed, visible, and invisible across AFF, Industry, and Services | 
+| `wm_major` | *Employed Persons Wanting More Hours of Work by Major Industry* | Quarterly ($1, 4, 7, 10$) | Underemployed across all $22$ major industries (and $3$ broad sectors) | 
+
+*(Rounding tolerances: PSA prints totals in thousands to* $3$ *decimal places and child breakdowns as percentages to* $1\text{--}3$ *decimal places; rebuilding a child level as* $\text{pct} \times \text{total}$ *introduces at most* $0.25\text{k}$ *rounding difference, guarded by strict pass/fail assertions of `TOL_LEVEL_K = 1.0k` and `TOL_RATE_PP = 0.05 pp`.)*
+
+### 10.2 Inventory of All $43$ Generated CSV Tables (`output/tables/*.csv`) {#table-inventory}
+
+All $43$ CSV tables below are also compiled as separate worksheets (alongside a `README` sheet = $44$ sheets total) in [`output/LFS_2025_Stratified_Underemployment_Tables.xlsx`](output/LFS_2025_Stratified_Underemployment_Tables.xlsx):
+
+| Table Family | CSV / Sheet Names | Stratification Dimensions | Divisor ($K$) | Extra Schema Columns & Verification Note | 
+| ----- | ----- | ----- | ----- | ----- | 
+| **PSA Validation (`2` tables)** | `0A_PSA_Validation_Annual`, `0B_PSA_Validation_Monthly` | Indicator $\times$ Group $\times$ Period/Month | $K=12$, $K=4$, or $K=1$ | `PUF_Calculated`, `PSA_Official`, `Diff`, `Status` ($4,229$ `PASS` checks) | 
+| **Broad Sector Breakdowns (`10` tables)** | `1A`/`1B` (Sector), `2A`/`2B` (Sector $\times$ Sex), `3A`/`3B` (Sector $\times$ Age), `4A`/`4B` (Sector $\times$ Age $\times$ Sex), `5A`/`5B` (Sector $\times$ Educ) | `A` = Annual mean, `B` = Monthly granular ($12$ months) | `A`: $K=12$; `B`: $K=1$ | `1B` includes `worked_lt40_k`, `worked_40plus_k`, `job_not_at_work_k`; all carry `se_underemp_k`, `se_underemp_rate_pp`, `cv_underemp_pct`, `reliability` | 
+| **Residence Region `R*` (`10` tables)** | `R0A`/`R0B` (Region), `R1A`/`R1B` ($\times$ Sex), `R2A`/`R2B` ($\times$ Sector), `R3A`/`R3B` ($\times$ Age), `R4A`/`R4B` ($\times$ Educ) | `A` = Quarterly avg (`Qavg`), `B` = Quarterly (`Jan, Apr, Jul, Oct`) | `A`: $K=4$; `B`: $K=1$ | Includes unweighted sample count `n_unweighted`; `R0` and `R1` checked directly vs. PSA regional tables | 
+| **Workplace Region `W*` (`10` tables)** | `W0A`/`W0B` (Work Region), `W1A`/`W1B` ($\times$ Sex), `W2A`/`W2B` ($\times$ Sector), `W3A`/`W3B` ($\times$ Age), `W4A`/`W4B` ($\times$ Educ) | `A` = Annual mean ($12$ months), `B` = Monthly ($12$ months) | `A`: $K=12$; `B`: $K=1$ | Includes `n_unweighted`; derived from `PUFC12A_PROVMUN`; sums to checked national totals | 
+| **Research Questions `RQ1`–`RQ3` (`11` tables)** | `RQ1_RQ2_a_Age`, `_b_Sex`, `_c_Education`, `_d1_Broad_Industry`, `_d2_Major_Industry`; `RQ3_Monthly_Overall`, `_by_Age`, `_by_Sex`, `_by_Educ`, `_by_Sector`, `_by_Major_Ind` | `RQ1_RQ2_*` = Annual mean; `RQ3_Monthly_*` = Monthly ($12$ months) | `RQ1_RQ2`: $K=12$; `RQ3`: $K=1$ | Direct source tables for Figures RQ1, RQ2, and RQ3 | 
+
+### 10.3 Worked Numerical Walkthrough
 
 To trace how the SQL and Python pipeline transforms raw household weights into published rows with standard errors and reliability flags, consider three benchmark cells from the verified 2025 tables:
 
-1. **National Annual Headline (`0A_PSA_Validation_Annual` & `1A_Sector_Annual`, $K = 12$ months):**
+1. **National Annual Headline (`0A_PSA_Validation_Annual` & `1A_Sector_Annual`,** $K = 12$ **months):**
+
    * **Point Estimates:** Across the $12$ monthly rounds, the exact mean employed total is $\bar{X} = 49,024.506\text{k}$ ($49.0\text{M}$) and the mean underemployed total is $\bar{Y} \approx 5,834\text{k}$ ($5.8\text{M}$, or $11.9\%$ of employed).
+
    * **Standard Error Validation:** Across the $12$ individual monthly rounds, the ratio of our two-stage design standard error $\text{SE}(\hat{Y} _ m)$ to PSA's published Special Release standard error has a median of $0.9990\times$ (range $0.973\times\text{--}1.020\times$).
 
-2. **Regional Quarterly Estimate (`R0A_RReg_Qavg` / `R0B_RReg_Quarterly`, $K = 4$ quarterly rounds):**
+2. **Regional Quarterly Estimate (`R0A_RReg_Qavg` / `R0B_RReg_Quarterly`,** $K = 4$ **quarterly rounds):**
+
    * **Point Estimates:** For Region XII (SOCCSKSARGEN), averaging the $4$ quarterly rounds (January, April, July, October) yields the highest regional underemployment rate in the country at $\bar{R} _ {\text{XII}} = 28.8\%$, compared with $\bar{R} _ {\text{XI}} = 5.3\%$ in neighboring Davao.
+
    * **Standard Error Validation:** Across all $4 \times 18 = 72$ quarterly regional cells, our two-stage standard errors match PSA's published regional standard errors to a median ratio of $0.9918\times$ (range $0.875\times\text{--}1.040\times$).
 
-3. **Unreliable Small Subgroup (`RQ1_RQ2_c_Education`, Post-Secondary Undergraduates, $K = 12$ months):**
+3. **Unreliable Small Subgroup (`RQ1_RQ2_c_Education`, Post-Secondary Undergraduates,** $K = 12$ **months):**
+
    * **Why it is flagged `**`:** Post-secondary non-tertiary undergraduates (`PUFC07_GRADE` codes `40001`–`40003` and `50001`–`50003`) represent a tiny fraction of the workforce where most PSU clusters contain zero respondents ($z _ {y,p,a} = 0$), triggering the small-cell variance effect derived in Section 8.
+
    * **CV Calculation:** With $\text{SE}(\bar{Y} _ d) = 0.227 \, \bar{Y} _ d$, dividing the pooled standard error by the small subgroup headcount estimate yields:
-     $$\text{CV}(\bar{Y}_d) = \frac{\text{SE}(\bar{Y}_d)}{\bar{Y}_d} \times 100 = \frac{0.227 \, \bar{Y}_d}{\bar{Y}_d} \times 100 = 22.7\% > 20\%$$
+     
+
+     $$
+     \text{CV}(\bar{Y}_d) = \frac{\text{SE}(\bar{Y}_d)}{\bar{Y}_d} \times 100 = \frac{0.227 \, \bar{Y}_d}{\bar{Y}_d} \times 100 = 22.7\% > 20\%
+     $$
+
    * **Visual & Table Encoding:** Because $\text{CV} > 20\%$, `tables.py` labels the row `unreliable (CV>20%)` and `figures.py` renders the bar with triple hatching (`///`), $45\%$ opacity, and a `**` suffix.
 
-[$\leftarrow$ Back to Main Report](index.html)
-
-<style>
-  table { display: block; max-width: 100%; overflow-x: auto; }
-</style>
-<script>
-  window.MathJax = {
-    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] }
-  };
-</script>
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+[\$\\leftarrow$ Back to Main Report](index.html)

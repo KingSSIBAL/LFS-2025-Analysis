@@ -118,7 +118,10 @@ if __name__ == "__main__":
                 f"FROM '{p_str}' WHERE NULLIF(TRIM(PUFREG), '') IS NOT NULL AND TRIM(PUFC12A_PROVMUN) <> '' GROUP BY 1, 2) GROUP BY 1"
             )
         else:
-            con.execute("CREATE OR REPLACE TABLE work_dom_region AS SELECT '66' AS work_dom, '19' AS wcode")
+            con.execute(
+                "CREATE OR REPLACE TABLE work_dom_region AS "
+                "SELECT * FROM (VALUES ('45', '18'), ('46', '18'), ('66', '19')) t(work_dom, wcode)"
+            )
         generate_figures(cached)
         generate_region_map(con, cached)
         generate_rq_figures(cached)
