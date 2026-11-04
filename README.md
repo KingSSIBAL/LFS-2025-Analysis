@@ -4,7 +4,7 @@ Who is underemployed (employed but wanting more hours of work), by sector, sex, 
 the 12 monthly 2025 LFS Public Use Files. Every figure PSA publishes is recomputed and checked against PSA's final
 tables (4,229 checks, all pass). Standard errors follow the PSA Technical Notes.
 
-**Report:** [`index.md`](index.md), published with GitHub Pages (Settings → Pages → Deploy from branch `main`, folder `/ (root)`).
+**Report:** [Live site](https://kingssibal.github.io/LFS-2025-Analysis/) ([`index.md`](index.md) source).
 
 **Methods, sources and why the results can't match PSA 100%:** see the notes at the top of [`lfs.py`](lfs.py)
 (also the `README` sheet of the Excel output).
