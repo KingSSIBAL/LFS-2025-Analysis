@@ -19,17 +19,17 @@ This page documents the exact estimators, domain-reconstruction rules, and two-s
   <li><a href="#variance">Two-stage stratified cluster variance (totals)</a></li>
   <li><a href="#taylor">Taylor series linearization for ratio standard errors</a></li>
   <li><a href="#reliability">Reliability bands (CV) &amp; confidence interval overlap</a></li>
-  <li><a href="#example">Worked numerical walkthrough (National vs. High-CV Subgroup)</a></li>
+  <li><a href="#example">Worked numerical walkthrough</a></li>
 </ol>
 </nav>
 
 ## 1. Core Point Estimators (Counts, Rates, and Shares) {#estimators}
 
-Let $S_m$ denote the sample of respondents in survey month $m \in \{1, \dots, 12\}$ who are aged $15$ and over, employed ($\texttt{PUFNEWEMPSTAT}_i = 1$), and have a valid industry code ($\texttt{PUFC16\_PKB}_i \neq \text{null}$). Each respondent $i$ carries a final calibrated person weight $w_i = \texttt{PUFPWGTPRV}_i$ reflecting base selection probabilities, non-response adjustments, and post-stratification to projected age-sex population totals.
+Let <span>$S_m$</span> denote the sample of respondents in survey month <span>$m \in \{1, \dots, 12\}$</span> who are aged $15$ and over, employed (<span>$\texttt{PUFNEWEMPSTAT}_i = 1$</span>), and have a valid industry code (<span>$\texttt{PUFC16\_PKB}_i \neq \text{null}$</span>). Each respondent $i$ carries a final calibrated person weight <span>$w_i = \texttt{PUFPWGTPRV}_i$</span> reflecting base selection probabilities, non-response adjustments, and post-stratification to projected age-sex population totals.
 
 ### Weighted Domain Totals
 
-For any demographic, sectoral, or regional subgroup $d \subseteq S_m$, the monthly weighted totals for **employed** ($\hat{X}_{m,d}$) and **underemployed** ($\hat{Y}_{m,d}$) persons are:
+For any demographic, sectoral, or regional subgroup <span>$d \subseteq S_m$</span>, the monthly weighted totals for **employed** (<span>$\hat{X}_{m,d}$</span>) and **underemployed** (<span>$\hat{Y}_{m,d}$</span>) persons are:
 
 $$
 \hat{X}_{m,d} = \sum_{i \in d} w_i
@@ -41,7 +41,7 @@ $$
 
 where $\mathbb{I}(\cdot)$ is the indicator function equal to $1$ if the respondent wants more hours of work in their present job or an additional job, and $0$ otherwise.
 
-Underemployed workers are partitioned into **visibly underemployed** (worked less than $40$ hours during the reference week, including those "with a job, not at work" where $\texttt{PUFC19\_PHOURS}_i$ is null or $0$) and **invisibly underemployed** (worked $40$ hours or more):
+Underemployed workers are partitioned into **visibly underemployed** (worked less than $40$ hours during the reference week, including those "with a job, not at work" where <span>$\texttt{PUFC19\_PHOURS}_i$</span> is null or $0$) and **invisibly underemployed** (worked $40$ hours or more):
 
 $$
 \hat{Y}_{m,d}^{\text{vis}} = \sum_{i \in d} w_i \, \mathbb{I}\!\left(\texttt{pwmore}_i = 1 \land (\texttt{phours}_i \text{ is null} \lor \texttt{phours}_i < 40)\right)
@@ -51,7 +51,13 @@ $$
 \hat{Y}_{m,d}^{\text{inv}} = \sum_{i \in d} w_i \, \mathbb{I}\!\left(\texttt{pwmore}_i = 1 \land \texttt{phours}_i \ge 40\right)
 $$
 
-such that $\hat{Y}_{m,d} = \hat{Y}_{m,d}^{\text{vis}} + \hat{Y}_{m,d}^{\text{inv}}$. Published headcount tables divide these totals by $10^3$ to report figures in thousands.
+such that:
+
+$$
+\hat{Y}_{m,d} = \hat{Y}_{m,d}^{\text{vis}} + \hat{Y}_{m,d}^{\text{inv}}
+$$
+
+Published headcount tables divide these totals by $10^3$ to report figures in thousands.
 
 ### Disambiguating the Four Percentage Metrics
 
@@ -59,10 +65,10 @@ Because headcount concentration and individual vulnerability move in opposite di
 
 | Metric Name | Column Name in CSVs | Mathematical Definition | Interpretation |
 |---|---|---|---|
-| **1. Within-Group Underemployment Rate** | `underemp_rate_pct` | $\hat{R}_{m,d} = \frac{\hat{Y}_{m,d}}{\hat{X}_{m,d}} \times 100$ | Share of *employed workers in group* $d$ who want more hours (vulnerability/incidence rate). |
-| **2. Within-Group Visible / Invisible Rates** | `visible_rate_pct`, `invisible_rate_pct` | $\hat{R}_{m,d}^{\text{vis}} = \frac{\hat{Y}_{m,d}^{\text{vis}}}{\hat{X}_{m,d}} \times 100$, $\hat{R}_{m,d}^{\text{inv}} = \frac{\hat{Y}_{m,d}^{\text{inv}}}{\hat{X}_{m,d}} \times 100$ | Additive components of the group rate ($\hat{R}_{m,d} = \hat{R}_{m,d}^{\text{vis}} + \hat{R}_{m,d}^{\text{inv}}$), plotted in Figure 1B. |
-| **3. Visible / Invisible Share of Underemployed** | `visible_share_within_group_pct` | $\hat{S}_{m,d}^{\text{vis}} = \frac{\hat{Y}_{m,d}^{\text{vis}}}{\hat{Y}_{m,d}} \times 100$, $\hat{S}_{m,d}^{\text{inv}} = \frac{\hat{Y}_{m,d}^{\text{inv}}}{\hat{Y}_{m,d}} \times 100$ | Share of *underemployed workers in group* $d$ working $<40$ hrs vs. $\ge 40$ hrs ($\hat{S}_{m,d}^{\text{vis}} + \hat{S}_{m,d}^{\text{inv}} = 100\%$). |
-| **4. Share of National / Sector Pool** | `share_of_national_underemp_pct` | $\hat{P}_{m,d}^{\text{nat}} = \frac{\hat{Y}_{m,d}}{\sum_{d'} \hat{Y}_{m,d'}} \times 100$ | Group $d$'s share of the entire national underemployed pool ($5.8\text{M}$). |
+| **1. Within-Group Underemployment Rate** | `underemp_rate_pct` | <span>$\hat{R}_{m,d} = \frac{\hat{Y}_{m,d}}{\hat{X}_{m,d}} \times 100$</span> | Share of *employed workers in group* $d$ who want more hours (vulnerability/incidence rate). |
+| **2. Within-Group Visible / Invisible Rates** | `visible_rate_pct`, `invisible_rate_pct` | <span>$\hat{R}_{m,d}^{\text{vis}} = \frac{\hat{Y}_{m,d}^{\text{vis}}}{\hat{X}_{m,d}} \times 100$</span>, <span>$\hat{R}_{m,d}^{\text{inv}} = \frac{\hat{Y}_{m,d}^{\text{inv}}}{\hat{X}_{m,d}} \times 100$</span> | Additive components of the group rate (<span>$\hat{R}_{m,d} = \hat{R}_{m,d}^{\text{vis}} + \hat{R}_{m,d}^{\text{inv}}$</span>), plotted in Figure 1B. |
+| **3. Visible / Invisible Share of Underemployed** | `visible_share_within_group_pct` | <span>$\hat{S}_{m,d}^{\text{vis}} = \frac{\hat{Y}_{m,d}^{\text{vis}}}{\hat{Y}_{m,d}} \times 100$</span>, <span>$\hat{S}_{m,d}^{\text{inv}} = \frac{\hat{Y}_{m,d}^{\text{inv}}}{\hat{Y}_{m,d}} \times 100$</span> | Share of *underemployed workers in group* $d$ working $<40$ hrs vs. $\ge 40$ hrs (<span>$\hat{S}_{m,d}^{\text{vis}} + \hat{S}_{m,d}^{\text{inv}} = 100\%$</span>). |
+| **4. Share of National / Sector Pool** | `share_of_national_underemp_pct` | <span>$\hat{P}_{m,d}^{\text{nat}} = \frac{\hat{Y}_{m,d}}{\sum_{d'} \hat{Y}_{m,d'}} \times 100$</span> | Group $d$'s share of the entire national underemployed pool ($5.8\text{M}$). |
 
 ## 2. Multi-Round Aggregation (Annual & Quarterly Averages) {#aggregation}
 
@@ -88,14 +94,14 @@ $$
 The PSA 2023 Geo-enabled Master Sample partitions the Philippines into $117$ sampling domains treated as explicit design strata ($81$ provinces, $33$ Highly Urbanized Cities, and $3$ other urban areas). Because the anonymized PUF omits explicit residence-province codes and reuses PSU numbers across provinces, [`lfs_view.sql`](https://github.com/KingSSIBAL/LFS-2025-Analysis/blob/main/lfs_view.sql) reconstructs the two-stage design in four steps:
 
 1. **Contiguous PSU Identification (`hh_psu`):** Within each month $m$, households are ordered by their sequential household number ($\texttt{PUFHHNUM}$), which follows the geographic ordering of the Master Sample frame. A new Primary Sampling Unit (PSU) cluster $a$ begins whenever the replicate code ($\texttt{PUFRPL}$) or PSU code ($\texttt{PUFPSU}$) changes between consecutive households.
-2. **Neighbor-PSU Stratum Assignment (`psu_frame`):** Each household is assigned the modal province/HUC of work ($\texttt{PUFC12A\_PROVMUN}$) of its employed members, and each PSU takes the modal domain $s_{m,a}$ of its households. Because $\texttt{PUFHHNUM}$ is sorted geographically by residence domain, any PSU whose workplace-mode domain differs from two agreeing adjacent neighbors ($s_{m,a-1} = s_{m,a+1} \neq s_{m,a}$) represents cross-border commuters ($248$ PSUs across 2025) and is reassigned to the residence stratum $p = s_{m,a-1}$.
-3. **Second-Stage Finite Population Correction ($1 - f_{2,p,a}$):** Let $b_{p,a}$ be the number of sampled households in PSU $a$ of stratum $p$. Following PSA Technical Notes (p. 3), where each PSU contains approximately $100$ to $400$ households, the frame size of each PSU is approximated by the midpoint $B_{p,a} = \max(b_{p,a}, 250)$, giving the second-stage FPC factor:
+2. **Neighbor-PSU Stratum Assignment (`psu_frame`):** Each household is assigned the modal province/HUC of work (<span>$\texttt{PUFC12A\_PROVMUN}$</span>) of its employed members, and each PSU takes the modal domain <span>$s_{m,a}$</span> of its households. Because $\texttt{PUFHHNUM}$ is sorted geographically by residence domain, any PSU whose workplace-mode domain differs from two agreeing adjacent neighbors (<span>$s_{m,a-1} = s_{m,a+1} \neq s_{m,a}$</span>) represents cross-border commuters ($248$ PSUs across 2025) and is reassigned to the residence stratum <span>$p = s_{m,a-1}$</span>.
+3. **Second-Stage Finite Population Correction (<span>$1 - f_{2,p,a}$</span>):** Let <span>$b_{p,a}$</span> be the number of sampled households in PSU $a$ of stratum $p$. Following PSA Technical Notes (p. 3), where each PSU contains approximately $100$ to $400$ households, the frame size of each PSU is approximated by the midpoint <span>$B_{p,a} = \max(b_{p,a}, 250)$</span>, giving the second-stage FPC factor:
 
 $$
 1 - f_{2,p,a} = 1 - \frac{b_{p,a}}{\max(b_{p,a}, 250)}
 $$
 
-4. **First-Stage Sampling Fraction ($f_{1,p}$):** Let $a_p$ be the number of sampled PSUs in stratum $p$, and let $\hat{H}_{p,a} = \sum_{h=1}^{b_{p,a}} w_{p,a,h}$ be the weighted household count of PSU $a$. The total number of frame PSUs in stratum $p$ is estimated as $\hat{A}_p = \max\!\left(a_p, \frac{1}{250}\sum_{a=1}^{a_p} \hat{H}_{p,a}\right)$, yielding the first-stage sampling fraction:
+4. **First-Stage Sampling Fraction (<span>$f_{1,p}$</span>):** Let <span>$a_p$</span> be the number of sampled PSUs in stratum $p$, and let <span>$\hat{H}_{p,a} = \sum_{h=1}^{b_{p,a}} w_{p,a,h}$</span> be the weighted household count of PSU $a$. The total number of frame PSUs in stratum $p$ is estimated as <span>$\hat{A}_p = \max\!\left(a_p, \frac{1}{250}\sum_{a=1}^{a_p} \hat{H}_{p,a}\right)$</span>, yielding the first-stage sampling fraction:
 
 $$
 f_{1,p} = \frac{a_p}{\hat{A}_p}, \qquad 1 - f_{1,p} = 1 - \frac{a_p}{\hat{A}_p}
@@ -103,9 +109,13 @@ $$
 
 ## 4. Two-Stage Stratified Cluster Variance (Totals) {#variance}
 
-For any target subgroup $d$ in month $m$, let $y_{p,a,h} = \sum_{i \in (p,a,h) \cap d} w_i \, \mathbb{I}(\texttt{pwmore}_i = 1)$ be the weighted underemployed total in household $h$, PSU $a$, and stratum $p$, and let $x_{p,a,h} = \sum_{i \in (p,a,h) \cap d} w_i$ be the corresponding household employed total.
+For any target subgroup $d$ in month $m$, let <span>$y_{p,a,h}$</span> be the weighted underemployed total in household $h$, PSU $a$, and stratum $p$, and let <span>$x_{p,a,h}$</span> be the corresponding household employed total:
 
-Define the PSU-level sums and cross-products across the $b_{p,a}$ households in PSU $(p,a)$:
+$$
+y_{p,a,h} = \sum_{i \in (p,a,h) \cap d} w_i \, \mathbb{I}(\texttt{pwmore}_i = 1), \qquad x_{p,a,h} = \sum_{i \in (p,a,h) \cap d} w_i
+$$
+
+Define the PSU-level sums and cross-products across the <span>$b_{p,a}$</span> households in PSU $(p,a)$:
 
 $$
 z_{y,p,a} = \sum_{h=1}^{b_{p,a}} y_{p,a,h}, \qquad q_{yy,p,a} = \sum_{h=1}^{b_{p,a}} y_{p,a,h}^2
@@ -133,17 +143,17 @@ $$
 V(\hat{Y}_{m,d}) = \sum_{p=1}^{117} \Big( V_{b,p}(y) + f_{1,p} \, V_{w,p}(y) \Big)
 $$
 
-Identical expressions yield the denominator variance $V(\hat{X}_{m,d})$ (replacing $q_{yy}, z_y^2$ with $q_{xx}, z_x^2$) and the bilinear covariance $\text{Cov}(\hat{X}_{m,d}, \hat{Y}_{m,d})$ (replacing $q_{yy}$ with $q_{xy}$ and $z_{y,p,a}^2$ with $z_{x,p,a} z_{y,p,a}$).
+Identical expressions yield the denominator variance <span>$V(\hat{X}_{m,d})$</span> and the bilinear covariance <span>$\text{Cov}(\hat{X}_{m,d}, \hat{Y}_{m,d})$</span>.
 
 ## 5. Taylor Series Linearization for Ratio Standard Errors {#taylor}
 
-Because the underemployment rate $\hat{R}_{d} = \hat{Y}_{d} / \hat{X}_{d}$ is a ratio of two random survey totals, its variance is approximated via first-order Taylor series linearization around the population expectations (PSA Technical Notes, p. 8b):
+Because the underemployment rate <span>$\hat{R}_{d} = \hat{Y}_{d} / \hat{X}_{d}$</span> is a ratio of two random survey totals, its variance is approximated via first-order Taylor series linearization around the population expectations (PSA Technical Notes, p. 8b):
 
 $$
 V(\hat{R}_d) \approx \frac{1}{\hat{X}_d^2} \Big( V(\hat{Y}_d) + r_d^2 \, V(\hat{X}_d) - 2 r_d \, \text{Cov}(\hat{Y}_d, \hat{X}_d) \Big)
 $$
 
-where $r_d = \hat{R}_d / 100 \in [0, 1]$ is the rate expressed as a proportion.
+where <span>$r_d = \hat{R}_d / 100 \in [0, 1]$</span> is the rate expressed as a proportion.
 
 For multi-round averages across $K$ rounds ($K = 12$ annual or $K = 4$ quarterly), where rounds are treated as independent cross-sections in the absence of panel household identifiers across PUF files, the variance sums across months and scales by $1/K^2$:
 
@@ -179,7 +189,7 @@ $$
 \text{CI}_{95\%, i} = \bar{R}_i \pm 1.96 \, \text{SE}(\bar{R}_i)
 $$
 
-When comparing two independent regional estimates $\bar{R}_1$ and $\bar{R}_2$ with similar standard errors ($\text{SE}_1 \approx \text{SE}_2 = s$), the standard error of their difference is $\text{SE}(\bar{R}_1 - \bar{R}_2) = \sqrt{s^2 + s^2} = \sqrt{2}\,s$.
+When comparing two independent regional estimates <span>$\bar{R}_1$</span> and <span>$\bar{R}_2$</span> with similar standard errors (<span>$\text{SE}_1 \approx \text{SE}_2 = s$</span>), the standard error of their difference is <span>$\text{SE}(\bar{R}_1 - \bar{R}_2) = \sqrt{s^2 + s^2} = \sqrt{2}\,s$</span>.
 
 * A two-sided test at the $\alpha = 0.05$ significance level rejects equality when:
 
@@ -197,17 +207,21 @@ Consequently, non-overlapping $95\%$ whiskers provide a conservative visual guar
 
 ## 7. Worked Numerical Walkthrough {#example}
 
-To see how the SQL and Python pipeline transforms raw household weights into a published row with standard errors and reliability flags, consider two contrasting cells from the 2025 tables:
+To trace how the SQL and Python pipeline transforms raw household weights into published rows with standard errors and reliability flags, consider three benchmark cells from the verified 2025 tables:
 
-1. **National Annual Headline (`RQ1` / `1A_Sector_Annual` sum, $K = 12$ months):**
-   * **Point Estimates:** Across the $12$ monthly rounds, the average weighted employed count is $\bar{X} = 49,000\text{k}$ ($49.0\text{M}$) and the average underemployed count is $\bar{Y} = 5,830\text{k}$ ($5.8\text{M}$).
+1. **National Annual Headline (`0A_PSA_Validation_Annual` & `1A_Sector_Annual`, $K = 12$ months):**
+   * **Point Estimates:** Across the $12$ monthly rounds, the exact mean employed total is $\bar{X} = 49,024.506\text{k}$ ($49.0\text{M}$) and the mean underemployed total is $\bar{Y} = 5,833.9\text{k}$ ($5.8\text{M}$).
    * **Headline Rate:**
-     $$\bar{R} = \frac{5,830\text{k}}{49,000\text{k}} \times 100 = 11.9\%$$
-   * **Precision:** With all $12$ rounds pooled across $117$ strata, the relative standard error is well below $\text{CV} = 1.5\% \le 10\%$, so the estimate is flagged `reliable (CV<=10%)`.
+     $$\bar{R} = \frac{5,833.9}{49,024.506} \times 100 = 11.90\%$$
+   * **Standard Error Validation:** Across the $12$ individual monthly rounds, the ratio of our two-stage design standard error $\text{SE}(\hat{Y}_m)$ to PSA's published Special Release standard error has a median of $0.9990\times$ (range $0.973\times\text{--}1.020\times$).
 
-2. **Post-Secondary Undergraduates (`RQ1_RQ2_c_Education`, $K = 12$ months):**
-   * **Why it is flagged `**`:** Because post-secondary non-tertiary undergraduates represent a tiny fraction of the Philippine workforce, many PSU clusters contain zero or one respondent in this cell.
-   * **CV Calculation:** The two-stage variance formula yields a standard error $\text{SE}(\bar{Y}_d)$ equal to $22.7\%$ of the point estimate $\bar{Y}_d$:
+2. **Regional Quarterly Estimate (`R0A_RReg_Qavg` / `R0B_RReg_Quarterly`, $K = 4$ quarterly rounds):**
+   * **Point Estimates:** For Region XII (SOCCSKSARGEN), averaging the $4$ quarterly rounds (January, April, July, October) yields the highest regional underemployment rate in the country at $\bar{R}_{\text{XII}} = 28.8\%$, compared with $\bar{R}_{\text{XI}} = 5.3\%$ in neighboring Davao.
+   * **Standard Error Validation:** Across all $4 \times 18 = 72$ quarterly regional cells, our two-stage standard errors match PSA's published regional standard errors to a median ratio of $0.9918\times$ (range $0.875\times\text{--}1.040\times$).
+
+3. **Unreliable Small Subgroup (`RQ1_RQ2_c_Education`, Post-Secondary Undergraduates, $K = 12$ months):**
+   * **Why it is flagged `**`:** Post-secondary non-tertiary undergraduates represent a small sub-population where most PSU clusters contain zero respondents, inflating between-PSU relative variance.
+   * **CV Calculation:** Dividing the pooled standard error by the subgroup point estimate yields:
      $$\text{CV}(\bar{Y}_d) = \frac{\text{SE}(\bar{Y}_d)}{\bar{Y}_d} \times 100 = 22.7\% > 20\%$$
    * **Visual & Table Encoding:** Because $\text{CV} > 20\%$, `tables.py` labels the row `unreliable (CV>20%)` and `figures.py` renders the bar with triple hatching (`///`), $45\%$ opacity, and a `**` suffix.
 

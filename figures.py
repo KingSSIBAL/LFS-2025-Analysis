@@ -56,14 +56,17 @@ def _annotate_hue_bars(
 
 def _save_fig(suptitle: str, filename: str, y: float = 1.02) -> None:
     fig = plt.gcf()
-    if any(p.get_hatch() for ax in fig.axes for p in ax.patches):
+    has_cv_flags = any(p.get_hatch() for ax in fig.axes for p in ax.patches)
+    plt.suptitle(suptitle, fontsize=12.5, weight="bold", y=y)
+    if has_cv_flags:
+        plt.tight_layout(rect=(0, 0.025, 1, 1))
         fig.text(
-            0.01, -0.01,
-            "* CV 10–20% (use with caution)   ** CV > 20% (unreliable)",
+            0.01, 0.004,
+            "* CV 10-20% (use with caution)   ** CV > 20% (unreliable)",
             fontsize=8.5, color="#444444", style="italic",
         )
-    plt.suptitle(suptitle, fontsize=12.5, weight="bold", y=y)
-    plt.tight_layout()
+    else:
+        plt.tight_layout()
     plt.savefig(FIG_DIR / filename, bbox_inches="tight")
     plt.close()
 
