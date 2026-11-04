@@ -1,7 +1,7 @@
 ---
+layout: default
 title: "Mathematical Methodology & Survey Variance Design — Philippine LFS 2025"
 description: "Exact point estimators, 117-domain PSU reconstruction, two-stage finite population corrections, and Taylor series linearization formulas for the 2025 Philippine Labor Force Survey."
-permalink: /methods.html
 ---
 
 # Mathematical Methodology & Survey Variance Design
@@ -19,7 +19,7 @@ This page documents the exact estimators, domain-reconstruction rules, and two-s
   <li><a href="#variance">Two-stage stratified cluster variance (totals)</a></li>
   <li><a href="#taylor">Taylor series linearization for ratio standard errors</a></li>
   <li><a href="#reliability">Reliability bands (CV) &amp; confidence interval overlap</a></li>
-  <li><a href="#example">Worked numerical walkthrough (SOCCSKSARGEN vs. National)</a></li>
+  <li><a href="#example">Worked numerical walkthrough (National vs. High-CV Subgroup)</a></li>
 </ol>
 </nav>
 

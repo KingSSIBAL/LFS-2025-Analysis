@@ -1,7 +1,7 @@
 ---
+layout: default
 title: "Underemployment in the Philippines, 2025 — PSA Labor Force Survey Analysis"
 description: "Stratified analysis of underemployment by sector, sex, age, education, and region from the 12 monthly 2025 Philippine Labor Force Survey Public Use Files (4,229 official PSA checks verified)."
-permalink: /index.html
 ---
 
 # Underemployment in the Philippines, 2025
@@ -14,7 +14,7 @@ Analysis of the 12 monthly 2025 Labor Force Survey Public Use Files (Philippine 
 | **Target Population** | Employed persons aged $15+$ excluding overseas workers ($\bar{X} = 49.0\text{M}$ average per month) |
 | **Sampling & Variance Design** | 2023 Geo-enabled Master Sample: $117$ province/HUC strata, contiguous PSU clustering, $2$-stage FPC ($B = 250$), Taylor series linearization |
 | **Official Validation** | $4,229 / 4,229$ published PSA Special Release figures matched ($3,576$ monthly, $77$ annual, $576$ regional) |
-| **Methodology & Derivations** | [**Mathematical Methodology & Variance Design (`methods.html`)**](methods.html) · [**Source Code (`lfs.py`)**](https://github.com/KingSSIBAL/LFS-2025-Analysis/blob/main/lfs.py) |
+| **Methodology & Derivations** | [**Mathematical Methodology & Variance Design (`methodology.html`)**](methodology.html) · [**Source Code (`lfs.py`)**](https://github.com/KingSSIBAL/LFS-2025-Analysis/blob/main/lfs.py) |
 
 <nav aria-label="Contents">
 <strong>Contents</strong>
@@ -32,7 +32,7 @@ Analysis of the 12 monthly 2025 Labor Force Survey Public Use Files (Philippine 
 </ul>
 </nav>
 
-**Key terms.** *Underemployed*: employed, but wants more hours of work. *Visibly underemployed*: worked under $40$ hours. *Invisibly underemployed*: already worked $40$ hours or more and still wants more. *Group rate* ($\hat{Y}_d / \hat{X}_d$): underemployed as a share of the employed in that group. *Pool share* ($\hat{Y}_d / \hat{Y}$): a group's share of all $5.8\text{M}$ underemployed workers nationally. *Visible share* ($\hat{Y}_d^{\text{vis}} / \hat{Y}_d$): the share of a group's underemployed who work under $40$ hours. See [**Mathematical Methodology & Variance Design**](methods.html) for the exact formulas.
+**Key terms.** *Underemployed*: employed, but wants more hours of work. *Visibly underemployed*: worked under $40$ hours. *Invisibly underemployed*: already worked $40$ hours or more and still wants more. *Group rate* ($\hat{Y}_d / \hat{X}_d$): underemployed as a share of the employed in that group. *Pool share* ($\hat{Y}_d / \hat{Y}$): a group's share of all $5.8\text{M}$ underemployed workers nationally. *Visible share* ($\hat{Y}_d^{\text{vis}} / \hat{Y}_d$): the share of a group's underemployed who work under $40$ hours. See [**Mathematical Methodology & Variance Design**](methodology.html) for the exact formulas.
 
 Annual figures are the average of the 12 monthly rounds. Regional figures are the average of the 4 quarterly rounds (January, April, July, October), the only rounds designed for regional estimates.
 
@@ -88,7 +88,7 @@ Annual figures are the average of the 12 monthly rounds. Regional figures are th
 
 [![Map of the Philippines shaded by regional underemployment rate, next to a ranked bar chart of the 18 regions with 95% confidence intervals.](output/figures/fig8_region_map.png)](output/figures/fig8_region_map.png)
 
-**Regions differ five-fold: SOCCSKSARGEN ($28.8\%$), MIMAROPA ($24.5\%$), and Bicol ($23.5\%$) rank highest; Davao ($5.3\%$) and NCR ($7.4\%$) rank lowest.** Whiskers show $95\%$ confidence intervals; non-overlapping intervals indicate conservative, statistically distinct pairs (slight overlaps can still differ at the $5\%$ level; see the [math notes](methods.html#reliability)).
+**Regions differ five-fold: SOCCSKSARGEN ($28.8\%$), MIMAROPA ($24.5\%$), and Bicol ($23.5\%$) rank highest; Davao ($5.3\%$) and NCR ($7.4\%$) rank lowest.** Whiskers show $95\%$ confidence intervals; non-overlapping intervals indicate conservative, statistically distinct pairs (slight overlaps can still differ at the $5\%$ level; see the [math notes](methodology.html#reliability)).
 
 **Residence vs. workplace:** When underemployed workers are counted by their *region of workplace* (`W*` tables) instead of residence (`R*` tables), cross-border commuting shifts the metropolitan numbers substantially—NCR's underemployed count is $19\%$ higher by workplace than by residence, while CALABARZON's is $11\%$ lower.
 
@@ -123,11 +123,11 @@ Annual figures are the average of the 12 monthly rounds. Regional figures are th
 - Multi-way breakdowns (by education, sector $\times$ sex/age/education, and region $\times$ age/sector/education) have no published PSA table and are verified by summing to checked margins.
 - Region of **workplace** tables (`W*`) cannot be checked against PSA's published tables, which report region of residence only.
 - Annual and regional averages treat the monthly Public Use Files as independent samples across rounds ($V(\bar{Y}) = \frac{1}{K^2}\sum_{m=1}^{K} V(\hat{Y}_m)$) because household panel identifiers across rounds are not released in the public microdata.
-- Standard errors cannot match PSA's to the last decimal because the Public Use Files omit survey design details documented in the [**Mathematical Methodology**](methods.html#design) and at the top of [`lfs.py`](https://github.com/KingSSIBAL/LFS-2025-Analysis/blob/main/lfs.py).
+- Standard errors cannot match PSA's to the last decimal because the Public Use Files omit survey design details documented in the [**Mathematical Methodology**](methodology.html#design) and at the top of [`lfs.py`](https://github.com/KingSSIBAL/LFS-2025-Analysis/blob/main/lfs.py).
 
 ## Data, math, and code {#data}
 
-- **Mathematical formulas & survey design:** [**Mathematical Methodology & Variance Design (`methods.html`)**](methods.html)
+- **Mathematical formulas & survey design:** [**Mathematical Methodology & Variance Design (`methodology.html`)**](methodology.html)
 - **All tables:** [Excel workbook](output/LFS_2025_Stratified_Underemployment_Tables.xlsx) · [CSV files](https://github.com/KingSSIBAL/LFS-2025-Analysis/tree/main/output/tables)
 - **Code and how to re-run:** [repository README](https://github.com/KingSSIBAL/LFS-2025-Analysis#readme)
 - **Data:** Philippine Statistics Authority, Labor Force Survey 2025 Public Use Files and Special Release tables. Map boundaries: [faeldon/philippines-json-maps](https://github.com/faeldon/philippines-json-maps) (MIT).

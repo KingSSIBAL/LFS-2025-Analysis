@@ -1,5 +1,16 @@
+title: "Underemployment in the Philippines, 2025"
+description: "Analysis of the 12 monthly 2025 Labor Force Survey Public Use Files (Philippine Statistics Authority)."
+lang: "en"
+markdown: kramdown
+
 exclude:
   - data/
   - docs/
   - lfs.py
+  - tables.py
+  - psa.py
+  - figures.py
+  - lfs_view.sql
   - README.md
+  - pyproject.toml
+  - uv.lock
