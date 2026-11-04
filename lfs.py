@@ -14,7 +14,7 @@
 """Philippine LFS 2025: underemployment by sector, sex, age, education and region, validated against PSA.
 Source tags like [TN p.8] point to the SOURCES list at the end of these notes.
 
-CODE (run `uv run lfs.py`)
+CODE (run `uv run lfs.py` for full build, or `uv run lfs.py --plots-only` to redraw figures from saved CSVs)
   lfs.py        these notes + the run order
   tables.py     PUF -> Parquet, all tables, standard errors, reliability flags, psa_check notes
   lfs_view.sql  the analysis view (definitions, recodes) and the variance design (117 strata, PSUs, FPC)
@@ -94,19 +94,30 @@ SOURCES
          discussion papers on Philippine small-area poverty estimation. Secondary source, not verified against a
          PSA issuance.
 """
+import sys
 
 import duckdb
 import pandas as pd
 
 from figures import generate_figures, generate_region_map, generate_rq_figures
 from psa import verify_against_psa_official
-from tables import (OUT_DIR, ROOT_DIR, build_consolidated_parquet, compute_region_tables, compute_rq_tables,
+from tables import (OUT_DIR, ROOT_DIR, TAB_DIR, build_consolidated_parquet, compute_region_tables, compute_rq_tables,
                     compute_tables, create_analytical_view)
 
 if __name__ == "__main__":
     con = duckdb.connect()
     build_consolidated_parquet(con)        # 12 monthly CSVs -> one Parquet
-    create_analytical_view(con)            # analysis view + variance design (lfs_view.sql)
+    create_analytical_view(con)            # analysis table + variance design (lfs_view.sql)
+
+    # shortcut: `uv run lfs.py --plots-only` reads cached CSVs from output/tables/ and skips 41 SE queries + 150 Excel reads
+    if "--plots-only" in sys.argv and any(TAB_DIR.glob("*.csv")):
+        cached = {p.stem: pd.read_csv(p) for p in TAB_DIR.glob("*.csv")}
+        generate_figures(cached)
+        generate_region_map(con, cached)
+        generate_rq_figures(cached)
+        print("\nFast plot-only rebuild complete!")
+        sys.exit(0)
+
     tables = compute_tables(con)           # sector x sex/age/education tables
     region_tables = compute_region_tables(con)
     rq_tables = compute_rq_tables(con)     # research questions 1-3

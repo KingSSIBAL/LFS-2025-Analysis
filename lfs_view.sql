@@ -1,4 +1,4 @@
--- Analysis view and variance design for the 2025 LFS PUF. Run by tables.create_analytical_view().
+-- Analysis table and variance design for the 2025 LFS PUF. Run by tables.create_analytical_view().
 -- Placeholders filled in by Python: {parquet} = consolidated PUF Parquet path, {dom} = the 117-domain expression.
 -- Source tags ([TN p.X], [DICT]) refer to the SOURCES list in lfs.py.
 
@@ -51,9 +51,10 @@ CREATE OR REPLACE TABLE stratum_frame AS
 SELECT m, strat, COUNT(*) AS a_p, COUNT(*) / GREATEST(COUNT(*)::DOUBLE, SUM(psu_hh) / 250.0) AS f1
 FROM psu_frame GROUP BY 1, 2;
 
+-- Materialized TABLE (instead of VIEW) so 80+ downstream table and variance queries do not re-read Parquet and re-join.
 -- One row per employed person aged 15+ [TN p.1]. coded: cast raw text once; sector/industry from the PSIC 2-digit
 -- division (PUFC16_PKB), education from the 5-digit PUFC07_GRADE code collapsed to PSA's 11 published groups.
-CREATE OR REPLACE VIEW lfs_employed_2025 AS
+CREATE OR REPLACE TABLE lfs_employed_2025 AS
 WITH coded AS (
     SELECT
         TRY_CAST(TRIM(PUFSVYMO) AS INTEGER) AS month_num,
@@ -145,4 +146,3 @@ LEFT JOIN region_names rw ON rw.rcode = wp.wcode
 LEFT JOIN hh_psu hp ON hp.m = coded.month_num AND hp.hh = coded.hh
 LEFT JOIN psu_frame ps ON ps.m = hp.m AND ps.psu_id = hp.psu_id
 WHERE age >= 15 AND empstat = '1' AND pkb IS NOT NULL;
-

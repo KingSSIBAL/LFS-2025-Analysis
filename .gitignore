@@ -4,6 +4,7 @@ data/puf/
 data/zips/
 # These dictionaries ship inside the PUF zips (and come to 168 MB), so they're excluded with the microdata.
 docs/metadata/
+docs/questionnaires/
 
 # Python / tooling
 __pycache__/

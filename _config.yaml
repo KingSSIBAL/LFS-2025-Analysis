@@ -1,0 +1,5 @@
+exclude:
+  - data/
+  - docs/
+  - lfs.py
+  - README.md

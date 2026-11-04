@@ -18,7 +18,50 @@ sns.set_theme(style="whitegrid", palette="deep")
 # ==============================================================================
 # STEP 4: GENERATE 2-PANEL (VOLUME/SHARE + VULNERABILITY RATE) 300-DPI FIGURES
 # ==============================================================================
+def _flag_suffix(cv: float) -> str:
+    if pd.isna(cv) or cv <= 10:
+        return ""
+    return "**" if cv > 20 else "*"
+
+
+def _style_bar_cv(bar, cv: float) -> None:
+    # shortcut: mutates Matplotlib Patch in-place using PSA/NSCB CV bands (10% and 20%)
+    if pd.notna(cv) and cv > 20:
+        bar.set_hatch("///")
+        bar.set_alpha(0.45)
+        bar.set_edgecolor("#333333")
+    elif pd.notna(cv) and cv > 10:
+        bar.set_hatch("//")
+        bar.set_alpha(0.75)
+        bar.set_edgecolor("#333333")
+
+
+def _annotate_hue_bars(
+    ax: plt.Axes, df: pd.DataFrame, cat: str, hue: str, metric: str,
+    cat_order: list[str], hue_order: list[str], fmt: str, fs: float,
+) -> None:
+    lookup = df.set_index([cat, hue])[[metric, "cv_underemp_pct"]].to_dict("index")
+    for h_val, container in zip(hue_order, ax.containers):
+        labels = []
+        for c_val, bar in zip(cat_order, container):
+            row = lookup.get((c_val, h_val))
+            if row is None or pd.isna(row[metric]):
+                labels.append("")
+                continue
+            cv = row["cv_underemp_pct"]
+            _style_bar_cv(bar, cv)
+            labels.append((fmt % row[metric]) + _flag_suffix(cv))
+        ax.bar_label(container, labels=labels, padding=3, fontsize=fs, weight="bold")
+
+
 def _save_fig(suptitle: str, filename: str, y: float = 1.02) -> None:
+    fig = plt.gcf()
+    if any(p.get_hatch() for ax in fig.axes for p in ax.patches):
+        fig.text(
+            0.01, -0.01,
+            "* CV 10–20% (use with caution)   ** CV > 20% (unreliable)",
+            fontsize=8.5, color="#444444", style="italic",
+        )
     plt.suptitle(suptitle, fontsize=12.5, weight="bold", y=y)
     plt.tight_layout()
     plt.savefig(FIG_DIR / filename, bbox_inches="tight")
@@ -32,16 +75,21 @@ def _two_panel_bars(
     order: list[str] | None = None, fs: float = 8.5, leg_loc: str = "best",
 ) -> None:
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize, dpi=300, sharey=horizontal)
+    cat_order = list(order) if order is not None else list(dict.fromkeys(df[cat]))
+    hue_order = [k for k in palette if k in set(df[hue])]
     specs = [
         (ax1, "avg_underemp_k", "%.0fk", "Average Monthly Underemployed (in Thousands)", title_a, False),
         (ax2, "underemp_rate_pct", "%.1f%%", "Within-Group Underemployment Rate (%)", title_b, True),
     ]
     for ax, metric, fmt, mlabel, title, is_pct in specs:
-        kw = {"y": cat, "x": metric, "order": order} if horizontal else {"x": cat, "y": metric, "order": order}
+        kw = (
+            {"y": cat, "x": metric, "order": cat_order, "hue_order": hue_order}
+            if horizontal
+            else {"x": cat, "y": metric, "order": cat_order, "hue_order": hue_order}
+        )
         sns.barplot(data=df, hue=hue, palette=palette, ax=ax, **kw)
-        for c in ax.containers:
-            ax.bar_label(c, fmt=fmt, padding=3, fontsize=fs, weight="bold")
-        lim = df[metric].max() * (1.16 if horizontal else 1.18)
+        _annotate_hue_bars(ax, df, cat, hue, metric, cat_order, hue_order, fmt, fs)
+        lim = df[metric].max() * 1.20
         if horizontal:
             ax.set(xlim=(0, lim), xlabel=mlabel, ylabel=cat_label if ax is ax1 else "")
             if is_pct:
@@ -137,10 +185,15 @@ def generate_figures(tables: dict[str, pd.DataFrame]) -> None:
 
     # Figure 7: 3-Way Stratified Facet (Broad Sector x Age Group x Sex)
     fig, axes = plt.subplots(1, 3, figsize=(16, 5.2), dpi=300, sharey=True)
+    sex_order = list(SEX_COLORS)
     for idx, (ax, sec) in enumerate(zip(axes, SECTOR_ORDER)):
-        sns.barplot(data=t4_agesex[t4_agesex["broad_sector"] == sec], x="age_group", y="avg_underemp_k", hue="sex", palette=SEX_COLORS, ax=ax)
-        for c in ax.containers:
-            ax.bar_label(c, fmt="%.0fk", padding=2, fontsize=7.5, weight="bold")
+        sub = t4_agesex[t4_agesex["broad_sector"] == sec]
+        age_order = list(dict.fromkeys(sub["age_group"]))
+        sns.barplot(
+            data=sub, x="age_group", y="avg_underemp_k", hue="sex",
+            order=age_order, hue_order=sex_order, palette=SEX_COLORS, ax=ax,
+        )
+        _annotate_hue_bars(ax, sub, "age_group", "sex", "avg_underemp_k", age_order, sex_order, "%.0fk", fs=7.5)
         ax.set(xlabel="Age Group (Years)", ylim=(0, t4_agesex["avg_underemp_k"].max() * 1.18))
         ax.set_title(SECTOR_SHORT[sec], fontsize=11, weight="bold")
         if idx == 0:
@@ -150,7 +203,6 @@ def generate_figures(tables: dict[str, pd.DataFrame]) -> None:
             ax.get_legend().remove()
     _save_fig("Figure 7. Underemployed Workers by Broad Sector, Age Group, and Sex (2025 Annual Average)", "fig7_sector_age_sex_3way.png")
     print(f"      Saved 7 multi-panel 300-DPI PNG figures in: {FIG_DIR}")
-
 
 
 def generate_region_map(con: duckdb.DuckDBPyConnection, region_tables: dict[str, pd.DataFrame]) -> None:
@@ -190,8 +242,6 @@ def generate_region_map(con: duckdb.DuckDBPyConnection, region_tables: dict[str,
     print(f"      Saved regional map in: {FIG_DIR}")
 
 
-
-
 # ==============================================================================
 # RESEARCH QUESTIONS 1, 2, AND 3 DIRECT TABLES & FIGURES
 # ==============================================================================
@@ -200,9 +250,12 @@ def _draw_rq1(ax: plt.Axes, df: pd.DataFrame, col: str, title: str, label: str, 
     sep = " " if horizontal else "\n"
     bars = (ax.barh(df_p[col], df_p["avg_underemp_k"], height=0.62, color="#2b5c8f") if horizontal
             else ax.bar(df_p[col], df_p["avg_underemp_k"], width=0.45 if len(df_p) <= 3 else 0.52, color="#2b5c8f"))
-    ax.bar_label(bars, [f"{r.avg_underemp_k:,.0f}k{sep}({r.share_of_national_underemp_pct:.1f}%)" for r in df_p.itertuples()],
-                 padding=3, fontsize=8.5, weight="bold")
-    lim = df_p["avg_underemp_k"].max() * (1.28 if horizontal else 1.25)
+    labels = []
+    for bar, r in zip(bars, df_p.itertuples()):
+        _style_bar_cv(bar, r.cv_underemp_pct)
+        labels.append(f"{r.avg_underemp_k:,.0f}k{_flag_suffix(r.cv_underemp_pct)}{sep}({r.share_of_national_underemp_pct:.1f}%)")
+    ax.bar_label(bars, labels, padding=3, fontsize=8.5, weight="bold")
+    lim = df_p["avg_underemp_k"].max() * (1.30 if horizontal else 1.25)
     if horizontal:
         ax.set(xlim=(0, lim), xlabel="Average Monthly Underemployed (in Thousands)", ylabel=label)
     else:
@@ -217,11 +270,16 @@ def _draw_rq2(ax: plt.Axes, df: pd.DataFrame, col: str, title: str, label: str, 
     b_vis = bar(pos + (w / 2 if horizontal else -w / 2), df_p["avg_visible_k"], w, label="Visibly (<40 hrs)", color="#2b5c8f")
     b_inv = bar(pos + (-w / 2 if horizontal else w / 2), df_p["avg_invisible_k"], w, label="Invisibly (40+ hrs)", color="#e68a00")
     sep, fs = (" ", 7.5) if horizontal else ("\n", 8.0)
-    ax.bar_label(b_vis, [f"{r.avg_visible_k:,.0f}k{sep}({r.visible_share_within_group_pct:.1f}%)" for r in df_p.itertuples()],
-                 padding=3, fontsize=fs, weight="bold", color="#1b3b5c")
-    ax.bar_label(b_inv, [f"{r.avg_invisible_k:,.0f}k{sep}({r.invisible_share_within_group_pct:.1f}%)" for r in df_p.itertuples()],
-                 padding=3, fontsize=fs, weight="bold", color="#995c00")
-    lim = max(df_p["avg_visible_k"].max(), df_p["avg_invisible_k"].max()) * (1.32 if horizontal else 1.28)
+    vis_labels, inv_labels = [], []
+    for bv, bi, r in zip(b_vis, b_inv, df_p.itertuples()):
+        _style_bar_cv(bv, r.cv_underemp_pct)
+        _style_bar_cv(bi, r.cv_underemp_pct)
+        sfx = _flag_suffix(r.cv_underemp_pct)
+        vis_labels.append(f"{r.avg_visible_k:,.0f}k{sfx}{sep}({r.visible_share_within_group_pct:.1f}%)")
+        inv_labels.append(f"{r.avg_invisible_k:,.0f}k{sfx}{sep}({r.invisible_share_within_group_pct:.1f}%)")
+    ax.bar_label(b_vis, vis_labels, padding=3, fontsize=fs, weight="bold", color="#1b3b5c")
+    ax.bar_label(b_inv, inv_labels, padding=3, fontsize=fs, weight="bold", color="#995c00")
+    lim = max(df_p["avg_visible_k"].max(), df_p["avg_invisible_k"].max()) * (1.34 if horizontal else 1.28)
     if horizontal:
         ax.set(yticks=pos, yticklabels=df_p[col], xlim=(0, lim), xlabel="Average Monthly Underemployed (in Thousands)", ylabel=label)
         ax.legend(frameon=True, loc="lower right")
@@ -256,10 +314,7 @@ def generate_rq_figures(rq_tables: dict[str, pd.DataFrame]) -> None:
         fig, axes = plt.subplots(2, 2, figsize=fsize, dpi=300)
         for ax, (df, col, label, horiz, *titles) in zip(axes.flat, panels):
             fn(ax, df, col, titles[idx_t], label, horizontal=horiz)
-        plt.suptitle(suptitle, fontsize=13, weight="bold", y=1.01)
-        plt.tight_layout()
-        plt.savefig(FIG_DIR / out, bbox_inches="tight")
-        plt.close()
+        _save_fig(suptitle, out, y=1.01)
 
     # Figure RQ3: Monthly Patterns in Number & Distribution Throughout 2025
     df_m = rq_tables["RQ3_Monthly_Overall"]
@@ -292,11 +347,7 @@ def generate_rq_figures(rq_tables: dict[str, pd.DataFrame]) -> None:
     ax2_twin.grid(False)
     handles = [s1, s2, l1[0]]
     ax2.legend(handles, [h.get_label() for h in handles], frameon=True, loc="lower left", fontsize=8.5)
-    plt.suptitle("Research Question 3: Monthly Patterns in the Number and Distribution of Underemployed Workers (2025)", fontsize=13, weight="bold", y=1.02)
-    plt.tight_layout()
-    plt.savefig(FIG_DIR / "fig_RQ3_monthly_number_and_distribution.png", bbox_inches="tight")
-    plt.close()
+    _save_fig("Research Question 3: Monthly Patterns in the Number and Distribution of Underemployed Workers (2025)",
+              "fig_RQ3_monthly_number_and_distribution.png", y=1.02)
 
     print(f"      Saved 3 RQ figures in {FIG_DIR}")
-
-
