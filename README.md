@@ -4,7 +4,7 @@ Who is underemployed (employed but wanting more hours of work), by sector, sex, 
 
 - **Live Report:** [`index.html`](https://kingssibal.github.io/LFS-2025-Analysis/) (source: [`index.md`](index.md))
 - **Mathematical Methodology, PSA Survey Plan & PUF Metadata:** [`methodology.html`](https://kingssibal.github.io/LFS-2025-Analysis/methodology.html) (source: [`methodology.md`](methodology.md))
-- **Code & Variance Design Notes:** see [`lfs.py`](lfs.py), [`tables.py`](tables.py), [`lfs_view.sql`](lfs_view.sql), and [`psa.py`](psa.py) (also written to the `README` sheet of the Excel output).
+- **Code & Variance Design Notes:** see [`lfs.py`](lfs.py), [`tables.py`](tables.py), [`lfs_view.sql`](lfs_view.sql), [`psa.py`](psa.py), and [`figures.py`](figures.py) (also written to the `README` sheet of the Excel output).
 
 ## Outputs (in this repo)
 - `output/LFS_2025_Stratified_Underemployment_Tables.xlsx` — all 43 tables + `README` sheet (44 sheets total); `0A`/`0B` = PSA validation
