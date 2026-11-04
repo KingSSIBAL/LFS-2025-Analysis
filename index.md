@@ -1,6 +1,20 @@
+---
+title: "Underemployment in the Philippines, 2025 — PSA Labor Force Survey Analysis"
+description: "Stratified analysis of underemployment by sector, sex, age, education, and region from the 12 monthly 2025 Philippine Labor Force Survey Public Use Files (4,229 official PSA checks verified)."
+permalink: /index.html
+---
+
 # Underemployment in the Philippines, 2025
 
 Analysis of the 12 monthly 2025 Labor Force Survey Public Use Files (Philippine Statistics Authority). Every figure PSA publishes was recomputed and matches.
+
+| Report Metadata | Specification |
+|---|---|
+| **Microdata Source** | PSA Labor Force Survey (LFS) Public Use Files, January–December 2025 (12 rounds) |
+| **Target Population** | Employed persons aged $15+$ excluding overseas workers ($\bar{X} = 49.0\text{M}$ average per month) |
+| **Sampling & Variance Design** | 2023 Geo-enabled Master Sample: $117$ province/HUC strata, contiguous PSU clustering, $2$-stage FPC ($B = 250$), Taylor series linearization |
+| **Official Validation** | $4,229 / 4,229$ published PSA Special Release figures matched ($3,576$ monthly, $77$ annual, $576$ regional) |
+| **Methodology & Derivations** | [**Mathematical Methodology & Variance Design (`methods.html`)**](methods.html) · [**Source Code (`lfs.py`)**](https://github.com/KingSSIBAL/LFS-2025-Analysis/blob/main/lfs.py) |
 
 <nav aria-label="Contents">
 <strong>Contents</strong>
@@ -109,11 +123,11 @@ Annual figures are the average of the 12 monthly rounds. Regional figures are th
 - Multi-way breakdowns (by education, sector $\times$ sex/age/education, and region $\times$ age/sector/education) have no published PSA table and are verified by summing to checked margins.
 - Region of **workplace** tables (`W*`) cannot be checked against PSA's published tables, which report region of residence only.
 - Annual and regional averages treat the monthly Public Use Files as independent samples across rounds ($V(\bar{Y}) = \frac{1}{K^2}\sum_{m=1}^{K} V(\hat{Y}_m)$) because household panel identifiers across rounds are not released in the public microdata.
-- Standard errors cannot match PSA's to the last decimal because the Public Use Files omit survey design details documented in the [**Mathematical Methodology**](methods.html#design) and at the top of [`lfs.py`](lfs.py).
+- Standard errors cannot match PSA's to the last decimal because the Public Use Files omit survey design details documented in the [**Mathematical Methodology**](methods.html#design) and at the top of [`lfs.py`](https://github.com/KingSSIBAL/LFS-2025-Analysis/blob/main/lfs.py).
 
 ## Data, math, and code {#data}
 
-- **Mathematical formulas & survey design:** [**Mathematical Methodology & Variance Design (`methods.md`)**](methods.html)
+- **Mathematical formulas & survey design:** [**Mathematical Methodology & Variance Design (`methods.html`)**](methods.html)
 - **All tables:** [Excel workbook](output/LFS_2025_Stratified_Underemployment_Tables.xlsx) · [CSV files](https://github.com/KingSSIBAL/LFS-2025-Analysis/tree/main/output/tables)
 - **Code and how to re-run:** [repository README](https://github.com/KingSSIBAL/LFS-2025-Analysis#readme)
 - **Data:** Philippine Statistics Authority, Labor Force Survey 2025 Public Use Files and Special Release tables. Map boundaries: [faeldon/philippines-json-maps](https://github.com/faeldon/philippines-json-maps) (MIT).
