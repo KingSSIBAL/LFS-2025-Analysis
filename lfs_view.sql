@@ -14,41 +14,127 @@ FROM (
 )
 GROUP BY 1;
 
--- Variance design [TN p.3-5, p.8]: 117 province/HUC strata, contiguous PSU clusters along PUFHHNUM (prevents
--- cross-domain PUFRPL-PUFPSU collisions), and 2-stage FPC with B = 250 HHs/PSU ("100 to 400 HHs", [TN p.3]).
--- hh_psu: one row per household. A new PSU starts whenever replicate (PUFRPL) or PSU code changes along PUFHHNUM,
--- because the same PSU code is reused in different provinces. hh_dom = household's most common work domain.
+-- Variance design [TN p.3-5, p.8]: 117 province/HUC strata, contiguous PSU runs along PUFHHNUM (with tight island
+-- reunification when split), residence-region constraint in both quarterly (PUFREG) and monthly (block-smoothed)
+-- rounds, full 3-PSU block commuter smoothing, and 2-stage FPC with urban B = 25 / rural B = 15 [TN p.3, p.7].
 CREATE OR REPLACE TABLE hh_psu AS
 WITH hh AS (
     SELECT TRY_CAST(TRIM(PUFSVYMO) AS INTEGER) AS m, TRY_CAST(TRIM(PUFHHNUM) AS INTEGER) AS hh_num,
            TRIM(PUFHHNUM) AS hh, TRIM(PUFRPL) AS rpl, TRIM(PUFPSU) AS psu,
+           NULLIF(TRIM(PUFREG), '') AS reg_code,
            AVG(TRY_CAST(TRIM(PUFPWGTPRV) AS DOUBLE)) AS w_hh,
-           mode({dom} ORDER BY {dom}) FILTER (WHERE TRIM(PUFC12A_PROVMUN) <> '') AS hh_dom
+           mode(TRIM(PUFURB2020) ORDER BY TRIM(PUFURB2020)) FILTER (WHERE TRIM(PUFURB2020) IN ('1', '2')) AS urb,
+           mode(d.work_dom ORDER BY d.work_dom) FILTER (WHERE TRIM(PUFC12A_PROVMUN) <> '') AS hh_dom_any,
+           mode(wp.wcode ORDER BY wp.wcode) FILTER (WHERE TRIM(PUFC12A_PROVMUN) <> '') AS hh_wreg,
+           mode(d.work_dom ORDER BY d.work_dom) FILTER (
+               WHERE TRIM(PUFC12A_PROVMUN) <> ''
+                 AND (NULLIF(TRIM(PUFREG), '') IS NULL OR wp.wcode = NULLIF(TRIM(PUFREG), ''))
+           ) AS hh_dom_qtr
     FROM '{parquet}'
-    GROUP BY 1, 2, 3, 4, 5
+    LEFT JOIN LATERAL (SELECT {dom} AS work_dom) d ON TRUE
+    LEFT JOIN work_dom_region wp ON wp.work_dom = d.work_dom
+    GROUP BY 1, 2, 3, 4, 5, 6
 ), lagged AS (
     SELECT *, CASE WHEN rpl = LAG(rpl) OVER (PARTITION BY m ORDER BY hh_num)
-                    AND psu = LAG(psu) OVER (PARTITION BY m ORDER BY hh_num) THEN 0 ELSE 1 END AS is_new
+                    AND psu = LAG(psu) OVER (PARTITION BY m ORDER BY hh_num)
+                    AND reg_code IS NOT DISTINCT FROM LAG(reg_code) OVER (PARTITION BY m ORDER BY hh_num)
+                   THEN 0 ELSE 1 END AS is_new
     FROM hh
-)
-SELECT m, hh, w_hh, hh_dom, SUM(is_new) OVER (PARTITION BY m ORDER BY hh_num) AS psu_id FROM lagged;
-
--- PUFHHNUM is sorted by domain, so a PSU whose workplace-mode domain differs from two agreeing neighbours is
--- commuters (248 PSUs), and a PSU with no workers (4) has none: both take the neighbours' (residence) domain.
-CREATE OR REPLACE TABLE psu_frame AS
-WITH raw AS (
-    SELECT m, psu_id, mode(hh_dom ORDER BY hh_dom) FILTER (WHERE hh_dom IS NOT NULL) AS s,
-           COUNT(*) AS b, SUM(w_hh) AS psu_hh
-    FROM hh_psu GROUP BY 1, 2
+), runs AS (
+    SELECT m, hh_num, hh, rpl, psu, reg_code, urb, w_hh, hh_dom_any, hh_wreg, hh_dom_qtr,
+           SUM(is_new) OVER (PARTITION BY m ORDER BY hh_num) AS run_id
+    FROM lagged
+), run_reg_raw AS (
+    SELECT m, run_id, ANY_VALUE(reg_code) AS reg_code,
+           mode(hh_wreg ORDER BY hh_wreg) FILTER (WHERE hh_wreg IS NOT NULL) AS r_raw
+    FROM runs GROUP BY 1, 2
+), run_reg_nb AS (
+    SELECT *,
+           LAG(r_raw, 1 IGNORE NULLS) OVER w AS rp1, LEAD(r_raw, 1 IGNORE NULLS) OVER w AS rn1,
+           LAG(r_raw, 2 IGNORE NULLS) OVER w AS rp2, LEAD(r_raw, 2 IGNORE NULLS) OVER w AS rn2,
+           LAG(r_raw, 3 IGNORE NULLS) OVER w AS rp3, LEAD(r_raw, 3 IGNORE NULLS) OVER w AS rn3
+    FROM run_reg_raw WINDOW w AS (PARTITION BY m ORDER BY run_id)
+), run_eff_reg AS (
+    SELECT m, run_id,
+           COALESCE(
+               reg_code,
+               CASE
+                   WHEN rp1 = rn1 AND rp1 IS NOT NULL THEN rp1
+                   WHEN rp1 = rp2 AND rp1 = rn2 AND rp1 IS NOT NULL THEN rp1
+                   WHEN rn1 = rn2 AND rn1 = rp2 AND rn1 IS NOT NULL THEN rn1
+                   WHEN rp1 = rp2 AND rp1 = rn3 AND rp1 IS NOT NULL THEN rp1
+                   WHEN rn1 = rn2 AND rn1 = rp3 AND rn1 IS NOT NULL THEN rn1
+                   WHEN rp2 = rn2 AND rp2 = rp3 AND rp2 = rn3 AND rp2 IS NOT NULL THEN rp2
+                   ELSE COALESCE(r_raw, rp1, rn1, rp2, rn2, rp3, rn3)
+               END
+           ) AS eff_reg
+    FROM run_reg_nb
+), raw_runs AS (
+    SELECT r.m, r.run_id, ANY_VALUE(r.rpl) AS rpl, ANY_VALUE(r.psu) AS psu,
+           ANY_VALUE(r.reg_code) AS reg_code, ANY_VALUE(er.eff_reg) AS eff_reg,
+           MIN(r.hh_num) AS min_hh, MAX(r.hh_num) AS max_hh,
+           mode(r.urb ORDER BY r.urb) AS urb,
+           COALESCE(
+               mode(r.hh_dom_any ORDER BY r.hh_dom_any) FILTER (WHERE r.hh_dom_any IS NOT NULL AND r.hh_wreg = er.eff_reg),
+               mode(r.hh_dom_qtr ORDER BY r.hh_dom_qtr) FILTER (WHERE r.hh_dom_qtr IS NOT NULL)
+           ) AS s,
+           COUNT(*) AS b, SUM(r.w_hh) AS psu_hh
+    FROM runs r
+    JOIN run_eff_reg er USING (m, run_id)
+    GROUP BY 1, 2
 ), nb AS (
-    SELECT *, LAG(s) OVER w AS p, LEAD(s) OVER w AS n FROM raw WINDOW w AS (PARTITION BY m ORDER BY psu_id)
+    SELECT *,
+           LAG(s, 1 IGNORE NULLS) OVER w AS p1, LEAD(s, 1 IGNORE NULLS) OVER w AS n1,
+           LAG(s, 2 IGNORE NULLS) OVER w AS p2, LEAD(s, 2 IGNORE NULLS) OVER w AS n2,
+           LAG(s, 3 IGNORE NULLS) OVER w AS p3, LEAD(s, 3 IGNORE NULLS) OVER w AS n3
+    FROM raw_runs WINDOW w AS (PARTITION BY m, eff_reg ORDER BY run_id)
+), smoothed_runs AS (
+    SELECT m, run_id, rpl, psu, reg_code, eff_reg, min_hh, max_hh, urb, b, psu_hh,
+           COALESCE(
+               CASE
+                   WHEN p1 = n1 AND p1 IS NOT NULL THEN p1
+                   WHEN p1 = p2 AND p1 = n2 AND p1 IS NOT NULL THEN p1
+                   WHEN n1 = n2 AND n1 = p2 AND n1 IS NOT NULL THEN n1
+                   WHEN p1 = p2 AND p1 = n3 AND p1 IS NOT NULL THEN p1
+                   WHEN n1 = n2 AND n1 = p3 AND n1 IS NOT NULL THEN n1
+                   WHEN p2 = n2 AND p2 = p3 AND p2 = n3 AND p2 IS NOT NULL THEN p2
+                   ELSE COALESCE(s, p1, n1, p2, n2, p3, n3)
+               END,
+               (SELECT work_dom FROM work_dom_region wp WHERE wp.wcode = nb.eff_reg LIMIT 1)
+           ) AS strat
+    FROM nb
+), island_flags AS (
+    SELECT *,
+           CASE WHEN min_hh - LAG(max_hh) OVER (PARTITION BY m, strat, rpl, psu ORDER BY run_id) < 150
+                THEN 0 ELSE 1 END AS is_new_island
+    FROM smoothed_runs
+), islands AS (
+    SELECT *,
+           SUM(is_new_island) OVER (PARTITION BY m, strat, rpl, psu ORDER BY run_id) AS island_id
+    FROM island_flags
+), merged_runs AS (
+    SELECT *,
+           CASE WHEN SUM(b) OVER (PARTITION BY m, strat, rpl, psu, island_id) <= 30
+                THEN MIN(run_id) OVER (PARTITION BY m, strat, rpl, psu, island_id)
+                ELSE run_id END AS psu_id
+    FROM islands
 )
-SELECT m, psu_id, CASE WHEN p = n THEN p ELSE COALESCE(s, p, n) END AS strat, b, psu_hh FROM nb;
+SELECT r.m, r.hh, r.reg_code, r.urb, r.w_hh, r.hh_dom_qtr AS hh_dom, mr.psu_id, mr.strat
+FROM runs r
+JOIN merged_runs mr USING (m, run_id);
 
--- stratum_frame: a_p = sampled PSUs in stratum p; A_p (PSUs in the frame) is not in the PUF, so estimate it as
--- weighted households / 250. f1 = a_p / A_p is the 1st-stage sampling fraction used in the FPC (1 - f1).
+-- psu_frame: one row per reunited PSU with its smoothed residence stratum and urban/rural frame household size.
+CREATE OR REPLACE TABLE psu_frame AS
+SELECT m, psu_id, strat,
+       COUNT(*) AS b, SUM(w_hh) AS psu_hh,
+       CASE WHEN mode(urb ORDER BY urb) = '1' THEN 25.0 ELSE 15.0 END AS b_frame
+FROM hh_psu GROUP BY 1, 2, 3;
+
+-- stratum_frame: a_p = sampled PSUs in stratum p; A_p = SUM(psu_hh / b_frame) within (m, strat) so that any
+-- month-to-month boundary jitter in a_p cancels between numerator and denominator.
 CREATE OR REPLACE TABLE stratum_frame AS
-SELECT m, strat, COUNT(*) AS a_p, COUNT(*) / GREATEST(COUNT(*)::DOUBLE, SUM(psu_hh) / 250.0) AS f1
+SELECT m, strat, COUNT(*) AS a_p,
+       COUNT(*) / GREATEST(COUNT(*)::DOUBLE, SUM(psu_hh / b_frame)) AS f1
 FROM psu_frame GROUP BY 1, 2;
 
 -- Materialized TABLE (instead of VIEW) so 80+ downstream table and variance queries do not re-read Parquet and re-join.
