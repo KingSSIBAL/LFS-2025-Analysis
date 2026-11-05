@@ -65,7 +65,6 @@ WORK_REGION_NOTE = (
 )
 
 
-
 # ==============================================================================
 # STEP 1: CONSOLIDATE 12 LFS PUF 2025 CSVs TO PARQUET VIA DUCKDB
 # ==============================================================================
@@ -231,14 +230,16 @@ def annotate_tables(con: duckdb.DuckDBPyConnection, tables: dict[str, pd.DataFra
         div = (4.0 if quarterly else 12.0) if annual else 1.0
         where = "AND region IS NOT NULL" if quarterly else ""
         g = "".join(f"{c}, " for c in by)
-        # Page 8(a) totals + Page 8(b) Taylor ratio SEs across the 117 province/HUC strata with 2-stage FPC (B = 250):
-        # matches PSA published SEs to ~0.999x national median (p10-p90 0.995-1.015x) & ~0.992x regional median.
+        # Page 8(a) totals + Page 8(b) Taylor ratio SEs across the 117 province/HUC strata with 2-stage FPC
+        # (B = 25 urban / 15 rural from psu_frame.b_frame, with residence-region constraint and island PSU reunion):
+        # matches PSA published SEs to 0.9999x national median (mean 1.0020x, MAPE 0.30%) & 0.9992x regional median
+        # (mean 0.9996x, MAPE 0.22%).
         # How it works, per table cell: x = employed, y = underemployed, summed per household -> PSU -> stratum.
         #   w_term = within-PSU (2nd stage) variance of households, shrunk by (1 - b/B)
         #   b_term = between-PSU (1st stage) variance in each stratum, shrunk by (1 - f1), plus f1 x within-PSU part
         #   vx, vy, cxy = variance of employed, of underemployed, and their covariance (needed for the rate SE)
         # Cells with one PSU in a stratum (a_p = 1) or one household in a PSU (b = 1) contribute 0 (no variance estimate).
-        w_term = lambda q, z: f"SUM(CASE WHEN pf.b > 1 THEN (1.0 - pf.b / GREATEST(pf.b, 250.0)) * pf.b / (pf.b - 1.0) * ({q} - {z} / pf.b) ELSE 0 END)"
+        w_term = lambda q, z: f"SUM(CASE WHEN pf.b > 1 THEN (1.0 - pf.b / GREATEST(pf.b, pf.b_frame)) * pf.b / (pf.b - 1.0) * ({q} - {z} / pf.b) ELSE 0 END)"
         b_term = lambda s2, s1s1, vw: f"SUM((CASE WHEN sf.a_p > 1 THEN (1.0 - sf.f1) * sf.a_p / (sf.a_p - 1.0) * ({s2} - {s1s1} / sf.a_p) ELSE 0 END) + sf.f1 * {vw})"
         se = con.execute(
             f"WITH y_hh AS (SELECT {g}month_num AS m, strat, psu_id, hh, SUM(wgt) AS x, "
@@ -351,7 +352,6 @@ def compute_region_tables(con: duckdb.DuckDBPyConnection) -> dict[str, pd.DataFr
     _save_tables(con, out)
     print(f"      Saved {len(out)} region CSV tables. W* tables: {WORK_REGION_NOTE}")
     return out
-
 
 
 def compute_rq_tables(con: duckdb.DuckDBPyConnection) -> dict[str, pd.DataFrame]:

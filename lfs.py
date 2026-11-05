@@ -39,13 +39,13 @@ PIPELINE
      reliability flag computed with the Technical Notes formulas for totals and ratios [TN p.8].
   5. Every number PSA publishes in its final Special Release tables is recomputed and compared (4,229 checks) [SR].
 
-WHAT MATCHES PSA (2025 PUF run, B = 250; every run re-checks the point estimates and SEs, and stops if off)
+WHAT MATCHES PSA (2025 PUF run, urban B = 25 / rural B = 15; every run re-checks point estimates and SEs)
   All point estimates (counts, rates, distributions): 3,576 monthly + 77 annual + 576 regional checks, 0 failures [SR].
   Tolerance is 1.0k / 0.05 pp only because PSA prints rounded values (largest gap 0.25k = PSA rounding a % to 3 dp).
   Standard errors of underemployed vs. the "Standard Error" columns of the same PSA tables [SR]:
-    national, 12 months:    median 0.999x PSA, range 0.973-1.020x (run stops if any month is > 5% off)
-    regional, 72 cells:     median 0.992x PSA, range 0.875-1.040x (run stops if any cell is > 15% off)
-    Only July is low (regional median 0.969x vs. ~0.992x in Jan/Apr/Oct); worst cell CAR July 0.875x. See B below.
+    national, 12 months:    median 0.9999x PSA (mean 1.0020x, MAPE 0.30%), range 0.997-1.021x (stops if > 5% off)
+    regional, 72 cells:     median 0.9992x PSA (mean 0.9996x, MAPE 0.22%), range 0.991-1.040x (stops if > 15% off)
+    Quarterly regional medians: Jan 0.9992x, Apr 0.9994x, Jul 0.9974x, Oct 0.9994x.
 
 WHY WE CANNOT MATCH PSA 100%
   Point estimates
@@ -53,16 +53,19 @@ WHY WE CANNOT MATCH PSA 100%
     estimates come out about six months after collection [TN p.9], so it is reported as INFO, not pass/fail.
   Standard errors (the PUF removes design information PSA uses internally)
   - Province/HUC of residence is the sampling stratum (117 domains treated as strata [TN p.3, p.8]) but the PUF has
-    only region, and only in quarterly rounds [DICT]. We infer it from the province of WORK of each PSU's workers,
-    then repair it from neighbouring PSUs: PSUs are listed in geographic order within each domain [TN p.3], and
-    household IDs follow that order. Commuter-heavy PSUs or PSUs at a domain boundary can still be misassigned.
+    only region, and only in quarterly rounds [DICT]. We infer it from the province of WORK of each PSU's workers
+    (constrained to the household's residence region PUFREG in quarterly rounds and to the 3-step smoothed region
+    block eff_reg in monthly rounds), then repair commuter/empty PSUs using a 3-step neighbor smoother within the
+    same region: PSUs are listed in geographic order within each domain [TN p.3], and household IDs follow that order.
   - PSU codes repeat across domains [DICT]; we rebuild PSUs as runs of consecutive households with the same
-    replicate + PSU code. We get 2,965 PSUs in January vs. 2,940 in the design table [TN p.4], so a few are split.
+    replicate + PSU + region code, and reunite split runs that share the same domain, replicate, and PSU code within
+    150 household IDs (<= 30 combined households) via gap-and-islands clustering.
   - B_pa (housing units in each PSU) and A_p (PSUs in each domain) are frame counts [TN p.5] that are not released.
     The base weight is (A_p / a_p) x (B_pa / b_pa) [TN p.5], so the weight only reveals their product, never each
-    one. We use B = 250, the midpoint of "about 100 to 400 households" per PSU [TN p.3], and A_p = weighted
-    households / 250. This drives the largest gaps: July (largest sample, so the FPC matters most) is 2.7% below
-    PSA; Aug/Dec ~2% above.
+    one. We use urban B = 25 and rural B = 15 (from PUFURB2020 [TN p.3, p.7]), and A_p = SUM(psu_hh / b_frame) within
+    each month and stratum. We report both the median and mean SE ratio alongside the strict cell-by-cell range
+    assertion because the median is invariant to single-month sample-size shifts and small-cell published rounding
+    quantization.
   - Weights are adjusted for non-response and calibrated to projected age-sex population totals [TN p.5-6]. The PUF
     gives only the final weight, not the adjustment factors, so their small effect on variance cannot be reproduced.
   - The 2nd-stage unit is the housing unit; in a housing unit with more than 3 households only 3 are sampled

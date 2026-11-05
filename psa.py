@@ -306,10 +306,8 @@ def verify_against_psa_official(
 ) -> dict[str, pd.DataFrame]:
     print("[4/4] Validating PUF calculations against official PSA Special Release (final) tables...")
     off = load_psa_official()
-    # Our underemployed SE (Technical Notes p. 8 with B = 250) vs PSA's published SE: national every month, and each
-    # region in Jan/Apr/Jul/Oct. Guards the accuracy claim in the module notes: fails if a change to B, strata or
-    # PSUs moves SEs off PSA. National > 5%; region > 15%: each region has ~1/18 of the PSUs, and the worst 2025 cell
-    # is CAR in July at 0.875x (July has the largest sample, so the B = 250 guess bites hardest; CAR has small provinces).
+    # Our underemployed SE (Technical Notes p. 8 with GeoMS urban B = 25 / rural B = 15) vs PSA's published SE:
+    # national every month, and each region in Jan/Apr/Jul/Oct. Prints median, mean, MAPE, and min-max range.
     psa_se = pd.Series(off.attrs["se_underemp"])
     nat = psa_se[[k for k in psa_se.index if not isinstance(k, tuple)]]
     reg = psa_se[[k for k in psa_se.index if isinstance(k, tuple)]]
@@ -319,8 +317,15 @@ def verify_against_psa_official(
         ("Regional", by_region.set_index(["month_num", "region"])["se_underemp_k"], reg, 4 * len(REGIONS), 0.15),
     ]:
         ratio = (mine / psa).dropna()
-        print(f"      {label} underemployed SE / PSA SE: median {ratio.median():.4f}, "
-              f"range {ratio.min():.3f}-{ratio.max():.3f} ({len(ratio)} cells)")
+        mape = ((mine - psa).abs() / psa * 100).dropna().mean()
+        print(
+            f"      {label} underemployed SE / PSA SE: median {ratio.median():.4f}, "
+            f"mean {ratio.mean():.4f}, MAPE {mape:.2f}%, "
+            f"range {ratio.min():.3f}-{ratio.max():.3f} ({len(ratio)} cells)"
+        )
+        if label == "Regional":
+            q_meds = ratio.groupby(level=0).median().to_dict()
+            print("        Quarterly regional medians: " + ", ".join(f"M{m}={v:.4f}" for m, v in sorted(q_meds.items())))
         assert len(ratio) == n and ratio.between(1 - tol, 1 + tol).all(), ratio[~ratio.between(1 - tol, 1 + tol)].round(3)
     fine = con.execute(
         "SELECT month_num, sex, age_group, educ_group, major_industry, broad_sector, region, "
@@ -397,5 +402,3 @@ def verify_against_psa_official(
         print("\n=== ROWS THAT DO NOT MATCH PSA ===\n" + bad.to_string(index=False))
     assert bad.empty, f"{len(bad)} figures do not match the official PSA release (see 0A/0B validation CSVs)"
     return {"0A_Validation_Annual": df_val_annual, "0B_Validation_Monthly": df_val_monthly}
-
-
