@@ -1,4 +1,3 @@
-```markdown
 ---
 layout: default
 title: "Mathematical Methodology, PSA Survey Plan & PUF Metadata — Philippine LFS 2025"
@@ -559,4 +558,3 @@ $\leftarrow$ [Back to Main Report](index.html)
   };
 </script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha384-Wuix6BuhrWbjDBs24bXrjf4ZQ5aFeFWBuKkFekO2t8xFU0iNaLQfp2K6/1Nxveei" crossorigin="anonymous"></script>
-```
