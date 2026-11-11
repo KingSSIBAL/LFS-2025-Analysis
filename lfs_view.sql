@@ -1,148 +1,235 @@
--- Analysis table and variance design for the 2025 LFS PUF. Run by tables.create_analytical_view().
--- Placeholders filled in by Python: {parquet} = consolidated PUF Parquet path, {dom} = the 117-domain expression.
+-- Analysis table and two-stage variance design for the 2025 LFS Public Use Files (PUF).
+-- Executed by tables.create_analytical_view().
+-- Placeholders substituted by Python:
+--   {parquet} = consolidated PUF Parquet file path
+--   {dom}     = SQL CASE expression mapping 4-digit PUFC12A_PROVMUN to the 117 Master Sample domains
 -- Source tags ([TN p.X], [DICT]) refer to the SOURCES list in lfs.py.
 
--- Monthly PUFs have no PUFREG; map each of the 117 work domains to its modal residence region (quarterly rounds).
--- ponytail: workplace region != residence region (NCR +19%, CALABARZON -11%); it can never be checked vs PSA.
+-- ==============================================================================
+-- 1. WORKPLACE DOMAIN -> MODAL RESIDENCE REGION LOOKUP (117 DOMAINS)
+-- ==============================================================================
+-- Non-quarterly monthly PUFs omit PUFREG; map each of the 117 province/HUC domains to its modal
+-- residence region observed in the 4 quarterly rounds. Workplace region != residence region due
+-- to cross-border commuting (e.g., NCR +19%, CALABARZON -11%) and is never compared directly to PSA R* tables.
 CREATE OR REPLACE TABLE work_dom_region AS
 SELECT work_dom, arg_max(rcode, w) AS wcode
 FROM (
-    SELECT {dom} AS work_dom, TRIM(PUFREG) AS rcode, SUM(TRY_CAST(TRIM(PUFPWGTPRV) AS DOUBLE)) AS w
+    SELECT
+        {dom} AS work_dom,
+        TRIM(PUFREG) AS rcode,
+        SUM(TRY_CAST(TRIM(PUFPWGTPRV) AS DOUBLE)) AS w
     FROM '{parquet}'
-    WHERE NULLIF(TRIM(PUFREG), '') IS NOT NULL AND TRIM(PUFC12A_PROVMUN) <> ''
+    WHERE NULLIF(TRIM(PUFREG), '') IS NOT NULL
+      AND NULLIF(TRIM(PUFC12A_PROVMUN), '') IS NOT NULL
     GROUP BY 1, 2
 )
 GROUP BY 1;
 
--- Variance design [TN p.3-5, p.8]: 117 province/HUC strata, contiguous PSU runs along PUFHHNUM (with tight island
--- reunification when split), residence-region constraint in both quarterly (PUFREG) and monthly (block-smoothed)
--- rounds, full 3-PSU block commuter smoothing, and 2-stage FPC with urban B = 25 / rural B = 15 [TN p.3, p.7].
+-- ==============================================================================
+-- 2. HOUSEHOLD -> CONTIGUOUS PSU & 117-STRATUM RECONSTRUCTION
+-- ==============================================================================
+-- Variance design [TN pp. 3-5, 8]:
+--   * 117 province/HUC explicit strata inferred from workplace domain constrained to residence region
+--   * Contiguous PSU runs along geographic PUFHHNUM order
+--   * 3-step geographic neighbor smoothing to repair commuter spikes and zero-worker PSUs
+--   * Gap-and-islands reunification (< 150 household IDs and <= 30 combined households) for split PSUs
 CREATE OR REPLACE TABLE hh_psu AS
 WITH hh AS (
-    SELECT TRY_CAST(TRIM(PUFSVYMO) AS INTEGER) AS m, TRY_CAST(TRIM(PUFHHNUM) AS INTEGER) AS hh_num,
-           TRIM(PUFHHNUM) AS hh, TRIM(PUFRPL) AS rpl, TRIM(PUFPSU) AS psu,
-           NULLIF(TRIM(PUFREG), '') AS reg_code,
-           AVG(TRY_CAST(TRIM(PUFPWGTPRV) AS DOUBLE)) AS w_hh,
-           mode(TRIM(PUFURB2020) ORDER BY TRIM(PUFURB2020)) FILTER (WHERE TRIM(PUFURB2020) IN ('1', '2')) AS urb,
-           mode(d.work_dom ORDER BY d.work_dom) FILTER (WHERE TRIM(PUFC12A_PROVMUN) <> '') AS hh_dom_any,
-           mode(wp.wcode ORDER BY wp.wcode) FILTER (WHERE TRIM(PUFC12A_PROVMUN) <> '') AS hh_wreg,
-           mode(d.work_dom ORDER BY d.work_dom) FILTER (
-               WHERE TRIM(PUFC12A_PROVMUN) <> ''
-                 AND (NULLIF(TRIM(PUFREG), '') IS NULL OR wp.wcode = NULLIF(TRIM(PUFREG), ''))
-           ) AS hh_dom_qtr
+    SELECT
+        TRY_CAST(TRIM(PUFSVYMO) AS INTEGER) AS m,
+        TRY_CAST(TRIM(PUFHHNUM) AS BIGINT) AS hh_num,
+        TRIM(PUFHHNUM) AS hh,
+        TRIM(PUFRPL) AS rpl,
+        TRIM(PUFPSU) AS psu,
+        NULLIF(TRIM(PUFREG), '') AS reg_code,
+        AVG(TRY_CAST(TRIM(PUFPWGTPRV) AS DOUBLE)) AS w_hh,
+        mode(TRIM(PUFURB2020) ORDER BY TRIM(PUFURB2020))
+            FILTER (WHERE TRIM(PUFURB2020) IN ('1', '2')) AS urb,
+        mode(d.work_dom ORDER BY d.work_dom)
+            FILTER (WHERE NULLIF(TRIM(PUFC12A_PROVMUN), '') IS NOT NULL) AS hh_dom_any,
+        mode(wp.wcode ORDER BY wp.wcode)
+            FILTER (WHERE NULLIF(TRIM(PUFC12A_PROVMUN), '') IS NOT NULL) AS hh_wreg,
+        mode(d.work_dom ORDER BY d.work_dom)
+            FILTER (
+                WHERE NULLIF(TRIM(PUFC12A_PROVMUN), '') IS NOT NULL
+                  AND (NULLIF(TRIM(PUFREG), '') IS NULL OR wp.wcode = NULLIF(TRIM(PUFREG), ''))
+            ) AS hh_dom_qtr
     FROM '{parquet}'
     LEFT JOIN LATERAL (SELECT {dom} AS work_dom) d ON TRUE
     LEFT JOIN work_dom_region wp ON wp.work_dom = d.work_dom
     GROUP BY 1, 2, 3, 4, 5, 6
 ), lagged AS (
-    SELECT *, CASE WHEN rpl = LAG(rpl) OVER (PARTITION BY m ORDER BY hh_num)
-                    AND psu = LAG(psu) OVER (PARTITION BY m ORDER BY hh_num)
-                    AND reg_code IS NOT DISTINCT FROM LAG(reg_code) OVER (PARTITION BY m ORDER BY hh_num)
-                   THEN 0 ELSE 1 END AS is_new
+    -- Start a new preliminary PSU run whenever replicate, PSU code, or residence region changes
+    SELECT
+        *,
+        CASE
+            WHEN rpl = LAG(rpl) OVER (PARTITION BY m ORDER BY hh_num)
+             AND psu = LAG(psu) OVER (PARTITION BY m ORDER BY hh_num)
+             AND reg_code IS NOT DISTINCT FROM LAG(reg_code) OVER (PARTITION BY m ORDER BY hh_num)
+            THEN 0
+            ELSE 1
+        END AS is_new
     FROM hh
 ), runs AS (
-    SELECT m, hh_num, hh, rpl, psu, reg_code, urb, w_hh, hh_dom_any, hh_wreg, hh_dom_qtr,
-           SUM(is_new) OVER (PARTITION BY m ORDER BY hh_num) AS run_id
+    SELECT
+        m, hh_num, hh, rpl, psu, reg_code, urb, w_hh, hh_dom_any, hh_wreg, hh_dom_qtr,
+        SUM(is_new) OVER (PARTITION BY m ORDER BY hh_num) AS run_id
     FROM lagged
 ), run_reg_raw AS (
-    SELECT m, run_id, ANY_VALUE(reg_code) AS reg_code,
-           mode(hh_wreg ORDER BY hh_wreg) FILTER (WHERE hh_wreg IS NOT NULL) AS r_raw
-    FROM runs GROUP BY 1, 2
+    -- Infer raw residence region per run in non-quarterly months where reg_code is NULL
+    SELECT
+        m,
+        run_id,
+        ANY_VALUE(reg_code) AS reg_code,
+        mode(hh_wreg ORDER BY hh_wreg) FILTER (WHERE hh_wreg IS NOT NULL) AS r_raw
+    FROM runs
+    GROUP BY 1, 2
 ), run_reg_nb AS (
-    SELECT *,
-           LAG(r_raw, 1 IGNORE NULLS) OVER w AS rp1, LEAD(r_raw, 1 IGNORE NULLS) OVER w AS rn1,
-           LAG(r_raw, 2 IGNORE NULLS) OVER w AS rp2, LEAD(r_raw, 2 IGNORE NULLS) OVER w AS rn2,
-           LAG(r_raw, 3 IGNORE NULLS) OVER w AS rp3, LEAD(r_raw, 3 IGNORE NULLS) OVER w AS rn3
-    FROM run_reg_raw WINDOW w AS (PARTITION BY m ORDER BY run_id)
+    SELECT
+        *,
+        LAG(r_raw, 1 IGNORE NULLS) OVER w AS rp1, LEAD(r_raw, 1 IGNORE NULLS) OVER w AS rn1,
+        LAG(r_raw, 2 IGNORE NULLS) OVER w AS rp2, LEAD(r_raw, 2 IGNORE NULLS) OVER w AS rn2,
+        LAG(r_raw, 3 IGNORE NULLS) OVER w AS rp3, LEAD(r_raw, 3 IGNORE NULLS) OVER w AS rn3
+    FROM run_reg_raw
+    WINDOW w AS (PARTITION BY m ORDER BY run_id)
 ), run_eff_reg AS (
-    SELECT m, run_id,
-           COALESCE(
-               reg_code,
-               CASE
-                   WHEN rp1 = rn1 AND rp1 IS NOT NULL THEN rp1
-                   WHEN rp1 = rp2 AND rp1 = rn2 AND rp1 IS NOT NULL THEN rp1
-                   WHEN rn1 = rn2 AND rn1 = rp2 AND rn1 IS NOT NULL THEN rn1
-                   WHEN rp1 = rp2 AND rp1 = rn3 AND rp1 IS NOT NULL THEN rp1
-                   WHEN rn1 = rn2 AND rn1 = rp3 AND rn1 IS NOT NULL THEN rn1
-                   WHEN rp2 = rn2 AND rp2 = rp3 AND rp2 = rn3 AND rp2 IS NOT NULL THEN rp2
-                   ELSE COALESCE(r_raw, rp1, rn1, rp2, rn2, rp3, rn3)
-               END
-           ) AS eff_reg
+    -- 3-step neighbor smoother over geographic run order prevents cross-region commuter spikes
+    SELECT
+        m,
+        run_id,
+        COALESCE(
+            reg_code,
+            CASE
+                WHEN rp1 = rn1 AND rp1 IS NOT NULL THEN rp1
+                WHEN rp1 = rp2 AND rp1 = rn2 AND rp1 IS NOT NULL THEN rp1
+                WHEN rn1 = rn2 AND rn1 = rp2 AND rn1 IS NOT NULL THEN rn1
+                WHEN rp1 = rp2 AND rp1 = rn3 AND rp1 IS NOT NULL THEN rp1
+                WHEN rn1 = rn2 AND rn1 = rp3 AND rn1 IS NOT NULL THEN rn1
+                WHEN rp2 = rn2 AND rp2 = rp3 AND rp2 = rn3 AND rp2 IS NOT NULL THEN rp2
+                ELSE COALESCE(r_raw, rp1, rn1, rp2, rn2, rp3, rn3)
+            END
+        ) AS eff_reg
     FROM run_reg_nb
 ), raw_runs AS (
-    SELECT r.m, r.run_id, ANY_VALUE(r.rpl) AS rpl, ANY_VALUE(r.psu) AS psu,
-           ANY_VALUE(r.reg_code) AS reg_code, ANY_VALUE(er.eff_reg) AS eff_reg,
-           MIN(r.hh_num) AS min_hh, MAX(r.hh_num) AS max_hh,
-           mode(r.urb ORDER BY r.urb) AS urb,
-           COALESCE(
-               mode(r.hh_dom_any ORDER BY r.hh_dom_any) FILTER (WHERE r.hh_dom_any IS NOT NULL AND r.hh_wreg = er.eff_reg),
-               mode(r.hh_dom_qtr ORDER BY r.hh_dom_qtr) FILTER (WHERE r.hh_dom_qtr IS NOT NULL)
-           ) AS s,
-           COUNT(*) AS b, SUM(r.w_hh) AS psu_hh
+    SELECT
+        r.m,
+        r.run_id,
+        ANY_VALUE(r.rpl) AS rpl,
+        ANY_VALUE(r.psu) AS psu,
+        ANY_VALUE(r.reg_code) AS reg_code,
+        ANY_VALUE(er.eff_reg) AS eff_reg,
+        MIN(r.hh_num) AS min_hh,
+        MAX(r.hh_num) AS max_hh,
+        mode(r.urb ORDER BY r.urb) AS urb,
+        COALESCE(
+            mode(r.hh_dom_any ORDER BY r.hh_dom_any)
+                FILTER (WHERE r.hh_dom_any IS NOT NULL AND r.hh_wreg = er.eff_reg),
+            mode(r.hh_dom_qtr ORDER BY r.hh_dom_qtr)
+                FILTER (WHERE r.hh_dom_qtr IS NOT NULL)
+        ) AS s,
+        COUNT(*) AS b,
+        SUM(r.w_hh) AS psu_hh
     FROM runs r
     JOIN run_eff_reg er USING (m, run_id)
     GROUP BY 1, 2
 ), nb AS (
-    SELECT *,
-           LAG(s, 1 IGNORE NULLS) OVER w AS p1, LEAD(s, 1 IGNORE NULLS) OVER w AS n1,
-           LAG(s, 2 IGNORE NULLS) OVER w AS p2, LEAD(s, 2 IGNORE NULLS) OVER w AS n2,
-           LAG(s, 3 IGNORE NULLS) OVER w AS p3, LEAD(s, 3 IGNORE NULLS) OVER w AS n3
-    FROM raw_runs WINDOW w AS (PARTITION BY m, eff_reg ORDER BY run_id)
+    SELECT
+        *,
+        LAG(s, 1 IGNORE NULLS) OVER w AS p1, LEAD(s, 1 IGNORE NULLS) OVER w AS n1,
+        LAG(s, 2 IGNORE NULLS) OVER w AS p2, LEAD(s, 2 IGNORE NULLS) OVER w AS n2,
+        LAG(s, 3 IGNORE NULLS) OVER w AS p3, LEAD(s, 3 IGNORE NULLS) OVER w AS n3
+    FROM raw_runs
+    WINDOW w AS (PARTITION BY m, eff_reg ORDER BY run_id)
 ), smoothed_runs AS (
-    SELECT m, run_id, rpl, psu, reg_code, eff_reg, min_hh, max_hh, urb, b, psu_hh,
-           COALESCE(
-               CASE
-                   WHEN p1 = n1 AND p1 IS NOT NULL THEN p1
-                   WHEN p1 = p2 AND p1 = n2 AND p1 IS NOT NULL THEN p1
-                   WHEN n1 = n2 AND n1 = p2 AND n1 IS NOT NULL THEN n1
-                   WHEN p1 = p2 AND p1 = n3 AND p1 IS NOT NULL THEN p1
-                   WHEN n1 = n2 AND n1 = p3 AND n1 IS NOT NULL THEN n1
-                   WHEN p2 = n2 AND p2 = p3 AND p2 = n3 AND p2 IS NOT NULL THEN p2
-                   ELSE COALESCE(s, p1, n1, p2, n2, p3, n3)
-               END,
-               (SELECT work_dom FROM work_dom_region wp WHERE wp.wcode = nb.eff_reg LIMIT 1)
-           ) AS strat
+    -- Smooth within-region commuter spikes (e.g. suburban PSUs commuting into a nearby HUC)
+    SELECT
+        m, run_id, rpl, psu, reg_code, eff_reg, min_hh, max_hh, urb, b, psu_hh,
+        COALESCE(
+            CASE
+                WHEN p1 = n1 AND p1 IS NOT NULL THEN p1
+                WHEN p1 = p2 AND p1 = n2 AND p1 IS NOT NULL THEN p1
+                WHEN n1 = n2 AND n1 = p2 AND n1 IS NOT NULL THEN n1
+                WHEN p1 = p2 AND p1 = n3 AND p1 IS NOT NULL THEN p1
+                WHEN n1 = n2 AND n1 = p3 AND n1 IS NOT NULL THEN n1
+                WHEN p2 = n2 AND p2 = p3 AND p2 = n3 AND p2 IS NOT NULL THEN p2
+                ELSE COALESCE(s, p1, n1, p2, n2, p3, n3)
+            END,
+            (SELECT wp.work_dom FROM work_dom_region wp WHERE wp.wcode = nb.eff_reg ORDER BY wp.work_dom LIMIT 1)
+        ) AS strat
     FROM nb
 ), island_flags AS (
-    SELECT *,
-           CASE WHEN min_hh - LAG(max_hh) OVER (PARTITION BY m, strat, rpl, psu ORDER BY run_id) < 150
-                THEN 0 ELSE 1 END AS is_new_island
+    -- Reunite split PSU fragments sharing (m, strat, rpl, psu) separated by < 150 household IDs
+    SELECT
+        *,
+        CASE
+            WHEN min_hh - LAG(max_hh) OVER (PARTITION BY m, strat, rpl, psu ORDER BY run_id) < 150
+            THEN 0
+            ELSE 1
+        END AS is_new_island
     FROM smoothed_runs
 ), islands AS (
-    SELECT *,
-           SUM(is_new_island) OVER (PARTITION BY m, strat, rpl, psu ORDER BY run_id) AS island_id
+    SELECT
+        *,
+        SUM(is_new_island) OVER (PARTITION BY m, strat, rpl, psu ORDER BY run_id) AS island_id
     FROM island_flags
 ), merged_runs AS (
-    SELECT *,
-           CASE WHEN SUM(b) OVER (PARTITION BY m, strat, rpl, psu, island_id) <= 30
-                THEN MIN(run_id) OVER (PARTITION BY m, strat, rpl, psu, island_id)
-                ELSE run_id END AS psu_id
+    SELECT
+        *,
+        CASE
+            WHEN SUM(b) OVER (PARTITION BY m, strat, rpl, psu, island_id) <= 30
+            THEN MIN(run_id) OVER (PARTITION BY m, strat, rpl, psu, island_id)
+            ELSE run_id
+        END AS psu_id
     FROM islands
 )
-SELECT r.m, r.hh, r.reg_code, r.urb, r.w_hh, r.hh_dom_qtr AS hh_dom, mr.psu_id, mr.strat
+SELECT
+    r.m,
+    r.hh,
+    r.reg_code,
+    r.urb,
+    r.w_hh,
+    r.hh_dom_qtr AS hh_dom,
+    mr.psu_id,
+    mr.strat
 FROM runs r
 JOIN merged_runs mr USING (m, run_id);
 
--- psu_frame: one row per reunited PSU with its smoothed residence stratum and urban/rural frame household size.
+-- ==============================================================================
+-- 3. TWO-STAGE PSU & STRATUM FINITE POPULATION CORRECTION (FPC) FRAMES
+-- ==============================================================================
+-- psu_frame: one row per reunited PSU with its smoothed residence stratum and effective 2nd-stage constant
+-- (urban B_tilde = 25, rural B_tilde = 15 from PUFURB2020 [TN pp. 3, 7]).
 CREATE OR REPLACE TABLE psu_frame AS
-SELECT m, psu_id, strat,
-       COUNT(*) AS b, SUM(w_hh) AS psu_hh,
-       CASE WHEN mode(urb ORDER BY urb) = '1' THEN 25.0 ELSE 15.0 END AS b_frame
-FROM hh_psu GROUP BY 1, 2, 3;
+SELECT
+    m,
+    psu_id,
+    strat,
+    COUNT(*) AS b,
+    SUM(w_hh) AS psu_hh,
+    CASE WHEN mode(urb ORDER BY urb) = '1' THEN 25.0 ELSE 15.0 END AS b_frame
+FROM hh_psu
+GROUP BY 1, 2, 3;
 
--- stratum_frame: a_p = sampled PSUs in stratum p; A_p = SUM(psu_hh / b_frame) within (m, strat) so that any
--- month-to-month boundary jitter in a_p cancels between numerator and denominator.
+-- stratum_frame: a_p = sampled PSUs in stratum p; A_p = SUM(psu_hh / b_frame) within (m, strat) so any
+-- month-to-month boundary jitter in a_p cancels proportionally between numerator and denominator.
 CREATE OR REPLACE TABLE stratum_frame AS
-SELECT m, strat, COUNT(*) AS a_p,
-       COUNT(*) / GREATEST(COUNT(*)::DOUBLE, SUM(psu_hh / b_frame)) AS f1
-FROM psu_frame GROUP BY 1, 2;
+SELECT
+    m,
+    strat,
+    COUNT(*) AS a_p,
+    COUNT(*) / GREATEST(COUNT(*)::DOUBLE, SUM(psu_hh / b_frame)) AS f1
+FROM psu_frame
+GROUP BY 1, 2;
 
--- Materialized TABLE (instead of VIEW) so 80+ downstream table and variance queries do not re-read Parquet and re-join.
--- One row per employed person aged 15+ [TN p.1]. coded: cast raw text once; sector/industry from the PSIC 2-digit
--- division (PUFC16_PKB), education from the 5-digit PUFC07_GRADE code collapsed to PSA's 11 published groups.
+-- ==============================================================================
+-- 4. MATERIALIZED ANALYTICAL TABLE (EMPLOYED PERSONS AGED 15+)
+-- ==============================================================================
+-- Materialized as a TABLE (not VIEW) so 80+ downstream table and variance queries do not re-scan Parquet.
+-- One row per domestic employed person aged 15+ [TN p. 1].
 CREATE OR REPLACE TABLE lfs_employed_2025 AS
 WITH coded AS (
     SELECT
+        COALESCE(TRY_CAST(TRIM(PUFSVYYR) AS INTEGER), 2025) AS svy_yr,
         TRY_CAST(TRIM(PUFSVYMO) AS INTEGER) AS month_num,
         TRIM(PUFHHNUM) AS hh,
         TRY_CAST(TRIM(PUFPWGTPRV) AS DOUBLE) AS wgt,
@@ -155,20 +242,29 @@ WITH coded AS (
         TRIM(PUFC20_PWMORE) AS pwmore,
         TRY_CAST(TRIM(PUFC19_PHOURS) AS INTEGER) AS phours,
         TRY_CAST(TRIM(PUFC16_PKB) AS INTEGER) AS pkb,
-        CASE WHEN pkb BETWEEN 1 AND 3 THEN 1 WHEN pkb BETWEEN 5 AND 43 THEN 2 WHEN pkb BETWEEN 45 AND 99 THEN 3 ELSE 4 END AS sector_order,
         CASE
-            WHEN pkb BETWEEN 1 AND 2 THEN 1   WHEN pkb = 3 THEN 2              WHEN pkb BETWEEN 5 AND 9 THEN 3
-            WHEN pkb BETWEEN 10 AND 33 THEN 4 WHEN pkb = 35 THEN 5             WHEN pkb BETWEEN 36 AND 39 THEN 6
-            WHEN pkb BETWEEN 41 AND 43 THEN 7 WHEN pkb BETWEEN 45 AND 47 THEN 8 WHEN pkb BETWEEN 49 AND 53 THEN 9
+            WHEN pkb BETWEEN 1 AND 3 THEN 1
+            WHEN pkb BETWEEN 5 AND 43 THEN 2
+            WHEN pkb BETWEEN 45 AND 99 THEN 3
+            ELSE 4
+        END AS sector_order,
+        CASE
+            WHEN pkb BETWEEN 1 AND 2 THEN 1    WHEN pkb = 3 THEN 2               WHEN pkb BETWEEN 5 AND 9 THEN 3
+            WHEN pkb BETWEEN 10 AND 33 THEN 4  WHEN pkb = 35 THEN 5              WHEN pkb BETWEEN 36 AND 39 THEN 6
+            WHEN pkb BETWEEN 41 AND 43 THEN 7  WHEN pkb BETWEEN 45 AND 47 THEN 8 WHEN pkb BETWEEN 49 AND 53 THEN 9
             WHEN pkb BETWEEN 55 AND 56 THEN 10 WHEN pkb BETWEEN 58 AND 63 THEN 11 WHEN pkb BETWEEN 64 AND 66 THEN 12
-            WHEN pkb = 68 THEN 13             WHEN pkb BETWEEN 69 AND 75 THEN 14 WHEN pkb BETWEEN 77 AND 82 THEN 15
-            WHEN pkb = 84 THEN 16             WHEN pkb = 85 THEN 17            WHEN pkb BETWEEN 86 AND 88 THEN 18
+            WHEN pkb = 68 THEN 13              WHEN pkb BETWEEN 69 AND 75 THEN 14 WHEN pkb BETWEEN 77 AND 82 THEN 15
+            WHEN pkb = 84 THEN 16              WHEN pkb = 85 THEN 17             WHEN pkb BETWEEN 86 AND 88 THEN 18
             WHEN pkb BETWEEN 90 AND 93 THEN 19 WHEN pkb BETWEEN 94 AND 96 THEN 20 WHEN pkb BETWEEN 97 AND 98 THEN 21
-            WHEN pkb = 99 THEN 22 ELSE 99
+            WHEN pkb = 99 THEN 22              ELSE 99
         END AS major_industry_order,
         CASE
-            WHEN age BETWEEN 15 AND 24 THEN 1 WHEN age BETWEEN 25 AND 34 THEN 2 WHEN age BETWEEN 35 AND 44 THEN 3
-            WHEN age BETWEEN 45 AND 54 THEN 4 WHEN age BETWEEN 55 AND 64 THEN 5 WHEN age >= 65 THEN 6
+            WHEN age BETWEEN 15 AND 24 THEN 1
+            WHEN age BETWEEN 25 AND 34 THEN 2
+            WHEN age BETWEEN 35 AND 44 THEN 3
+            WHEN age BETWEEN 45 AND 54 THEN 4
+            WHEN age BETWEEN 55 AND 64 THEN 5
+            WHEN age >= 65 THEN 6
         END AS age_order,
         CASE
             WHEN (grade_num BETWEEN 0 AND 1000) OR (grade_num = 2000) THEN 1
@@ -187,9 +283,19 @@ WITH coded AS (
     FROM '{parquet}'
 )
 SELECT
-    month_num, strftime(make_date(2025, month_num, 1), '%b') AS month_name,
-    wgt, age, pwmore, phours, ps.strat, hp.psu_id, coded.hh,
-    COALESCE(['Agriculture, Forestry, and Fisheries', 'Industry', 'Services'][sector_order], 'Not Reported') AS broad_sector,
+    month_num,
+    strftime(make_date(svy_yr, month_num, 1), '%b') AS month_name,
+    wgt,
+    age,
+    pwmore,
+    phours,
+    ps.strat,
+    hp.psu_id,
+    coded.hh,
+    COALESCE(
+        ['Agriculture, Forestry, and Fisheries', 'Industry', 'Services'][sector_order],
+        'Not Reported'
+    ) AS broad_sector,
     sector_order,
     COALESCE([
         'Agriculture and Forestry', 'Fishing and Aquaculture', 'Mining and Quarrying',
@@ -205,13 +311,14 @@ SELECT
     ][major_industry_order], 'Not Reported') AS major_industry,
     major_industry_order,
     CASE sex_code WHEN '1' THEN 'Male' WHEN '2' THEN 'Female' END AS sex,
-    ['15-24', '25-34', '35-44', '45-54', '55-64', '65 and Over'][age_order] AS age_group, age_order,
+    ['15-24', '25-34', '35-44', '45-54', '55-64', '65 and Over'][age_order] AS age_group,
+    age_order,
     CASE
         WHEN phours IS NULL OR phours = 0 THEN 'Did not work (With a job, not at work)'
         WHEN phours BETWEEN 1 AND 39 THEN 'Worked less than 40 hours (1-39 hrs)'
         WHEN phours >= 40 THEN 'Worked 40 hours and over'
     END AS hours_category,
-    -- [TN p.1-2]: underemployed = wants more hours; visible = under 40 hours (incl. with a job, not at work)
+    -- [TN pp. 1-2]: underemployed = wants more hours; visible = < 40 hours (incl. with a job, not at work)
     CASE
         WHEN pwmore = '1' AND (phours IS NULL OR phours < 40) THEN 'Visibly Underemployed (<40 hrs)'
         WHEN pwmore = '1' AND phours >= 40 THEN 'Invisibly Underemployed (40+ hrs)'
@@ -224,7 +331,10 @@ SELECT
         'Senior High Graduate', 'Post Secondary Undergraduate', 'Post Secondary Graduate',
         'College Undergraduate', 'College Graduate'
     ][educ_code], 'Not Reported') AS educ_group,
-    r.rname AS region, r.rord AS region_order, rw.rname AS work_region, rw.rord AS work_region_order
+    r.rname AS region,
+    r.rord AS region_order,
+    rw.rname AS work_region,
+    rw.rord AS work_region_order
 FROM coded
 LEFT JOIN region_names r ON r.rcode = coded.reg_code
 LEFT JOIN work_dom_region wp ON wp.work_dom = coded.work_dom

@@ -1,0 +1,85 @@
+Scope,Month,Region,PUF_SE_k,PSA_SE_k,Diff_k,SE_Ratio,APE_Pct,Gate_Pct,Status
+National,Jan,Philippines,211.5146,211.564,-0.0494,0.9998,0.0233,5.0,PASS
+National,Feb,Philippines,384.0576,385.149,-1.0914,0.9972,0.2834,5.0,PASS
+National,Mar,Philippines,524.2316,525.097,-0.8654,0.9984,0.1648,5.0,PASS
+National,Apr,Philippines,247.6296,247.665,-0.0354,0.9999,0.0143,5.0,PASS
+National,May,Philippines,482.5552,482.569,-0.0138,1.0,0.0029,5.0,PASS
+National,Jun,Philippines,362.3595,362.188,0.1715,1.0005,0.0474,5.0,PASS
+National,Jul,Philippines,106.4177,106.507,-0.0893,0.9992,0.0839,5.0,PASS
+National,Aug,Philippines,348.7512,341.64,7.1112,1.0208,2.0815,5.0,PASS
+National,Sep,Philippines,355.6834,355.068,0.6154,1.0017,0.1733,5.0,PASS
+National,Oct,Philippines,221.1935,221.231,-0.0375,0.9998,0.0169,5.0,PASS
+National,Nov,Philippines,346.7463,346.789,-0.0427,0.9999,0.0123,5.0,PASS
+National,Dec,Philippines,303.7617,301.664,2.0977,1.007,0.6954,5.0,PASS
+Regional,Jan,NCR,61.1035,60.834,0.2695,1.0044,0.4429,15.0,PASS
+Regional,Jan,CAR,10.2814,10.313,-0.0316,0.9969,0.3065,15.0,PASS
+Regional,Jan,Region I (Ilocos),46.5294,46.549,-0.0196,0.9996,0.042,15.0,PASS
+Regional,Jan,Region II (Cagayan Valley),46.7426,46.77,-0.0274,0.9994,0.0585,15.0,PASS
+Regional,Jan,Region III (Central Luzon),80.578,80.603,-0.025,0.9997,0.031,15.0,PASS
+Regional,Jan,Region IV-A (CALABARZON),85.2198,85.243,-0.0232,0.9997,0.0272,15.0,PASS
+Regional,Jan,MIMAROPA,35.7458,35.781,-0.0352,0.999,0.0984,15.0,PASS
+Regional,Jan,Region V (Bicol),60.5407,60.572,-0.0313,0.9995,0.0516,15.0,PASS
+Regional,Jan,Region VI (Western Visayas),52.6434,52.671,-0.0276,0.9995,0.0524,15.0,PASS
+Regional,Jan,NIR (Negros Island),43.9956,44.028,-0.0324,0.9993,0.0737,15.0,PASS
+Regional,Jan,Region VII (Central Visayas),54.9792,54.999,-0.0198,0.9996,0.0359,15.0,PASS
+Regional,Jan,Region VIII (Eastern Visayas),35.7653,35.801,-0.0357,0.999,0.0997,15.0,PASS
+Regional,Jan,Region IX (Zamboanga Peninsula),30.3798,30.404,-0.0242,0.9992,0.0796,15.0,PASS
+Regional,Jan,Region X (Northern Mindanao),41.696,41.733,-0.037,0.9991,0.0888,15.0,PASS
+Regional,Jan,Region XI (Davao),12.7884,12.799,-0.0106,0.9992,0.0832,15.0,PASS
+Regional,Jan,Region XII (SOCCSKSARGEN),64.9902,65.05,-0.0598,0.9991,0.0919,15.0,PASS
+Regional,Jan,Region XIII (Caraga),19.9326,19.961,-0.0284,0.9986,0.1421,15.0,PASS
+Regional,Jan,BARMM,37.3656,37.498,-0.1324,0.9965,0.3531,15.0,PASS
+Regional,Apr,NCR,63.826,63.583,0.243,1.0038,0.3822,15.0,PASS
+Regional,Apr,CAR,13.086,13.124,-0.038,0.9971,0.2895,15.0,PASS
+Regional,Apr,Region I (Ilocos),31.581,31.594,-0.013,0.9996,0.0411,15.0,PASS
+Regional,Apr,Region II (Cagayan Valley),44.7405,44.769,-0.0285,0.9994,0.0636,15.0,PASS
+Regional,Apr,Region III (Central Luzon),95.1447,95.176,-0.0313,0.9997,0.0328,15.0,PASS
+Regional,Apr,Region IV-A (CALABARZON),115.4989,115.529,-0.0301,0.9997,0.026,15.0,PASS
+Regional,Apr,MIMAROPA,34.685,34.722,-0.037,0.9989,0.1065,15.0,PASS
+Regional,Apr,Region V (Bicol),49.0572,49.088,-0.0308,0.9994,0.0628,15.0,PASS
+Regional,Apr,Region VI (Western Visayas),104.8644,104.911,-0.0466,0.9996,0.0444,15.0,PASS
+Regional,Apr,NIR (Negros Island),39.2021,39.228,-0.0259,0.9993,0.0659,15.0,PASS
+Regional,Apr,Region VII (Central Visayas),46.7663,46.781,-0.0147,0.9997,0.0314,15.0,PASS
+Regional,Apr,Region VIII (Eastern Visayas),32.5299,32.556,-0.0261,0.9992,0.08,15.0,PASS
+Regional,Apr,Region IX (Zamboanga Peninsula),34.9255,34.954,-0.0285,0.9992,0.0816,15.0,PASS
+Regional,Apr,Region X (Northern Mindanao),47.5173,47.55,-0.0327,0.9993,0.0687,15.0,PASS
+Regional,Apr,Region XI (Davao),12.2114,12.223,-0.0116,0.9991,0.0946,15.0,PASS
+Regional,Apr,Region XII (SOCCSKSARGEN),78.5232,78.6,-0.0768,0.999,0.0977,15.0,PASS
+Regional,Apr,Region XIII (Caraga),26.188,26.226,-0.038,0.9986,0.1449,15.0,PASS
+Regional,Apr,BARMM,42.6269,42.523,0.1039,1.0024,0.2443,15.0,PASS
+Regional,Jul,NCR,22.7917,22.768,0.0237,1.001,0.1039,15.0,PASS
+Regional,Jul,CAR,8.0276,8.102,-0.0744,0.9908,0.9178,15.0,PASS
+Regional,Jul,Region I (Ilocos),26.0452,26.089,-0.0438,0.9983,0.168,15.0,PASS
+Regional,Jul,Region II (Cagayan Valley),21.2958,21.352,-0.0562,0.9974,0.2632,15.0,PASS
+Regional,Jul,Region III (Central Luzon),32.1664,32.214,-0.0476,0.9985,0.1477,15.0,PASS
+Regional,Jul,Region IV-A (CALABARZON),48.766,48.822,-0.056,0.9989,0.1148,15.0,PASS
+Regional,Jul,MIMAROPA,13.6247,13.69,-0.0653,0.9952,0.4767,15.0,PASS
+Regional,Jul,Region V (Bicol),25.6477,25.715,-0.0673,0.9974,0.2617,15.0,PASS
+Regional,Jul,Region VI (Western Visayas),31.6271,31.685,-0.0579,0.9982,0.1827,15.0,PASS
+Regional,Jul,NIR (Negros Island),33.6523,33.714,-0.0617,0.9982,0.1831,15.0,PASS
+Regional,Jul,Region VII (Central Visayas),24.8786,24.919,-0.0404,0.9984,0.1622,15.0,PASS
+Regional,Jul,Region VIII (Eastern Visayas),16.7445,16.805,-0.0605,0.9964,0.3602,15.0,PASS
+Regional,Jul,Region IX (Zamboanga Peninsula),18.8627,18.929,-0.0663,0.9965,0.3501,15.0,PASS
+Regional,Jul,Region X (Northern Mindanao),25.3171,25.403,-0.0859,0.9966,0.3382,15.0,PASS
+Regional,Jul,Region XI (Davao),17.0199,17.081,-0.0611,0.9964,0.3578,15.0,PASS
+Regional,Jul,Region XII (SOCCSKSARGEN),23.5056,23.588,-0.0824,0.9965,0.3493,15.0,PASS
+Regional,Jul,Region XIII (Caraga),11.717,11.784,-0.067,0.9943,0.5682,15.0,PASS
+Regional,Jul,BARMM,18.5583,17.848,0.7103,1.0398,3.9799,15.0,PASS
+Regional,Oct,NCR,46.894,46.946,-0.052,0.9989,0.1108,15.0,PASS
+Regional,Oct,CAR,13.1869,13.215,-0.0281,0.9979,0.2125,15.0,PASS
+Regional,Oct,Region I (Ilocos),36.715,36.726,-0.011,0.9997,0.0301,15.0,PASS
+Regional,Oct,Region II (Cagayan Valley),32.7576,32.783,-0.0254,0.9992,0.0774,15.0,PASS
+Regional,Oct,Region III (Central Luzon),102.205,102.24,-0.035,0.9997,0.0342,15.0,PASS
+Regional,Oct,Region IV-A (CALABARZON),82.2824,82.304,-0.0216,0.9997,0.0262,15.0,PASS
+Regional,Oct,MIMAROPA,31.2898,31.323,-0.0332,0.9989,0.106,15.0,PASS
+Regional,Oct,Region V (Bicol),53.4208,53.451,-0.0302,0.9994,0.0565,15.0,PASS
+Regional,Oct,Region VI (Western Visayas),47.8912,47.918,-0.0268,0.9994,0.0558,15.0,PASS
+Regional,Oct,NIR (Negros Island),38.8647,38.882,-0.0173,0.9996,0.0446,15.0,PASS
+Regional,Oct,Region VII (Central Visayas),92.4009,92.431,-0.0301,0.9997,0.0326,15.0,PASS
+Regional,Oct,Region VIII (Eastern Visayas),46.9439,46.969,-0.0251,0.9995,0.0534,15.0,PASS
+Regional,Oct,Region IX (Zamboanga Peninsula),48.8706,48.907,-0.0364,0.9993,0.0744,15.0,PASS
+Regional,Oct,Region X (Northern Mindanao),43.2528,43.281,-0.0282,0.9993,0.065,15.0,PASS
+Regional,Oct,Region XI (Davao),15.7805,15.8,-0.0195,0.9988,0.1235,15.0,PASS
+Regional,Oct,Region XII (SOCCSKSARGEN),49.0546,49.11,-0.0554,0.9989,0.1129,15.0,PASS
+Regional,Oct,Region XIII (Caraga),19.4231,19.451,-0.0279,0.9986,0.1432,15.0,PASS
+Regional,Oct,BARMM,35.299,34.835,0.464,1.0133,1.332,15.0,PASS

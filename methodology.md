@@ -1,3 +1,4 @@
+```markdown
 ---
 layout: default
 title: "Mathematical Methodology, PSA Survey Plan & PUF Metadata — Philippine LFS 2025"
@@ -47,14 +48,13 @@ The 2025 LFS utilizes the PSA's **2023 Geo-Enabled Master Sample (MS)** for hous
 | **Highly Urbanized Cities (HUCs) in NCR** | $16$ | City of Manila (coded by 2-digit prefix `39`) plus the $15$ Highly Urbanized Cities in NCR Districts II–IV (coded by 4-digit PSGC in `74xx`, `75xx`, `76xx`, excluding Pateros `7606`). |
 | **Highly Urbanized Cities (HUCs) Outside NCR** | $17$ | Coded by their full 4-digit PSGC (`_HUCS_OUTSIDE_NCR`): `0202` Butuan, `1102` Baguio, `2217` Cebu City, `2226` Lapu-Lapu, `2230` Mandaue, `2402` Davao City, `3022` Iloilo City, `3504` Iligan, `3747` Tacloban, `4305` Cagayan de Oro, `4501` Bacolod, `5316` Puerto Princesa, `5401` Angeles, `5624` Lucena, `6303` General Santos, `7107` Olongapo, `7332` Zamboanga City. |
 | **Other Urban Areas** | $3$ | Municipality of Pateros (4-digit code `7606` in NCR), Isabela City (2-digit prefix `97`), and Cotabato City (2-digit prefix `98`). |
-| **Total Sampling Domains** | $117$ | $81 + 16 + 17 + 3 = 117$ ($84$ two-digit codes + $33$ four-digit codes; asserted via `SELECT COUNT(*) FROM work_dom_region == 117`). |
+| **Total Sampling Domains** | $117$ | $81 + 16 + 17 + 3 = 117$ ($84$ two-digit codes + $33$ four-digit codes; verified via `SELECT COUNT(*) FROM work_dom_region == 117`). |
 
 ### 1.3 Two-Stage Stratified Cluster Design (Technical Notes, pp. 3–5)
 
 Within each of the $117$ sampling domains (strata), the Master Sample selects households in two stages:
 
-1. **Stage 1 — Primary Sampling Units (PSUs):** PSUs are individual barangays, combinations of small contiguous barangays, or portions of large barangays formed in the 2020 Census frame to contain approximately **100 to 400 households** (calibrated via `PUFURB2020` as $B _ {\text{urb}} = 25$ for urban PSUs and $B _ {\text{rur}} = 15$ for rural PSUs to match PSA's post-stratified Taylor variance scale; see [Section 5.1](#design)). Within each domain $p$, $a _ p$ PSUs are selected systematically with **Probability Proportional to Size (PPS)**, where the measure of size is the 2020 Census household count $B _ {p,a}$. PSUs are sorted in geographic/serpentine order prior to systematic selection to induce implicit geographic stratification.
-1. **Stage 1 — Primary Sampling Units (PSUs):** PSUs are individual barangays, combinations of small contiguous barangays, or portions of large barangays formed to contain approximately **100 to 400 households** (calibrated via `PUFURB2020` as $B _ {\text{urb}} = 25$ for urban PSUs and $B _ {\text{rur}} = 15$ for rural PSUs to match PSA's post-stratified Taylor variance scale). Within each domain $p$, $a _ p$ PSUs are selected systematically with **Probability Proportional to Size (PPS)**, where the measure of size is the 2020 Census household count $B _ {p,a}$. PSUs are sorted in geographic/serpentine order prior to systematic selection to induce implicit geographic stratification.
+1. **Stage 1 — Primary Sampling Units (PSUs):** PSUs are individual barangays, combinations of small contiguous barangays, or portions of large barangays formed in the 2020 Census frame to contain approximately **100 to 400 households** ($B _ {p,a}$). Within each domain $p$, $a _ p$ PSUs are selected systematically with **Probability Proportional to Size (PPS)**, where the measure of size is the 2020 Census household count $B _ {p,a}$. PSUs are sorted in geographic/serpentine order prior to systematic selection to induce implicit geographic stratification. Because exact $B _ {p,a}$ values are confidential, our variance engine (`psu_frame`) calibrates effective second-stage constants $\tilde{B} _ {\text{urb}} = 25$ and $\tilde{B} _ {\text{rur}} = 15$ via `PUFURB2020` to match PSA's post-stratified Taylor variance scale (see [Section 5.1](#design)).
 2. **Stage 2 — Secondary Sampling Units (Housing Units & Households):** Within each sampled PSU $(p,a)$, housing units are selected via systematic random sampling. All households residing within a selected housing unit are interviewed, up to a maximum of **3 households per housing unit** (if a housing unit contains more than $3$ households, $3$ are selected at random).
 
 ### 1.4 Quarterly (4-Replicate) vs. Monthly (1-Replicate) Rotation Schedule (Technical Notes, pp. 2, 4)
@@ -100,7 +100,7 @@ All $12$ monthly CSV files in `data/puf/` are consolidated into `LFS_PUF_2025_Co
 | `PUFREG` | String ($2$-char) | `01`–`19` (`NULL` in monthly) | PSGC Region of Residence. Populated only in quarterly rounds (`1, 4, 7, 10`). |
 | `PUFPSU` | String | Numeric code | Primary Sampling Unit number. Reused across different provinces/domains. |
 | `PUFRPL` | String | `1`–`4` | Master Sample replicate code. Used with `PUFPSU` and `PUFHHNUM` to identify contiguous PSU clusters. |
-| `PUFHHNUM` | Integer | Sequential ID | Unique household identifier within each round, sorted in geographic domain order. |
+| `PUFHHNUM` | Bigint | Sequential ID | Unique household identifier within each round, sorted in geographic domain order. |
 | `PUFHHSIZE` | Integer | $\ge 1$ | Number of household members. |
 | `PUFURB2020` | String | `1` = Urban, `2` = Rural | 2020 Census urban-rural barangay classification. |
 | `PUFPWGTPRV` | Double | $> 0$ | **Final calibrated person weight** ($w _ i$). Summing `PUFPWGTPRV` yields population levels; household weight `w_hh` in `hh_psu` is `AVG(PUFPWGTPRV)` within each household. |
@@ -206,7 +206,7 @@ Because the $8$ non-quarterly monthly rounds omit several supplemental questions
 | Publication Order (`region_order`) | PSGC Code (`rcode`) | Region Display Name (`region` / `work_region`) | Residence (`R*`) vs. Workplace (`W*`) Rule |
 |---|---|---|---|
 | `1`–`6` | `13`, `14`, `01`, `02`, `03`, `04` | NCR, CAR, Region I (Ilocos), Region II (Cagayan Valley), Region III (Central Luzon), Region IV-A (CALABARZON) | `R*` uses `PUFREG` (Jan/Apr/Jul/Oct); `W*` maps `PUFC12A_PROVMUN` across all $12$ months. |
-| `7`–`12` | `17`, `05`, `06`, `18`, `07`, `08` | MIMAROPA, Region V (Bicol), Region VI (Western Visayas), NIR (Negros Island), Region VII (Central Visayas), Region VIII (Eastern Visayas) | NIR (`18`: Negros Occidental `45` and Negros Oriental `46`) is published as a distinct region throughout all 2025 LFS rounds. |
+| `7`–`12` | `17`, `05`, `06`, `18`, `07`, `08` | MIMAROPA, Region V (Bicol), Region VI (Western Visayas), NIR (Negros Island), Region VII (Central Visayas), Region VIII (Eastern Visayas) | NIR (`18`: Negros Occidental `45`, Bacolod `4501`, Negros Oriental `46`, and Siquijor `61`) is published as a distinct region throughout all 2025 LFS rounds. |
 | `13`–`18` | `09`, `10`, `11`, `12`, `16`, `19` | Region IX (Zamboanga Peninsula), Region X (Northern Mindanao), Region XI (Davao), Region XII (SOCCSKSARGEN), Region XIII (Caraga), BARMM | In the 2025 PUF, Sulu province (`66`) is mapped to BARMM (`19`) via `work_dom_region`. |
 
 ## 3. Core Point Estimators (Counts, Rates, and Shares) {#estimators}
@@ -263,7 +263,7 @@ Let $\mathcal{M}$ be the set of survey months pooled for an estimate, with cardi
 * **National and Workplace-Region (`W*`) Annual Tables:** $\mathcal{M} = \{1, 2, \dots, 12\}$, $K = 12$.
 * **Residence-Region (`R*`) Quarterly Tables:** $\mathcal{M} = \{1, 4, 7, 10\}$ (January, April, July, October), $K = 4$, as only the quarterly LFS rounds deploy the full $4$-replicate sample designed for regional estimates.
 
-The multi-round average monthly headcount (in thousands) is the arithmetic mean across the $K$ rounds:
+Monthly and quarterly panel queries (`build_monthly_stratified_query` in `tables.py`) cross-join the active months against all observed category combinations and fill empty cells with $0.0$, guaranteeing balanced $K$-period panels where the mean of monthly rows equals the multi-round headcount average:
 
 $$
 \bar{X}_d = \frac{1}{K} \sum_{m \in \mathcal{M}} \frac{\hat{X}_{m,d}}{10^3}, \qquad \bar{Y}_d = \frac{1}{K} \sum_{m \in \mathcal{M}} \frac{\hat{Y}_{m,d}}{10^3}
@@ -283,18 +283,13 @@ Because the anonymized PUF omits explicit residence-province codes and reuses PS
 
 1. **Contiguous PSU Identification & Multi-Fragment Island Reunification (`hh_psu`):** Within each month $m$, households are ordered by their sequential household number (`PUFHHNUM`), which follows the geographic ordering of the Master Sample frame. Preliminary runs begin whenever the replicate code (`PUFRPL`), PSU code (`PUFPSU`), or residence region (`PUFREG`) changes between consecutive households. Any split PSU fragments that share the same inferred domain, replicate, and PSU code within $150$ household IDs ($\le 30$ combined households) are reunited into a single `psu_id` via a gap-and-islands window (`MIN(run_id) OVER (PARTITION BY m, strat, rpl, psu, island_id)` in `merged_runs`). Each household's weight $w _ {p,a,h}$ (`w_hh`) is computed as the mean of its members' calibrated person weights (`AVG(PUFPWGTPRV)`).
 2. **In-Region Residence Constraint & 3-Step Neighbor-PSU Stratum Assignment (`psu_frame`):** Each household is assigned the modal province/HUC of work (`PUFC12A_PROVMUN`) of its employed members. In the $4$ quarterly rounds where the true residence region (`PUFREG`) is observed, only workplace domains belonging to the household's residence region (`wp.wcode = reg_code`) are eligible; in the $8$ non-quarterly monthly rounds (`PUFREG IS NULL`), each run's residence region `eff_reg` is first inferred via a $3$-step neighbor smoother over the geographic `PUFHHNUM` ordering and used to filter eligible workplace domains (`hh_wreg = eff_reg`). Within each `(m, eff_reg)` partition, a $3$-step neighbor window (`LAG`/`LEAD` $1, 2, 3$ with `IGNORE NULLS`) repairs commuter and empty PSUs to their surrounding residence stratum $p$.
-3. **Urban/Rural Second-Stage Finite Population Correction** ($1 - f _ {2,p,a}$): Let $b _ {p,a}$ be the number of sampled households in PSU $a$ of stratum $p$. Following PSA Technical Notes (pp. 3, 7–8)—where rural barangay PSUs are smaller than urban EAs and post-stratification calibration absorbs part of the finite-population variance reduction—the effective frame constant of each PSU is calibrated using `PUFURB2020` as $B _ {p,a} = \max(b _ {p,a}, B _ {\text{urb/rur}})$, where $B _ {\text{urb}} = 25$ (`PUFURB2020 = '1'`, urban) and $B _ {\text{rur}} = 15$ (`PUFURB2020 = '2'`, rural), giving the second-stage FPC factor:
-1. **Contiguous PSU Identification & Multi-Fragment Island Reunification (`hh_psu`):** Within each month $m$, households are ordered by their sequential household number (`PUFHHNUM`), which follows the geographic ordering of the Master Sample frame. Preliminary runs begin whenever the replicate code (`PUFRPL`), PSU code (`PUFPSU`), or residence region (`PUFREG`) changes between consecutive households. Any split PSU fragments that share the same inferred domain, replicate, and PSU code within $150$ household IDs ($\le 30$ combined households) are reunited into a single `psu_id` via a gap-and-islands window (`MIN(run_id) OVER (PARTITION BY m, strat, rpl, psu, island_id)` in `merged_runs`). Each household's weight $w _ {p,a,h}$ (`w_hh`) is computed as the mean of its members' calibrated person weights (`AVG(PUFPWGTPRV)`).
-2. **In-Region Residence Constraint & 3-Step Neighbor-PSU Stratum Assignment (`psu_frame`):** Each household is assigned the modal province/HUC of work (`PUFC12A_PROVMUN`) of its employed members. In the $4$ quarterly rounds where the true residence region (`PUFREG`) is observed, only workplace domains belonging to the household's residence region (`wp.wcode = reg_code`) are eligible; in the $8$ non-quarterly monthly rounds (`PUFREG IS NULL`), each run's residence region `eff_reg` is first inferred via a 3-step neighbor smoother over the geographic `PUFHHNUM` ordering and used to filter eligible workplace domains (`hh_wreg = eff_reg`). Within each `(m, eff_reg)` partition, a 3-step neighbor window (`LAG`/`LEAD` $1, 2, 3$ with `IGNORE NULLS`) repairs commuter and empty PSUs to their surrounding residence stratum $p$.
-3. **Urban/Rural Second-Stage Finite Population Correction** ($1 - f _ {2,p,a}$): Let $b _ {p,a}$ be the number of sampled households in PSU $a$ of stratum $p$. Following PSA Technical Notes (pp. 3, 7–8)—where rural barangay PSUs are smaller than urban EAs and post-stratification calibration absorbs part of the finite-population variance reduction—the effective frame constant of each PSU is calibrated using `PUFURB2020` as $B _ {p,a} = \max(b _ {p,a}, B _ {\text{urb/rur}})$, where $B _ {\text{urb}} = 25$ (`PUFURB2020 = '1'`) and $B _ {\text{rur}} = 15$ (`PUFURB2020 = '2'`), giving the second-stage FPC factor:
+3. **Urban/Rural Second-Stage Finite Population Correction** ($1 - f _ {2,p,a}$): Let $b _ {p,a}$ be the number of sampled households in PSU $a$ of stratum $p$. Following PSA Technical Notes (pp. 3, 7–8)—where rural barangay PSUs are smaller than urban EAs and post-stratification calibration absorbs part of the finite-population variance reduction—the effective second-stage frame constant `b_frame` of each PSU is calibrated using `PUFURB2020` as $\tilde{B} _ {p,a} = 25$ for urban PSUs (`PUFURB2020 = '1'`) and $\tilde{B} _ {p,a} = 15$ for rural PSUs (`PUFURB2020 = '2'`), giving the second-stage FPC factor:
 
 $$
-1 - f_{2,p,a} = 1 - \frac{b_{p,a}}{\max(b_{p,a}, B_{p,a})}
-1 - f_{2,p,a} = 1 - \frac{b_{p,a}}{\max(b_{p,a}, B_{p,a})}
+1 - f_{2,p,a} = 1 - \frac{b_{p,a}}{\max(b_{p,a}, \tilde{B}_{p,a})}
 $$
 
-4. **First-Stage Sampling Fraction** ($f _ {1,p}$): Let $a _ p$ be the number of sampled PSUs in stratum $p$, and let $\hat{H} _ {p,a} = \sum _ {h=1}^{b _ {p,a}} w _ {p,a,h}$ (`psu_hh`) be the weighted household count of PSU $a$. The effective number of frame PSUs in stratum $p$ is estimated within each `(m, strat)` as $\hat{A} _ p = \max\!\left(a _ p, \sum _ {a=1}^{a _ p} \frac{\hat{H} _ {p,a}}{B _ {p,a}}\right)$, yielding the first-stage sampling fraction:
-4. **First-Stage Sampling Fraction** ($f _ {1,p}$): Let $a _ p$ be the number of sampled PSUs in stratum $p$, and let $\hat{H} _ {p,a} = \sum _ {h=1}^{b _ {p,a}} w _ {p,a,h}$ (`psu_hh`) be the weighted household count of PSU $a$. The effective number of frame PSUs in stratum $p$ is estimated within each `(m, strat)` as $\hat{A} _ p = \max\!\left(a _ p, \sum _ {a=1}^{a _ p} \frac{\hat{H} _ {p,a}}{B _ {p,a}}\right)$, yielding the first-stage sampling fraction:
+4. **First-Stage Sampling Fraction** ($f _ {1,p}$): Let $a _ p$ be the number of sampled PSUs in stratum $p$, and let $\hat{H} _ {p,a} = \sum _ {h=1}^{b _ {p,a}} w _ {p,a,h}$ (`psu_hh`) be the weighted household count of PSU $a$. The effective number of frame PSUs in stratum $p$ is estimated within each `(m, strat)` as $\hat{A} _ p = \max\!\left(a _ p, \sum _ {a=1}^{a _ p} \frac{\hat{H} _ {p,a}}{\tilde{B} _ {p,a}}\right)$, yielding the first-stage sampling fraction:
 
 $$
 f_{1,p} = \frac{a_p}{\hat{A}_p}, \qquad 1 - f_{1,p} = 1 - \frac{a_p}{\hat{A}_p}
@@ -315,7 +310,7 @@ While point estimates match PSA Special Release tables $100\%$ ($4,229 / 4,229$ 
 
 * **Inferred Residence Strata at Domain Boundaries:** Where `PUFHHNUM` transitions between two provinces or an HUC and a province within the same region, a boundary commuter PSU can still be absorbed into the adjacent domain.
 * **Repeated PSU Codes & Residual Split Clusters:** A handful of PSUs separated by more than $150$ household IDs or $> 30$ combined households remain split.
-* **Unpublished Frame Counts ($B _ {p,a}$ and $A _ p$) & Post-Stratification Raking Factors:** Exact barangay housing-unit counts ($B _ {p,a}$), domain PSU counts ($A _ p$), and intermediate non-response/post-stratification adjustment factors are not released in the PUF; calibrating $B _ {\text{urb}} = 25$ and $B _ {\text{rur}} = 15$ achieves our final verified precision (**National:** median $0.9999\times$, mean $1.0020\times$, MAPE $0.30\%$, range $0.997\text{--}1.021\times$; **Regional:** median $0.9992\times$, mean $0.9996\times$, MAPE $0.22\%$, range $0.991\text{--}1.040\times$; quarterly medians `M1=0.9992`, `M4=0.9994`, `M7=0.9974`, `M10=0.9994`), with the remaining minor dispersion driven by unpublished barangay-level frame sizes and post-stratification adjustments.
+* **Unpublished Frame Counts ($B _ {p,a}$ and $A _ p$) & Post-Stratification Raking Factors:** Exact barangay housing-unit counts ($B _ {p,a}$), domain PSU counts ($A _ p$), and intermediate non-response/post-stratification adjustment factors are not released in the PUF; calibrating $\tilde{B} _ {\text{urb}} = 25$ and $\tilde{B} _ {\text{rur}} = 15$ achieves our final verified precision (**National:** median $0.9999\times$, mean $1.0020\times$, MAPE $0.30\%$, range $0.997\text{--}1.021\times$; **Regional:** median $0.9992\times$, mean $0.9996\times$, MAPE $0.22\%$, range $0.991\text{--}1.040\times$; quarterly medians `M1=0.9992`, `M4=0.9994`, `M7=0.9974`, `M10=0.9994`), with the remaining minor dispersion driven by unpublished barangay-level frame sizes and post-stratification adjustments.
 * **Omission of Second-Stage Housing-Unit IDs & Longitudinal Panel Keys:** Treating sampled households within multi-household housing units (up to $3$ households per housing unit) as independent second-stage units slightly understates within-PSU clustering, and the suppression of longitudinal household IDs across quarterly rotational waves requires multi-round averages ($K = 12$ or $K = 4$) to treat rounds as independent cross-sections.
 
 ## 6. Two-Stage Stratified Cluster Variance (Totals) {#variance}
@@ -339,8 +334,7 @@ $$
 Following the two-stage variance decomposition in the PSA Technical Notes (p. 8a), the **within-PSU (second-stage) variance** summed across PSUs in stratum $p$ is:
 
 $$
-V_{w,p}(y) = \sum_{a=1}^{a_p} \mathbb{I}(b_{p,a} > 1) \left(1 - \frac{b_{p,a}}{\max(b_{p,a}, B_{p,a})}\right) \frac{b_{p,a}}{b_{p,a} - 1} \left( q_{yy,p,a} - \frac{z_{y,p,a}^2}{b_{p,a}} \right)
-V_{w,p}(y) = \sum_{a=1}^{a_p} \mathbb{I}(b_{p,a} > 1) \left(1 - \frac{b_{p,a}}{\max(b_{p,a}, B_{p,a})}\right) \frac{b_{p,a}}{b_{p,a} - 1} \left( q_{yy,p,a} - \frac{z_{y,p,a}^2}{b_{p,a}} \right)
+V_{w,p}(y) = \sum_{a=1}^{a_p} \mathbb{I}(b_{p,a} > 1) \left(1 - \frac{b_{p,a}}{\max(b_{p,a}, \tilde{B}_{p,a})}\right) \frac{b_{p,a}}{b_{p,a} - 1} \left( q_{yy,p,a} - \frac{z_{y,p,a}^2}{b_{p,a}} \right)
 $$
 
 The **between-PSU (first-stage) variance** in stratum $p$ is:
@@ -355,7 +349,7 @@ $$
 V(\hat{Y}_{m,d}) = \sum_{p=1}^{117} \Big( V_{b,p}(y) + f_{1,p} \, V_{w,p}(y) \Big)
 $$
 
-Identical expressions yield the denominator variance $V(\hat{X} _ {m,d})$ and the bilinear covariance $\text{Cov}(\hat{X} _ {m,d}, \hat{Y} _ {m,d})$.
+Identical expressions yield the visibly underemployed variance $V(\hat{Y} _ {m,d}^{\text{vis}})$, the invisibly underemployed variance $V(\hat{Y} _ {m,d}^{\text{inv}})$, the denominator variance $V(\hat{X} _ {m,d})$, and the bilinear covariance $\text{Cov}(\hat{X} _ {m,d}, \hat{Y} _ {m,d})$.
 
 ## 7. Taylor Series Linearization for Ratio Standard Errors {#taylor}
 
@@ -365,7 +359,7 @@ $$
 V(\hat{r}_d) \approx \frac{1}{\hat{X}_d^2} \Big( V(\hat{Y}_d) + \hat{r}_d^2 \, V(\hat{X}_d) - 2 \hat{r}_d \, \text{Cov}(\hat{Y}_d, \hat{X}_d) \Big)
 $$
 
-For multi-round averages across $K$ rounds ($K = 12$ annual or $K = 4$ quarterly), where rounds are treated as independent cross-sections in the absence of panel household identifiers across PUF files, `annotate_tables` in `tables.py` appends five validation and precision columns to every table (`psa_check`, `se_underemp_k`, `se_underemp_rate_pp`, `cv_underemp_pct`, and `reliability`), where:
+For multi-round averages across $K$ rounds ($K = 12$ annual or $K = 4$ quarterly), where rounds are treated as independent cross-sections in the absence of panel household identifiers across PUF files, `annotate_tables` in `tables.py` appends validation and precision columns to every table (`psa_check`, `se_underemp_k`, `se_visible_k`, `se_invisible_k`, `se_underemp_rate_pp`, `cv_underemp_pct`, `cv_visible_pct`, `cv_invisible_pct`, and `reliability`), where:
 
 $$
 \text{SE}(\bar{Y}_d) = \frac{\sqrt{\max\!\left(0,\, \sum_{m \in \mathcal{M}} V(\hat{Y}_{m,d})\right)}}{K \times 10^3} \quad \text{(in thousands, } \texttt{se\_underemp\_k}\text{)}
@@ -381,17 +375,18 @@ Note on rotational panel covariance: If longitudinal household panel identifiers
 
 ### Coefficient of Variation (CV)
 
-The relative sampling precision of every headcount estimate is measured by its Coefficient of Variation:
+The relative sampling precision of every headcount estimate (total, visible, and invisible) is measured by its Coefficient of Variation:
 
 $$
 \text{CV}(\bar{Y}_d) = \frac{\text{SE}(\bar{Y}_d)}{\bar{Y}_d} \times 100\%
 $$
 
-Following the reliability thresholds used in PSA/NSCB small-area statistics, every table row and chart bar is classified into three bands:
+Following the reliability thresholds used in PSA/NSCB small-area statistics, every table row and chart bar is classified into bands (with Figure RQ2 evaluating `cv_visible_pct` and `cv_invisible_pct` separately on each sub-bar):
 
 * **Reliable** ($\text{CV} \le 10\%$): Solid bar, no flag.
 * **Use with caution** ($10\% < \text{CV} \le 20\%$): Single-hatched bar (`//`) and single asterisk (`*`).
 * **Unreliable** ($\text{CV} > 20\%$): Triple-hatched translucent bar (`///`) and double asterisk (`**`).
+* **Zero / Empty Cells:** Cells with zero employed sample ($\bar{X} _ d = 0$) are labeled `no sample`; sampled cells where $\bar{X} _ d > 0$ but $\bar{Y} _ d = 0$ are labeled `zero estimate (CV undefined)`.
 
 ### Why Rare Subgroups Have High CVs (`*` and `**`): The Mathematics of Small-Cell Variance {#small-cells}
 
@@ -505,8 +500,7 @@ The repository stores two sets of PSA spreadsheets: preliminary Press Release ta
   * $576$ `PASS` rows (`Q-avg Jan/Apr/Jul/Oct`): Regional $4$-quarter averages across all $18$ regions.
   * $1$ `INFO` row (`2025 Annual (Annual Special Release 2025p)`): Compares our $12$-month final mean employed count ($49,024.506\text{k}$) against PSA's preliminary `00_Annual__Table 2` release (`2025p`, which was published before all monthly rounds were finalized and sits $11.3\text{k}$ higher).
   * $3$ `N/A` rows (`N/A (not published every month; no comparable period average)`): Documents `wm_broad` (`visible` and `invisible` by broad sector, published only in the $8$ non-quarterly rounds) and `wm_major` (`underemp` by major industry, published only in the $4$ quarterly rounds).
-* **Standard Error Assertions & Why Both Median and Mean/MAPE/Range Are Reported** ($84$ cells): `psa.py` asserts that every single two-stage Taylor linearization standard error (`se_underemp_k`) matches PSA's published `Standard Error` column within $\pm 5\%$ nationally ($12$ months: **median $0.9999\times$, mean $1.0020\times$, MAPE $0.30\%$, range $0.997\text{--}1.021\times$**) and within $\pm 15\%$ regionally ($72$ cells: **median $0.9992\times$, mean $0.9996\times$, MAPE $0.22\%$, range $0.991\text{--}1.040\times$**; quarterly medians: `M1=0.9992`, `M4=0.9994`, `M7=0.9974`, `M10=0.9994`). The median ratio is reported alongside the mean, MAPE, and hard range gate because it is invariant to single-round sample-size shifts and published rounding quantization on small regional denominators.
-* **Standard Error Assertions & Why Both Median and Mean/MAPE/Range Are Reported** ($84$ cells): `psa.py` asserts that every single two-stage Taylor linearization standard error (`se_underemp_k`) matches PSA's published `Standard Error` column within $\pm 5\%$ nationally ($12$ months: **median $0.9999\times$, mean $1.0020\times$, MAPE $0.30\%$, range $0.997\text{--}1.021\times$**) and within $\pm 15\%$ regionally ($72$ cells: **median $0.9992\times$, mean $0.9996\times$, MAPE $0.22\%$, range $0.991\text{--}1.040\times$**; quarterly medians: Jan $0.9992\times$, Apr $0.9994\times$, Jul $0.9974\times$, Oct $0.9994\times$). The median ratio is reported alongside the mean, MAPE, and hard range gate because it is invariant to single-round sample-size shifts and published rounding quantization on small regional denominators.
+* **`0C_PSA_Validation_SE.csv` — Standard Error Checks & Why Both Median and Mean/MAPE/Range Are Reported** ($84$ `PASS` rows, $0$ failures): `psa.py` checks and exports every single two-stage Taylor linearization standard error (`se_underemp_k`) against PSA's published `Standard Error` column within $\pm 5\%$ nationally ($12$ months: **median $0.9999\times$, mean $1.0020\times$, MAPE $0.30\%$, range $0.997\text{--}1.021\times$**) and within $\pm 15\%$ regionally ($72$ cells: **median $0.9992\times$, mean $0.9996\times$, MAPE $0.22\%$, range $0.991\text{--}1.040\times$**; quarterly medians: `M1=0.9992`, `M4=0.9994`, `M7=0.9974`, `M10=0.9994`). The median ratio is reported alongside the mean, MAPE, and hard range gate because it is invariant to single-round sample-size shifts and published rounding quantization on small regional denominators.
 
 | Verifier Key in `psa.py` | Official PSA Special Release Table Title Pattern | Rounds Published | Verified Indicators & Dimensions |
 |---|---|---|---|
@@ -523,16 +517,16 @@ The repository stores two sets of PSA spreadsheets: preliminary Press Release ta
 | `wm_broad` | *Employed Persons Wanting More Hours of Work by Total Hours Worked and Broad Industry* | Monthly ($8$ non-Q rounds) | Underemployed, visible, and invisible across AFF, Industry, and Services |
 | `wm_major` | *Employed Persons Wanting More Hours of Work by Major Industry* | Quarterly ($1, 4, 7, 10$) | Underemployed across all $22$ major industries (and $3$ broad sectors) |
 
-Rounding tolerances: PSA prints totals in thousands to $3$ decimal places and child breakdowns as percentages to $1\text{--}3$ decimal places; rebuilding a child level as $\text{pct} \times \text{total}$ introduces at most $0.25\text{k}$ rounding difference, guarded by strict pass/fail assertions of `TOL_LEVEL_K = 1.0k` and `TOL_RATE_PP = 0.05 pp`.
+Rounding tolerances: PSA prints totals in thousands to $3$ decimal places and child breakdowns as percentages to $1\text{--}3$ decimal places; rebuilding a child level as $\text{pct} \times \text{total}$ introduces at most $0.25\text{k}$ rounding difference, guarded by strict pass/fail gates of `TOL_LEVEL_K = 1.0k` and `TOL_RATE_PP = 0.05 pp`.
 
-### 10.2 Inventory of All 43 Generated CSV Tables (`output/tables/*.csv`) {#table-inventory}
+### 10.2 Inventory of All 44 Generated CSV Tables (`output/tables/*.csv`) {#table-inventory}
 
-All $43$ CSV tables below are also compiled as separate worksheets (alongside a `README` sheet = $44$ sheets total) in [`output/LFS_2025_Stratified_Underemployment_Tables.xlsx`](output/LFS_2025_Stratified_Underemployment_Tables.xlsx):
+All $44$ CSV tables below are also compiled as identically named worksheets (alongside a `README` sheet = $45$ sheets total) in [`output/LFS_2025_Stratified_Underemployment_Tables.xlsx`](output/LFS_2025_Stratified_Underemployment_Tables.xlsx):
 
 | Table Family | CSV / Sheet Names | Stratification Dimensions | Divisor ($K$) | Extra Schema Columns & Verification Note |
 |---|---|---|---|---|
-| **PSA Validation (`2` tables)** | `0A_PSA_Validation_Annual`, `0B_PSA_Validation_Monthly` | Indicator $\times$ Group $\times$ Period/Month | $K=12$, $K=4$, or $K=1$ | `PUF_Calculated`, `PSA_Official`, `Diff`, `Status` ($4,229$ `PASS` checks) |
-| **Broad Sector Breakdowns (`10` tables)** | `1A`/`1B` (Sector), `2A`/`2B` (Sector $\times$ Sex), `3A`/`3B` (Sector $\times$ Age), `4A`/`4B` (Sector $\times$ Age $\times$ Sex), `5A`/`5B` (Sector $\times$ Educ) | `A` = Annual mean, `B` = Monthly granular ($12$ months) | `A`: $K=12$; `B`: $K=1$ | `1B` includes `worked_lt40_k`, `worked_40plus_k`, `job_not_at_work_k`; all carry `se_underemp_k`, `se_underemp_rate_pp`, `cv_underemp_pct`, `reliability` |
+| **PSA Validation (`3` tables)** | `0A_PSA_Validation_Annual`, `0B_PSA_Validation_Monthly`, `0C_PSA_Validation_SE` | Indicator $\times$ Group $\times$ Period/Month | $K=12$, $K=4$, or $K=1$ | `PUF_Calculated`, `PSA_Official`, `Diff`, `Status` ($4,229$ point checks + $84$ SE checks) |
+| **Broad Sector Breakdowns (`10` tables)** | `1A`/`1B` (Sector), `2A`/`2B` (Sector $\times$ Sex), `3A`/`3B` (Sector $\times$ Age), `4A`/`4B` (Sector $\times$ Age $\times$ Sex), `5A`/`5B` (Sector $\times$ Educ) | `A` = Annual mean, `B` = Monthly granular ($12$ months) | `A`: $K=12$; `B`: $K=1$ | `1B` includes `worked_lt40_k`, `worked_40plus_k`, `job_not_at_work_k`; all carry total/visible/invisible SEs, CVs, and `reliability` |
 | **Residence Region `R*` (`10` tables)** | `R0A`/`R0B` (Region), `R1A`/`R1B` ($\times$ Sex), `R2A`/`R2B` ($\times$ Sector), `R3A`/`R3B` ($\times$ Age), `R4A`/`R4B` ($\times$ Educ) | `A` = Quarterly avg (`Qavg`), `B` = Quarterly (`Jan, Apr, Jul, Oct`) | `A`: $K=4$; `B`: $K=1$ | Includes unweighted sample count `n_unweighted`; `R0` and `R1` checked directly vs. PSA regional tables |
 | **Workplace Region `W*` (`10` tables)** | `W0A`/`W0B` (Work Region), `W1A`/`W1B` ($\times$ Sex), `W2A`/`W2B` ($\times$ Sector), `W3A`/`W3B` ($\times$ Age), `W4A`/`W4B` ($\times$ Educ) | `A` = Annual mean ($12$ months), `B` = Monthly ($12$ months) | `A`: $K=12$; `B`: $K=1$ | Includes `n_unweighted`; derived from `PUFC12A_PROVMUN`; sums to checked national totals |
 | **Research Questions `RQ1`–`RQ3` (`11` tables)** | `RQ1_RQ2_a_Age`, `_b_Sex`, `_c_Education`, `_d1_Broad_Industry`, `_d2_Major_Industry`; `RQ3_Monthly_Overall`, `_by_Age`, `_by_Sex`, `_by_Educ`, `_by_Sector`, `_by_Major_Ind` | `RQ1_RQ2_*` = Annual mean; `RQ3_Monthly_*` = Monthly ($12$ months) | `RQ1_RQ2`: $K=12$; `RQ3`: $K=1$ | Direct source tables for Figures RQ1, RQ2, and RQ3 |
@@ -544,12 +538,10 @@ To trace how the SQL and Python pipeline transforms raw household weights into p
 1. **National Annual Headline** (`0A_PSA_Validation_Annual` & `1A_Sector_Annual`, $K = 12$ months):
    * **Point Estimates:** Across the $12$ monthly rounds, the exact mean employed total is $\bar{X} = 49,024.506\text{k}$ ($49.0\text{M}$) and the mean underemployed total is $\bar{Y} \approx 5,834\text{k}$ ($5.8\text{M}$, or $11.9\%$ of employed).
    * **Standard Error Validation:** Across the $12$ individual monthly rounds, the ratio of our two-stage design standard error $\text{SE}(\hat{Y} _ m)$ to PSA's published Special Release standard error achieves a median of $0.9999\times$ (mean $1.0020\times$, MAPE $0.30\%$, range $0.997\text{--}1.021\times$, $\pm 5\%$ gate).
-   * **Standard Error Validation:** Across the $12$ individual monthly rounds, the ratio of our two-stage design standard error $\text{SE}(\hat{Y} _ m)$ to PSA's published Special Release standard error achieves a median of $0.9999\times$ (mean $1.0020\times$, MAPE $0.30\%$, range $0.997\times\text{--}1.021\times$).
 
 2. **Regional Quarterly Estimate** (`R0A_RReg_Qavg` / `R0B_RReg_Quarterly`, $K = 4$ quarterly rounds):
    * **Point Estimates:** For Region XII (SOCCSKSARGEN), averaging the $4$ quarterly rounds (January, April, July, October) yields the highest regional underemployment rate in the country at $\bar{R} _ {\text{XII}} = 28.8\%$, compared with $\bar{R} _ {\text{XI}} = 5.3\%$ in neighboring Davao.
    * **Standard Error Validation:** Across all $4 \times 18 = 72$ quarterly regional cells, our two-stage standard errors match PSA's published regional standard errors to a median ratio of $0.9992\times$ (mean $0.9996\times$, MAPE $0.22\%$, range $0.991\text{--}1.040\times$, $\pm 15\%$ gate; quarterly medians `M1=0.9992`, `M4=0.9994`, `M7=0.9974`, `M10=0.9994`).
-   * **Standard Error Validation:** Across all $4 \times 18 = 72$ quarterly regional cells, our two-stage standard errors match PSA's published regional standard errors to a median ratio of $0.9992\times$ (mean $0.9996\times$, MAPE $0.22\%$, range $0.991\times\text{--}1.040\times$).
 
 3. **Unreliable Small Subgroup** (`RQ1_RQ2_c_Education`, Post-Secondary Undergraduates, $K = 12$ months):
    * **Why it is flagged `**`:** Post-secondary non-tertiary undergraduates (`PUFC07_GRADE` codes `40001`–`40003` and `50001`–`50003`) represent a tiny fraction of the workforce where most PSU clusters contain zero respondents ($z _ {y,p,a} = 0$), triggering the small-cell variance effect derived in Section 8.
@@ -566,4 +558,5 @@ $\leftarrow$ [Back to Main Report](index.html)
     tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] }
   };
 </script>
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha384-Wuix6BuhrWbjDBs24bXrjf4ZQ5aFeFWBuKkFekO2t8xFU0iNaLQfp2K6/1Nxveei" crossorigin="anonymous"></script>
+```

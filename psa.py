@@ -34,45 +34,59 @@ REQUIRED_QUARTERLY = REQUIRED_ALL | {"status_region_sex", "hours_region_sex", "e
 REQUIRED_MONTHLY = REQUIRED_ALL | {"wm_broad"}
 
 # (keyword in PSA label, view major_industry name) in view order 1..22: 1-2 AFF, 3-7 Industry, 8-22 Services.
-# PSA's "Other service activities" includes PSIC Section T (households as employers); empty in 2025 PUFs (asserted below).
+# PSA's "Other service activities" includes PSIC Section T (households as employers); empty in 2025 PUFs (checked below).
 INDUSTRY_KEYS = [
-    ("agriculture and forestry", "Agriculture and Forestry"), ("fishing", "Fishing and Aquaculture"),
-    ("mining", "Mining and Quarrying"), ("manufacturing", "Manufacturing"),
+    ("agriculture and forestry", "Agriculture and Forestry"),
+    ("fishing", "Fishing and Aquaculture"),
+    ("mining", "Mining and Quarrying"),
+    ("manufacturing", "Manufacturing"),
     ("electricity", "Electricity, Gas, Steam, and Air Conditioning Supply"),
-    ("water supply", "Water Supply; Sewerage, Waste Management"), ("construction", "Construction"),
-    ("wholesale", "Wholesale and Retail Trade; Repair of Motor Vehicles"), ("transportation", "Transportation and Storage"),
-    ("accommodation", "Accommodation and Food Service Activities"), ("information", "Information and Communication"),
-    ("financial", "Financial and Insurance Activities"), ("real estate", "Real Estate Activities"),
+    ("water supply", "Water Supply; Sewerage, Waste Management"),
+    ("construction", "Construction"),
+    ("wholesale", "Wholesale and Retail Trade; Repair of Motor Vehicles"),
+    ("transportation", "Transportation and Storage"),
+    ("accommodation", "Accommodation and Food Service Activities"),
+    ("information", "Information and Communication"),
+    ("financial", "Financial and Insurance Activities"),
+    ("real estate", "Real Estate Activities"),
     ("professional", "Professional, Scientific and Technical Activities"),
     ("administrative", "Administrative and Support Service Activities"),
-    ("public administration", "Public Administration and Defense"), ("education", "Education"),
-    ("human health", "Human Health and Social Work Activities"), ("arts", "Arts, Entertainment and Recreation"),
-    ("other service", "Other Service Activities"), ("households", "Activities of Households as Employers"),
+    ("public administration", "Public Administration and Defense"),
+    ("education", "Education"),
+    ("human health", "Human Health and Social Work Activities"),
+    ("arts", "Arts, Entertainment and Recreation"),
+    ("other service", "Other Service Activities"),
+    ("households", "Activities of Households as Employers"),
     ("extraterritorial", "Activities of Extraterritorial Organizations"),
 ]
 MEASURES = ["employed", "underemp", "visible", "invisible", "notwork", "lt40", "ge40"]
 DIMS = ["sex", "age_group", "educ_group", "major_industry", "broad_sector", "region"]
 TOL_LEVEL_K, TOL_RATE_PP = 1.0, 0.05
 MONTHS_ABBR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-# Tolerances are rounding, not slack: PSA prints levels to 0.001k but children as % to 1-3 dp, so a child level
-# rebuilt as % x total can be off by up to ~0.25k. Rates 0.05 pp for the same reason.
+# Tolerances account strictly for published rounding: PSA prints levels to 0.001k and child breakdowns as % to 1-3 dp,
+# so rebuilding a child level as % x total introduces up to ~0.25k rounding error.
 
 
 def read_psa_blocks(path: Path) -> tuple[str, list[dict]]:
-    """(title, blocks). A block = level row in '000, then a 'Total' row, then % child rows (% of the level row)."""
+    """Parse (title, blocks) from a PSA Excel table: level row in '000, SE row in '000, and % child rows."""
     raw = pd.read_excel(path, header=None)
     title = " ".join(" ".join(v for v in raw.iloc[:6].values.ravel() if isinstance(v, str)).split())
     head = raw.iloc[:15].astype(str)
     se_col = next((c for c in raw.columns if head[c].str.contains("standard error", case=False).any()), None)
     if se_col is None:
         raise ValueError(f"No 'Standard Error' header in {path.name}")
+
     est = raw.iloc[:, :se_col].apply(pd.to_numeric, errors="coerce")
     est = est.loc[:, est.notna().sum() >= 3]  # real estimate columns; drops stray page numbers
     se = raw.iloc[:, se_col:].apply(pd.to_numeric, errors="coerce")
-    se = se.loc[:, se.notna().sum() >= 3]  # PSA's standard errors, same column order as the estimates
-    labels = [next((" ".join(v.split()) for v in raw.iloc[i, :se_col] if isinstance(v, str) and v.strip()), "")
-              for i in range(len(raw))]
+    se = se.loc[:, se.notna().sum() >= 3]  # PSA's standard errors, aligned in column order with estimates
+
+    labels = [
+        next((" ".join(v.split()) for v in raw.iloc[i, :se_col] if isinstance(v, str) and v.strip()), "")
+        for i in range(len(raw))
+    ]
     numeric = [est.iloc[i].notna().sum() >= max(1, est.shape[1] // 2) for i in range(len(raw))]
+
     rows = []
     for i, lab in enumerate(labels):
         if numeric[i]:
@@ -85,6 +99,7 @@ def read_psa_blocks(path: Path) -> tuple[str, list[dict]]:
                     captioned = True
                     break
             rows.append((lab, est.iloc[i].to_numpy(dtype=float), captioned, se.iloc[i].to_numpy(dtype=float)))
+
     blocks = []
     for k, (lab, vals, captioned, se_vals) in enumerate(rows):
         if lab == "Total":
@@ -97,10 +112,12 @@ def read_psa_blocks(path: Path) -> tuple[str, list[dict]]:
 
 
 def _is_national(b: dict) -> bool:
+    """Return True if a PSA table block represents the national aggregate."""
     return b["name"] in ("Philippines", "Both Sexes")
 
 
 def _region(label: str) -> str:
+    """Map a PSA regional row header to its canonical display name in REGIONS."""
     for _, name, key in REGIONS:
         if re.search(key, label, re.I):
             return name
@@ -108,6 +125,7 @@ def _region(label: str) -> str:
 
 
 def _industry(label: str) -> tuple[str, str]:
+    """Map a PSA major-industry row label to (major_industry, broad_sector)."""
     for i, (key, name) in enumerate(INDUSTRY_KEYS):
         if key in label.lower():
             return name, SECTOR_ORDER[0 if i < 2 else 1 if i < 7 else 2]
@@ -115,27 +133,34 @@ def _industry(label: str) -> tuple[str, str]:
 
 
 def _regions(blocks: list[dict]) -> list[dict]:
-    assert blocks[0]["name"] == "Philippines" and len(blocks) == 1 + len(REGIONS), [b["name"] for b in blocks]
+    """Validate and return the 18 regional blocks following the national Philippines block."""
+    if blocks[0]["name"] != "Philippines" or len(blocks) != 1 + len(REGIONS):
+        raise ValueError(f"Unexpected regional block structure: {[b['name'] for b in blocks]}")
     return blocks[1:]
 
 
 def _child_k(b: dict, rows: list[np.ndarray], j: int) -> np.ndarray:
-    """Child rows in '000 for column j. Usually % of the block total, but some releases print '000 (Jul Table 2 ages)."""
+    """Convert child rows to '000 for column j (handles both % shares and direct '000 releases like Jul Table 2)."""
     v, tot = np.array([r[j] for r in rows]), b["level"][j]
     return v if abs(np.nansum(v) - tot) < abs(np.nansum(v) - 100) else v * tot / 100
 
 
 def _sexes(b: dict, j: int) -> list[tuple[str, float]]:
-    # region blocks: Male, Female rows (unlabeled in Jan/Apr; Jul/Oct add a 100% "Both Sexes" row)
+    """Extract Male and Female levels in '000 from a regional block (handles unlabeled Jan/Apr and Jul/Oct 'Both Sexes')."""
     kids = [(lab, pct) for lab, pct in b["children"] if lab != "Both Sexes"]
-    assert len(kids) == 2 and all(lab in ("", s) for (lab, _), s in zip(kids, ("Male", "Female"))), (b["name"], kids)
+    if len(kids) != 2 or not all(lab in ("", s) for (lab, _), s in zip(kids, ("Male", "Female"))):
+        raise ValueError(f"Unexpected sex sub-rows in block {b['name']!r}: {kids}")
     return list(zip(("Male", "Female"), _child_k(b, [p for _, p in kids], j)))
 
 
 def _hours(level: np.ndarray) -> dict[str, float]:
+    """Aggregate PSA hours-worked columns into not-at-work, <40 hours, and 40+ hours."""
     return {"notwork": level[1], "lt40": level[2] + level[3] + level[4], "ge40": level[5]}
 
 
+# ==============================================================================
+# TABLE-FAMILY EXTRACTORS
+# ==============================================================================
 def ex_status_sex_age(blocks):
     for b in blocks:
         sex = None if _is_national(b) else b["name"]
@@ -218,7 +243,8 @@ def ex_wm_hours_region(blocks):
 def ex_wm_broad(blocks):
     b = blocks[0]
     for lab, sector in zip([lab for lab, _ in b["children"]], SECTOR_ORDER, strict=True):
-        assert sector.lower().startswith(lab.lower()[:5]), lab
+        if not sector.lower().startswith(lab.lower()[:5]):
+            raise ValueError(f"Unexpected broad sector row order in PSA table: {lab!r}")
     for m, j in WM_COLS:
         for sector, v in zip(SECTOR_ORDER, _child_k(b, [p for _, p in b["children"]], j)):
             yield m, {"broad_sector": sector}, v
@@ -237,10 +263,12 @@ def ex_wm_major(blocks):
 EXTRACTORS = {k: globals()[f"ex_{k}"] for k in PSA_TABLES}
 
 
+# ==============================================================================
+# OFFICIAL DATA LOADING & VERIFICATION HARNESS
+# ==============================================================================
 def load_psa_official() -> pd.DataFrame:
-    """Long table: month_num, check, table, measure, <DIMS>, psa (levels in '000).
-    attrs['se_underemp']: PSA SE of underemployed, keyed by month (national) or (month, region)."""
-    recs, found, se_national = [], {}, {}
+    """Load all final Special Release tables into a long DataFrame (levels in '000) and attach SE benchmarks."""
+    recs, found, se_underemp = [], {}, {}
     for p in sorted(PSA_DIR.glob("*__T*.xls*")):
         prefix = p.name.split("__")[0]
         if "__PR_" in p.name or not prefix[:2].isdigit() or prefix.startswith("00"):
@@ -253,14 +281,26 @@ def load_psa_official() -> pd.DataFrame:
         if len(keys) > 1 or (month, keys[0]) in found:
             raise ValueError(f"Ambiguous PSA table {p.name}: {keys} / {found.get((month, keys[0]))}")
         found[(month, keys[0])] = p.name
-        tab = re.match(r"(TAB|Table)\s*\d+", p.name.split("__")[1], re.I).group()
-        if keys[0] == "status_sex_age":  # national underemployed SE ('000), column 3 as for the estimate
-            se_national[month] = next(b for b in blocks if _is_national(b))["se"][3]
-        if keys[0] == "status_region_sex":  # same, per region (Jan/Apr/Jul/Oct only)
-            se_national.update({(month, _region(b["name"])): b["se"][3] for b in _regions(blocks)})
+        tab_match = re.match(r"(TAB|Table)\s*\d+", p.name.split("__")[1], re.I)
+        if tab_match is None:
+            raise ValueError(f"Cannot parse table number from filename: {p.name}")
+        tab = tab_match.group()
+
+        if keys[0] == "status_sex_age":  # national underemployed SE ('000), column 3 matches estimate column 3
+            se_underemp[month] = float(next(b for b in blocks if _is_national(b))["se"][3])
+        if keys[0] == "status_region_sex":  # regional underemployed SE ('000) in Jan/Apr/Jul/Oct
+            se_underemp.update({(month, _region(b["name"])): float(b["se"][3]) for b in _regions(blocks)})
+
         for measure, dims, value in EXTRACTORS[keys[0]](blocks):
-            recs.append({"month_num": month, "check": keys[0], "table": tab, "measure": measure,
-                         **{d: v for d, v in dims.items() if v is not None}, "psa": float(value)})
+            recs.append({
+                "month_num": month,
+                "check": keys[0],
+                "table": tab,
+                "measure": measure,
+                **{d: v for d, v in dims.items() if v is not None},
+                "psa": float(value),
+            })
+
     missing = [
         f"{MONTHS_ABBR[m - 1]}: {k}"
         for m in range(1, 13)
@@ -269,13 +309,14 @@ def load_psa_official() -> pd.DataFrame:
     ]
     if missing:
         raise FileNotFoundError(f"PSA Special Release tables not found in {PSA_DIR}:\n  " + "\n  ".join(missing))
+
     out = pd.DataFrame(recs).reindex(columns=["month_num", "check", "table", "measure", *DIMS, "psa"])
-    out.attrs["se_underemp"] = se_national
+    out.attrs["se_underemp"] = se_underemp
     return out
 
 
 def read_annual_employed() -> float:
-    """PHILIPPINES employed ('000) from the Annual release, 'Annual 2025p' estimate column."""
+    """Read PHILIPPINES employed ('000) from the preliminary Annual release ('Annual 2025p' column)."""
     path = next(PSA_DIR.glob("00_Annual__Table 2*.xls*"), None)
     if path is None:
         raise FileNotFoundError(f"Annual release '00_Annual__Table 2 ...' (employed) not found in {PSA_DIR}")
@@ -286,7 +327,7 @@ def read_annual_employed() -> float:
 
 
 def _with_rates(df: pd.DataFrame, keys: list[str]) -> pd.DataFrame:
-    """Append underemployment-rate rows wherever the same table gives both employed and underemployed."""
+    """Append underemployment-rate rows wherever the same table provides both employed and underemployed."""
     e = df[df["measure"] == "employed"].set_index(keys)
     u = df[df["measure"] == "underemp"].set_index(keys)
     j = e[["psa", "puf"]].join(u[["psa", "puf"]], lsuffix="_e", rsuffix="_u", how="inner")
@@ -295,27 +336,28 @@ def _with_rates(df: pd.DataFrame, keys: list[str]) -> pd.DataFrame:
 
 
 def _status(df: pd.DataFrame) -> pd.DataFrame:
+    """Compute PUF-minus-PSA differences and assign PASS / CHECK status against rounding tolerances."""
     tol = np.where(df["measure"] == "underemp_rate_pct", TOL_RATE_PP, TOL_LEVEL_K)
     df["diff"] = df["puf"] - df["psa"]
     df["status"] = np.where(df["diff"].abs() <= tol, "PASS", "CHECK")
     return df
 
 
-def verify_against_psa_official(
-    con: duckdb.DuckDBPyConnection, overall: pd.DataFrame, by_region: pd.DataFrame,
-) -> dict[str, pd.DataFrame]:
-    print("[4/4] Validating PUF calculations against official PSA Special Release (final) tables...")
-    off = load_psa_official()
-    # Our underemployed SE (Technical Notes p. 8 with GeoMS urban B = 25 / rural B = 15) vs PSA's published SE:
-    # national every month, and each region in Jan/Apr/Jul/Oct. Prints median, mean, MAPE, and min-max range.
-    psa_se = pd.Series(off.attrs["se_underemp"])
+def _validate_standard_errors(
+    psa_se: pd.Series, overall: pd.DataFrame, by_region: pd.DataFrame,
+) -> pd.DataFrame:
+    """Validate all 84 national and regional Standard Errors against PSA and return an auditable DataFrame."""
     nat = psa_se[[k for k in psa_se.index if not isinstance(k, tuple)]]
     reg = psa_se[[k for k in psa_se.index if isinstance(k, tuple)]]
     reg.index = pd.MultiIndex.from_tuples(reg.index)
-    for label, mine, psa, n, tol in [
+    reg_order = {name: idx for idx, (_, name, _) in enumerate(REGIONS)}
+
+    se_records = []
+    specs = [
         ("National", overall.set_index("month_num")["se_underemp_k"], nat, 12, 0.05),
         ("Regional", by_region.set_index(["month_num", "region"])["se_underemp_k"], reg, 4 * len(REGIONS), 0.15),
-    ]:
+    ]
+    for label, mine, psa, expected_n, tol in specs:
         ratio = (mine / psa).dropna()
         mape = ((mine - psa).abs() / psa * 100).dropna().mean()
         print(
@@ -326,7 +368,50 @@ def verify_against_psa_official(
         if label == "Regional":
             q_meds = ratio.groupby(level=0).median().to_dict()
             print("        Quarterly regional medians: " + ", ".join(f"M{m}={v:.4f}" for m, v in sorted(q_meds.items())))
-        assert len(ratio) == n and ratio.between(1 - tol, 1 + tol).all(), ratio[~ratio.between(1 - tol, 1 + tol)].round(3)
+
+        ordered_keys = (
+            sorted(psa.index)
+            if label == "National"
+            else sorted(psa.index, key=lambda item: (item[0], reg_order.get(item[1], 999)))
+        )
+        for key in ordered_keys:
+            m_num = key if label == "National" else key[0]
+            r_name = "Philippines" if label == "National" else key[1]
+            puf_v = float(mine.loc[key]) if key in mine.index else np.nan
+            psa_v = float(psa.loc[key])
+            rat_v = puf_v / psa_v if psa_v else np.nan
+            ape_v = abs(puf_v - psa_v) / psa_v * 100.0 if psa_v else np.nan
+            passed = bool(pd.notna(rat_v) and (1.0 - tol) <= rat_v <= (1.0 + tol))
+            se_records.append({
+                "Scope": label,
+                "Month": MONTHS_ABBR[m_num - 1],
+                "Region": r_name,
+                "PUF_SE_k": puf_v,
+                "PSA_SE_k": psa_v,
+                "Diff_k": puf_v - psa_v,
+                "SE_Ratio": rat_v,
+                "APE_Pct": ape_v,
+                "Gate_Pct": tol * 100.0,
+                "Status": "PASS" if passed else "CHECK",
+            })
+
+        if len(ratio) != expected_n or not ratio.between(1 - tol, 1 + tol).all():
+            bad_se = ratio[~ratio.between(1 - tol, 1 + tol)].round(3)
+            raise ValueError(f"{label} SE check failed (expected {expected_n} cells within +/-{tol*100:.0f}%):\n{bad_se}")
+
+    return pd.DataFrame(se_records).round(4)
+
+
+def verify_against_psa_official(
+    con: duckdb.DuckDBPyConnection, overall: pd.DataFrame, by_region: pd.DataFrame,
+) -> dict[str, pd.DataFrame]:
+    """Run all point-estimate and Standard Error checks against PSA Special Release files and export CSVs."""
+    print("[4/4] Validating PUF calculations against official PSA Special Release (final) tables...")
+    off = load_psa_official()
+
+    # Validate and export all 84 national (12) and regional (72) Standard Error cells
+    df_val_se = _validate_standard_errors(pd.Series(off.attrs["se_underemp"]), overall, by_region)
+
     fine = con.execute(
         "SELECT month_num, sex, age_group, educ_group, major_industry, broad_sector, region, "
         "  SUM(wgt) AS employed, "
@@ -339,66 +424,114 @@ def verify_against_psa_official(
         "FROM lfs_employed_2025 GROUP BY ALL"
     ).df()
     fine[MEASURES] = fine[MEASURES] / 1e3
-    assert not (fine["major_industry"] == "Activities of Households as Employers").any(), \
-        "PUF now codes households (PSIC T) separately; fold it into 'Other Service Activities' before comparing to PSA"
+    if (fine["major_industry"] == "Activities of Households as Employers").any():
+        raise ValueError(
+            "PUF codes households (PSIC T) separately; fold into 'Other Service Activities' before comparing to PSA"
+        )
 
-    off["group"] = off[DIMS].apply(lambda r: "; ".join(f"{d}={v}" for d, v in r.items() if pd.notna(v)) or "Philippines", axis=1)
+    off["group"] = off[DIMS].apply(
+        lambda r: "; ".join(f"{d}={v}" for d, v in r.items() if pd.notna(v)) or "Philippines", axis=1
+    )
     off["dimset"] = off[DIMS].notna().apply(lambda r: tuple(d for d, v in r.items() if v), axis=1)
     parts = []
     for dimset, grp in off.groupby("dimset"):
         keys = ["month_num", *dimset]
         puf = fine.groupby(keys, as_index=False)[MEASURES].sum().melt(keys, var_name="measure", value_name="puf")
         parts.append(grp.merge(puf, on=[*keys, "measure"], how="left"))
-    # no PUF respondents in a cell = 0; PSA prints "-" (blank) for 0. Must be 0 not NaN, or averages skip months.
+
+    # Empty PUF cells represent 0, matching PSA "-" blanks; filling 0.0 prevents multi-month averages skipping zero months
     mon = pd.concat(parts, ignore_index=True).fillna({"psa": 0.0, "puf": 0.0})
     mon = _status(_with_rates(mon, ["month_num", "check", "table", "group"]))
 
-    # Period averages: national annual = mean of 12 monthly finals (SUM/12); region = mean of 4 quarterly rounds.
-    lv = (mon[mon["measure"] != "underemp_rate_pct"]
-          .groupby(["measure", "group", "month_num"], as_index=False)
-          .agg(psa=("psa", "mean"), puf=("puf", "mean"), check=("check", lambda s: "+".join(sorted(set(s))))))
+    # Period averages: national annual = mean of 12 monthly finals (SUM/12); region = mean of 4 quarterly rounds
+    lv = (
+        mon[mon["measure"] != "underemp_rate_pct"]
+        .groupby(["measure", "group", "month_num"], as_index=False)
+        .agg(psa=("psa", "mean"), puf=("puf", "mean"), check=("check", lambda s: "+".join(sorted(set(s)))))
+    )
     avg = lv.groupby(["measure", "group"], as_index=False).agg(
-        psa=("psa", "mean"), puf=("puf", "mean"), months=("month_num", frozenset),
-        check=("check", lambda s: "+".join(sorted(set("+".join(s).split("+"))))))
+        psa=("psa", "mean"),
+        puf=("puf", "mean"),
+        months=("month_num", frozenset),
+        check=("check", lambda s: "+".join(sorted(set("+".join(s).split("+"))))),
+    )
     full = avg["months"] == frozenset(range(1, 13))
     qavg = (avg["months"] == frozenset({1, 4, 7, 10})) & avg["group"].str.contains("region=")
     avg["period"] = np.select([full, qavg], ["2025 Annual Avg (mean of 12 monthly finals)", "Q-avg Jan/Apr/Jul/Oct"], "")
     na = avg[avg["period"] == ""].groupby(["check", "measure"], as_index=False)["months"].first()
-    avg = _status(_with_rates(avg[avg["period"] != ""].drop(columns="months"), ["period", "group"]).fillna({"check": "rate = underemp / employed"}))
+    avg = _status(
+        _with_rates(avg[avg["period"] != ""].drop(columns="months"), ["period", "group"]).fillna(
+            {"check": "rate = underemp / employed"}
+        )
+    )
 
-    # Annual 2025p is preliminary and differs from the mean of PSA's own 12 monthly finals, so report as INFO.
+    # Annual 2025p is preliminary and differs slightly from the mean of PSA's 12 monthly finals; record as INFO
     psa_monthly_mean = avg.loc[(avg["measure"] == "employed") & (avg["group"] == "Philippines"), "psa"].iloc[0]
     annual_psa = read_annual_employed()
     annual_puf_emp = con.execute("SELECT SUM(wgt) / 12e3 FROM lfs_employed_2025").fetchone()[0]
     avg = pd.concat([
         avg,
         pd.DataFrame([{
-            "period": "2025 Annual (Annual Special Release 2025p)", "check": "annual_release_table2",
-            "measure": "employed", "group": "Philippines", "psa": annual_psa, "puf": annual_puf_emp,
+            "period": "2025 Annual (Annual Special Release 2025p)",
+            "check": "annual_release_table2",
+            "measure": "employed",
+            "group": "Philippines",
+            "psa": annual_psa,
+            "puf": annual_puf_emp,
             "diff": annual_puf_emp - annual_psa,
             "status": f"INFO: preliminary; PSA's own monthly finals average {psa_monthly_mean:,.3f}",
         }]),
         pd.DataFrame({
-            "period": "N/A (not published every month; no comparable period average)", "check": na["check"],
-            "measure": na["measure"], "group": "all groups",
+            "period": "N/A (not published every month; no comparable period average)",
+            "check": na["check"],
+            "measure": na["measure"],
+            "group": "all groups",
             "status": "N/A months " + na["months"].map(lambda s: ",".join(MONTHS_ABBR[m - 1] for m in sorted(s))),
         }),
     ], ignore_index=True)
 
-    cols = {"check": "Check", "table": "PSA_Table", "measure": "Indicator", "group": "Group", "puf": "PUF_Calculated",
-            "psa": "PSA_Official", "diff": "Diff", "status": "Status"}
-    df_val_monthly = (mon.assign(Month=mon["month_num"].map(lambda m: MONTHS_ABBR[m - 1]))
-                      .sort_values(["month_num", "check", "measure", "group"])
-                      .rename(columns=cols)[["Month", *cols.values()]].round(4))
-    df_val_annual = avg.rename(columns={**cols, "period": "Period"})[["Period", *[c for c in cols.values() if c != "PSA_Table"]]].round(4)
+    cols = {
+        "check": "Check",
+        "table": "PSA_Table",
+        "measure": "Indicator",
+        "group": "Group",
+        "puf": "PUF_Calculated",
+        "psa": "PSA_Official",
+        "diff": "Diff",
+        "status": "Status",
+    }
+    df_val_monthly = (
+        mon.assign(Month=mon["month_num"].map(lambda m: MONTHS_ABBR[m - 1]))
+        .sort_values(["month_num", "check", "measure", "group"])
+        .rename(columns=cols)[["Month", *cols.values()]]
+        .round(4)
+    )
+    df_val_annual = (
+        avg.rename(columns={**cols, "period": "Period"})[["Period", *[c for c in cols.values() if c != "PSA_Table"]]]
+        .round(4)
+    )
+
     df_val_annual.to_csv(TAB_DIR / "0A_PSA_Validation_Annual.csv", index=False)
     df_val_monthly.to_csv(TAB_DIR / "0B_PSA_Validation_Monthly.csv", index=False)
+    df_val_se.to_csv(TAB_DIR / "0C_PSA_Validation_SE.csv", index=False)
 
     print("\n=== PSA VALIDATION SUMMARY ===")
-    print(pd.concat([df_val_monthly.assign(Period="Monthly"), df_val_annual]).groupby(["Period", "Status"]).size().to_string())
-    bad = pd.concat([df_val_monthly[df_val_monthly["Status"].str.startswith("CHECK")],
-                     df_val_annual[df_val_annual["Status"].str.startswith("CHECK")]])
+    print(
+        pd.concat([df_val_monthly.assign(Period="Monthly"), df_val_annual])
+        .groupby(["Period", "Status"])
+        .size()
+        .to_string()
+    )
+    bad = pd.concat([
+        df_val_monthly[df_val_monthly["Status"].str.startswith("CHECK")],
+        df_val_annual[df_val_annual["Status"].str.startswith("CHECK")],
+    ])
     if len(bad):
         print("\n=== ROWS THAT DO NOT MATCH PSA ===\n" + bad.to_string(index=False))
-    assert bad.empty, f"{len(bad)} figures do not match the official PSA release (see 0A/0B validation CSVs)"
-    return {"0A_Validation_Annual": df_val_annual, "0B_Validation_Monthly": df_val_monthly}
+        raise ValueError(f"{len(bad)} figures do not match the official PSA release (see 0A/0B validation CSVs)")
+
+    return {
+        "0A_PSA_Validation_Annual": df_val_annual,
+        "0B_PSA_Validation_Monthly": df_val_monthly,
+        "0C_PSA_Validation_SE": df_val_se,
+    }

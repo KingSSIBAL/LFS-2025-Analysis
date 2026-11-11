@@ -1,3 +1,4 @@
+```markdown
 ---
 layout: default
 title: "Underemployment in the Philippines, 2025 — PSA Labor Force Survey Analysis"
@@ -64,7 +65,7 @@ Annual figures are the average of the $12$ monthly rounds. Regional figures are 
 
 [![Four paired bar charts comparing visibly and invisibly underemployed workers by age group, sex, education and sector.](output/figures/fig_RQ2_visible_invisible_4panel.png)](output/figures/fig_RQ2_visible_invisible_4panel.png)
 
-**Underemployed college graduates mostly work full time already:** only $37\%$ of underemployed graduates work under $40$ hours (visibly underemployed), compared with $77\%$ in agriculture and $77\%$ among workers aged $65$ and over.
+**Underemployed college graduates mostly work full time already:** only $37\%$ of underemployed graduates work under $40$ hours (visibly underemployed), compared with $77\%$ in agriculture and $77\%$ among workers aged $65$ and over. Each visible and invisible bar carries its own subgroup $\text{CV}$ flag (`cv_visible_pct` and `cv_invisible_pct`).
 
 ## 4. Monthly pattern {#monthly}
 
@@ -114,9 +115,9 @@ Annual figures are the average of the $12$ monthly rounds. Regional figures are 
 |---|---|
 | **Microdata Source** | PSA Labor Force Survey (LFS) Public Use Files, January–December 2025 ($12$ rounds; [see full PUF dictionary](methodology.html#metadata)) |
 | **Target Population** | Employed persons aged $15+$ excluding overseas workers ($\bar{X} = 49,024.506\text{k}$ average per month) |
-| **Sampling & Variance Design** | [2023 Geo-enabled Master Sample](methodology.html#psa-plan): $117$ province/HUC strata, in-region residence constraint & $3$-step neighbor commuter smoothing, contiguous PSU clustering with island reunification, $2$-stage FPC ($B _ {\text{urb}} = 25$, $B _ {\text{rur}} = 15$), Taylor series linearization ([see design math](methodology.html#design)) |
-| **Official Validation** | $4,229 / 4,229$ published PSA Special Release figures matched ($3,576$ monthly, $77$ annual, $576$ regional; $0$ failures within rounding tolerances `1.0k` / `0.05 pp`, max rounding gap $0.25\text{k}$; [see table map](methodology.html#validation-map)) |
-| **Standard Error Accuracy** | **National ($12$ months, $\pm 5\%$ gate):** median $0.9999\times$, mean $1.0020\times$, MAPE $0.30\%$, range $0.997\text{--}1.021\times$; **Regional ($72$ cells, $\pm 15\%$ gate):** median $0.9992\times$, mean $0.9996\times$, MAPE $0.22\%$, range $0.991\text{--}1.040\times$; **quarterly medians:** `M1=0.9992`, `M4=0.9994`, `M7=0.9974`, `M10=0.9994` |
+| **Sampling & Variance Design** | [2023 Geo-enabled Master Sample](methodology.html#psa-plan): $117$ province/HUC strata, in-region residence constraint & $3$-step neighbor commuter smoothing, contiguous PSU clustering with island reunification, $2$-stage FPC ($\tilde{B} _ {\text{urb}} = 25$, $\tilde{B} _ {\text{rur}} = 15$), Taylor series linearization ([see design math](methodology.html#design)) |
+| **Official Validation** | $4,229 / 4,229$ published PSA Special Release figures matched (`0A`/`0B`: $3,576$ monthly, $77$ annual, $576$ regional; $0$ failures within rounding tolerances `1.0k` / `0.05 pp`, max rounding gap $0.25\text{k}$; [see table map](methodology.html#validation-map)) |
+| **Standard Error Accuracy** | $84 / 84$ SE cells verified in `0C_PSA_Validation_SE.csv` — **National ($12$ months, $\pm 5\%$ gate):** median $0.9999\times$, mean $1.0020\times$, MAPE $0.30\%$, range $0.997\text{--}1.021\times$; **Regional ($72$ cells, $\pm 15\%$ gate):** median $0.9992\times$, mean $0.9996\times$, MAPE $0.22\%$, range $0.991\text{--}1.040\times$; **quarterly medians:** `M1=0.9992`, `M4=0.9994`, `M7=0.9974`, `M10=0.9994` |
 | **Reliability Flag Bands** | $\text{CV} \le 10\%$ reliable, $10\text{--}20\%$ (`*`) use with caution, $> 20\%$ (`**`) unreliable |
 
 ## Why are some small cells flagged as "unreliable" — and how can they be improved? {#why-unreliable}
@@ -137,16 +138,16 @@ Seeing a cell flagged as **use with caution** ($\text{CV} \in (10\%, 20\%]$) or 
 ### A. Public Use File (PUF) Anonymization & Frame Constraints
 - **Inferred Residence Strata ($117$ Master Sample Domains):** Province/HUC of residence is the official sampling stratum, but the anonymized PUF includes only regional codes (`PUFREG`), and only in the $4$ quarterly rounds. Reconstructing the $117$ strata from each PSU's modal province of work (`PUFC12A_PROVMUN`, constrained to `PUFREG` in quarterly rounds and to the $3$-step smoothed residence-region block `eff_reg` in monthly rounds) and repairing commuter/empty PSUs via $3$-step geographic neighbor smoothing eliminates cross-region "phantom stratum" variance inflation and repairs $\sim 250$ within-region commuter spikes, though minor boundary misassignments can remain in heavy within-region commuter corridors.
 - **Repeated PSU Codes & Split Clusters:** Because `PUFPSU` codes repeat across provinces, rebuilding PSUs as contiguous runs of `PUFRPL` + `PUFPSU` + `PUFREG` along household IDs (`PUFHHNUM`) and reuniting split fragments within the same domain via gap-and-islands clustering (`< 150` household IDs and $\le 30$ combined households) recovers the positive cross-term $2z _ 1 z _ 2$ lost when PSUs are split, though a handful of boundary PSUs remain split.
-- **Unpublished Frame Counts ($B _ {p,a}$ and $A _ p$):** Exact housing-unit counts per PSU ($B _ {p,a}$) and PSU counts per domain ($A _ p$) are confidential frame variables. Calibrating effective second-stage frame sizes via `PUFURB2020` ($B _ {\text{urb}} = 25$, $B _ {\text{rur}} = 15$) achieves our final verified precision (**National:** median $0.9999\times$, mean $1.0020\times$, MAPE $0.30\%$, range $0.997\text{--}1.021\times$; **Regional:** median $0.9992\times$, mean $0.9996\times$, MAPE $0.22\%$, range $0.991\text{--}1.040\times$; quarterly medians `M1=0.9992`, `M4=0.9994`, `M7=0.9974`, `M10=0.9994`), with the remaining minor dispersion driven by unpublished barangay-level frame sizes and post-stratification adjustments.
+- **Unpublished Frame Counts ($B _ {p,a}$ and $A _ p$):** Exact housing-unit counts per PSU ($B _ {p,a}$) and PSU counts per domain ($A _ p$) are confidential frame variables. Calibrating effective second-stage frame constants via `PUFURB2020` ($\tilde{B} _ {\text{urb}} = 25$, $\tilde{B} _ {\text{rur}} = 15$) achieves our final verified precision (**National:** median $0.9999\times$, mean $1.0020\times$, MAPE $0.30\%$, range $0.997\text{--}1.021\times$; **Regional:** median $0.9992\times$, mean $0.9996\times$, MAPE $0.22\%$, range $0.991\text{--}1.040\times$; quarterly medians `M1=0.9992`, `M4=0.9994`, `M7=0.9974`, `M10=0.9994`), with the remaining minor dispersion driven by unpublished barangay-level frame sizes and post-stratification adjustments.
 - **Omission of Housing-Unit IDs & Calibration Adjustment Factors:** The PUF provides only the final calibrated weight (`PUFPWGTPRV`) without intermediate non-response or post-stratification factors, and omits second-stage housing-unit IDs (where at most $3$ households per housing unit are sampled), slightly understating within-PSU household clustering.
 
 ### B. Multi-Round Pooling & Sub-National Coverage Constraints
 - **Suppressed Rotational Panel Identifiers:** The LFS Master Sample uses a rotating panel where households are interviewed across multiple quarters, inducing positive serial covariance across rounds ($\text{Cov}(\hat{Y} _ m, \hat{Y} _ {m'}) > 0$). Because longitudinal household linkage keys are suppressed in the public microdata, our annual ($K=12$) and quarterly ($K=4$) variance formulas treat rounds as independent cross-sections ($V(\bar{Y}) = \frac{1}{K^2}\sum _ {m=1}^{K} V(\hat{Y} _ m)$), which slightly understates true multi-round standard errors.
 - **Quarterly-Only Regional Design (`R*`):** The $8$ non-quarterly rounds (Feb, Mar, May, Jun, Aug, Sep, Nov, Dec) deploy only $1$ sample replicate designed strictly for national estimates; reliable residence-region estimates (`R*`) can only be computed from the $4$ quarterly rounds (Jan, Apr, Jul, October).
-- **Indirect Verification of Multi-Way & Workplace Tables:** PSA does not publish underemployment by education, multi-way sector interactions (sector $\times$ sex/age/education), or region of workplace (`W*`). These tables are verified indirectly by asserting that their cells sum exactly to checked national and regional margins.
+- **Indirect Verification of Multi-Way & Workplace Tables:** PSA does not publish underemployment by education, multi-way sector interactions (sector $\times$ sex/age/education), or region of workplace (`W*`). These tables are verified indirectly by confirming that their cells sum to checked national and regional margins.
 
 ### C. Conceptual & Labor Market Measurement Constraints
-- **Time-Related Definition vs. Wage Data Absence:** Following ILO and PSA standards, underemployment is defined strictly by wanting additional hours of work (`PUFC20_PWMORE = 1`). Because daily basic pay and wage variables are omitted from the 2025 LFS PUF release, *invisible underemployment* ($40+$ hours) serves as a behavioral proxy for inadequate earnings rather than a direct measure of low hourly wages.
+- **Time-Related Definition vs. Wage Data Absence:** Following ILO and PSA standards, underemployment is defined strictly by wanting additional hours of work (`PUFC20_PWMORE = 1`). Because daily basic pay and wage variables are omitted from the 2025 LFS PUF release, *invisible underemployment* ($40+$ hours) acts as a behavioral proxy for inadequate earnings rather than a direct measure of low hourly wages.
 - **Scope Exclusions:** Following PSA Technical Notes (p. 1), the target population excludes Overseas Filipino Workers (OFWs) and measures underemployment strictly among employed persons, excluding unemployed jobseekers and discouraged workers outside the labor force.
 
 ## Recommendations for future research {#recommendations}
@@ -158,12 +159,12 @@ Seeing a cell flagged as **use with caution** ($\text{CV} \in (10\%, 20\%]$) or 
 
 ### B. Survey Methodology & Variance Research Directions
 1. **Apply Multi-Year Wave Pooling ($2023\text{--}2025$) and Fay-Herriot SAE to High-CV Education $\times$ Sector Cells:** To estimate underemployment precisely for rare cells flagged in Figures RQ1, RQ2, and 6—specifically *Post-Secondary Undergraduates* ($\text{CV} = 22.7\%$) and sparse *Education $\times$ Sector* cells like *No grade completed in Industry*—without losing the $11$-category PSA education classification, future research should pool the $2023\text{--}2025$ LFS PUF waves ($36$ rounds, cutting CVs by $1/\sqrt{3} \approx 0.58\times$) or fit a Fay-Herriot area-level model linking our direct two-stage estimates to 2024 Census of Population (POPCEN) and TESDA administrative covariates ([see equations in `methodology.html#remedies`](methodology.html#remedies)).
-2. **Incorporate Post-Stratification Calibration Residuals and Bound Rotational Panel Serial Correlation:** Our two-stage variance design ($B _ {\text{urb}} = 25$, $B _ {\text{rur}} = 15$) matches official PSA standard errors to a median of $0.9999\times$ (mean $1.0020\times$, MAPE $0.30\%$, range $0.997\text{--}1.021\times$) nationally and $0.9992\times$ (mean $0.9996\times$, MAPE $0.22\%$, range $0.991\text{--}1.040\times$; quarterly medians `M1=0.9992`, `M4=0.9994`, `M7=0.9974`, `M10=0.9994`) regionally. Future methodological work should test regression-calibration residualization against the age-sex-domain post-stratification cells and estimate upper and lower bounds on the unlinked rotational panel covariance $\text{Cov}(\hat{Y} _ m, \hat{Y} _ {m'})$ across quarterly waves.
+2. **Incorporate Post-Stratification Calibration Residuals and Bound Rotational Panel Serial Correlation:** Our two-stage variance design ($\tilde{B} _ {\text{urb}} = 25$, $\tilde{B} _ {\text{rur}} = 15$) matches official PSA standard errors to a median of $0.9999\times$ (mean $1.0020\times$, MAPE $0.30\%$, range $0.997\text{--}1.021\times$) nationally and $0.9992\times$ (mean $0.9996\times$, MAPE $0.22\%$, range $0.991\text{--}1.040\times$; quarterly medians `M1=0.9992`, `M4=0.9994`, `M7=0.9974`, `M10=0.9994`) regionally. Future methodological work should test regression-calibration residualization against the age-sex-domain post-stratification cells and estimate upper and lower bounds on the unlinked rotational panel covariance $\text{Cov}(\hat{Y} _ m, \hat{Y} _ {m'})$ across quarterly waves.
 
 ## Data, math, and code {#data}
 
 - **PSA survey plan, metadata & math formulas:** [**Mathematical Methodology, PSA Survey Plan & PUF Metadata (`methodology.html`)**](methodology.html)
-- **All tables:** [Excel workbook](output/LFS_2025_Stratified_Underemployment_Tables.xlsx) $\cdot$ [CSV files](https://github.com/KingSSIBAL/LFS-2025-Analysis/tree/main/output/tables) (`RQ1_RQ2_*` and `RQ3_*` correspond to Sections 2, 3, and 4)
+- **All tables:** [Excel workbook](output/LFS_2025_Stratified_Underemployment_Tables.xlsx) $\cdot$ [CSV files](https://github.com/KingSSIBAL/LFS-2025-Analysis/tree/main/output/tables) (`0A`/`0B`/`0C` store PSA point and SE validations; `RQ1_RQ2_*` and `RQ3_*` correspond to Sections 2, 3, and 4)
 - **Code and how to re-run:** [repository README](https://github.com/KingSSIBAL/LFS-2025-Analysis#readme)
 - **Data:** Philippine Statistics Authority, Labor Force Survey 2025 Public Use Files and Special Release tables. Map boundaries: [faeldon/philippines-json-maps](https://github.com/faeldon/philippines-json-maps) (MIT).
 
@@ -187,12 +188,12 @@ Seeing a cell flagged as **use with caution** ($\text{CV} \in (10\%, 20\%]$) or 
   // shortcut: delegates all .png clicks on document, assumes all report figures end in .png
   document.addEventListener('click', (e) => {
     const link = e.target.closest('a[href$=".png"]');
-    if (!link || e.metaKey || e.ctrlKey) return;
+    if (!link || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
     const thumb = link.querySelector('img');
     dialogImg.src = link.href;
     dialogImg.alt = thumb ? thumb.alt : '';
-    dialog.showModal();
+    if (!dialog.open) dialog.showModal();
   });
   dialog.addEventListener('click', () => dialog.close());
 </script>
@@ -201,4 +202,5 @@ Seeing a cell flagged as **use with caution** ($\text{CV} \in (10\%, 20\%]$) or 
     tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] }
   };
 </script>
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha384-Wuix6BuhrWbjDBs24bXrjf4ZQ5aFeFWBuKkFekO2t8xFU0iNaLQfp2K6/1Nxveei" crossorigin="anonymous"></script>
+```
